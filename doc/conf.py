@@ -1,0 +1,1 @@
+project = 'erfa_python'
