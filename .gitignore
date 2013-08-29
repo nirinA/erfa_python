@@ -1,5 +1,8 @@
 *.py[cod]
 
+error_py275.txt
+doc/_build
+
 # C extensions
 *.so
 
