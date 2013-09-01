@@ -80,6 +80,7 @@ RN = erfa.numat(EPSA, DPSI, DEPS)
 
 # Combine the matrices: PN = N x P
 RNPB = erfa.rxr(RN, RP)
+print("NPB matrix, equinox based:")
 pprint(RNPB)
 
 # Equation of the equinoxes, including nutation correction
@@ -96,6 +97,7 @@ print("    = %s%dh%dm%d.%ds"%erfa.a2tf(6, GST))
 ##RC2TI = erfa.cr(RNPB)
 ##RC2TI = erfa.rz(GST, RC2TI)
 RC2TI = erfa.rz(GST, RNPB)
+print("celestial to terrestrial matrix (no polar motion)")
 pprint(RC2TI)
 
 # Polar motion matrix (TIRS->ITRS, IERS 1996).
@@ -105,6 +107,7 @@ RPOM = erfa.ry(-XP, RPOM)
 
 # Form celestial-terrestrial matrix (including polar motion).
 RC2IT = erfa.rxr(RPOM, RC2TI)
+print("celestial to terrestrial matrix (including polar motion)")
 pprint(RC2IT)
 
 ##A = scipy.matrix(RC2IT)
@@ -121,14 +124,17 @@ X, Y, S = erfa.xys00a(DJMJD0, TT)
 X = X + DX00
 Y = Y + DY00
 
+print("CIP corrections")
 print('X = %.17f\nY = %.17f\nS = %.17f'%(X, Y, S*R2AS))
 
 # GCRS to CIRS matrix.
 RC2I = erfa.c2ixys(X, Y, S)
+print("NPB matrix, CIO based")
 pprint(RC2I)
 
 # Earth rotation angle.
 ERA = erfa.era00(DJMJD0+DATE, TUT)
+print("Earth rotation angle")
 print('ERA = %.17f radians'%ERA)
 print("    = %.17f degrees"%math.degrees(ERA))
 print("    = %s%dd%dm%d.%ds"%erfa.a2af(6, ERA))
@@ -138,6 +144,7 @@ print("    = %s%dh%dm%d.%ds"%erfa.a2tf(6, ERA))
 ##RC2TI = erfa.cr(RC2I)
 ##RC2TI = erfa.rz(ERA, RC2TI)
 RC2TI = erfa.rz(ERA, RC2I)
+print("celestial to terrestrial matrix (no polar motion)")
 pprint(RC2TI)
 
 # Polar motion matrix (TIRS->ITRS, IERS 2003).
@@ -145,7 +152,8 @@ RPOM = erfa.pom00(XP, YP, erfa.sp00(DJMJD0,TT))
 
 # Form celestial-terrestrial matrix (including polar motion).
 RC2IT = erfa.rxr(RPOM, RC2TI)
-print(RC2IT)
+print("celestial to terrestrial matrix (including polar motion)")
+pprint(RC2IT)
 
 ##B = scipy.matrix(RC2IT)
 
@@ -176,6 +184,7 @@ RN = erfa.numat(EPSA, DPSI, DEPS)
 
 # Combine the matrices: PN = N x P.
 RNPB = erfa.rxr(RN, RPB)
+print("NPB matrix, equinox based:")
 pprint(RNPB)
 
 # Greenwich apparent sidereal time (IAU 1982/1994).
@@ -187,6 +196,7 @@ print("    = %s%dh%dm%d.%ds"%erfa.a2tf(6, GST))
 
 # Form celestial-terrestrial matrix (no polar motion yet).
 RC2TI = erfa.rz(GST, RNPB)
+print("celestial to terrestrial matrix (no polar motion)")
 pprint(RC2TI)
 
 # Polar motion matrix (TIRS->ITRS, IERS 2003).
@@ -194,6 +204,7 @@ RPOM = erfa.pom00(XP, YP, erfa.sp00(DJMJD0,TT))
 
 # Form celestial-terrestrial matrix (including polar motion).
 RC2IT = erfa.rxr(RPOM, RC2TI)
+print("celestial to terrestrial matrix (including polar motion)")
 pprint(RC2IT)
 
 print('''
@@ -209,10 +220,12 @@ X, Y, S = erfa.xys06a(DJMJD0, TT)
 X = X + DX06
 Y = Y + DY06
 
+print("CIP corrections")
 print('X = %.17f\nY = %.17f\nS = %.17f'%(X, Y, S*R2AS))
 
 # GCRS to CIRS matrix
 RC2I = erfa.c2ixys(X, Y, S)
+print("NPB matrix, CIO based")
 pprint(RC2I)
 
 # Earth rotation angle
@@ -224,6 +237,7 @@ print("    = %s%dh%dm%d.%ds"%erfa.a2tf(6, ERA))
 
 # Form celestial-terrestrial matrix (no polar motion yet).
 RC2TI = erfa.rz(ERA, RC2I)
+print("celestial to terrestrial matrix (no polar motion)")
 pprint(RC2TI)
 
 # Polar motion matrix (TIRS->ITRS, IERS 2003).
@@ -231,6 +245,7 @@ RPOM = erfa.pom00(XP, YP, erfa.sp00(DJMJD0,TT))
 
 # Form celestial-terrestrial matrix (including polar motion).
 RC2IT = erfa.rxr(RPOM, RC2TI)
+print("celestial to terrestrial matrix (including polar motion)")
 pprint(RC2IT)
 
 print('''
@@ -247,14 +262,17 @@ S = erfa.s06(DJMJD0, TT, X, Y)
 X = X + DX06
 Y = Y + DY06
 
+print("CIP corrections")
 print('X = %.17f\nY = %.17f\nS = %.17f'%(X, Y, S*R2AS))
 
 # GCRS to CIRS matrix
 RC2I = erfa.c2ixys(X, Y, S)
+print("NPB matrix, CIO based")
 pprint(RC2I)
 
 # Earth rotation angle
 ERA = erfa.era00(DJMJD0+DATE, TUT)
+print("Earth rotation angle")
 print("ERA = %.17f radians"%ERA)
 print("    = %.17f degrees"%math.degrees(ERA))
 print("    = %s%dd%dm%d.%ds"%erfa.a2af(6, ERA))
@@ -262,6 +280,7 @@ print("    = %s%dh%dm%d.%ds"%erfa.a2tf(6, ERA))
 
 # Form celestial-terrestrial matrix (no polar motion yet).
 RC2TI = erfa.rz(ERA, RC2I)
+print("celestial to terrestrial matrix (no polar motion)")
 pprint(RC2TI)
 
 # Polar motion matrix (TIRS->ITRS, IERS 2003).
@@ -269,4 +288,5 @@ RPOM = erfa.pom00(XP, YP, erfa.sp00(DJMJD0,TT))
 
 # Form celestial-terrestrial matrix (including polar motion).
 RC2IT = erfa.rxr(RPOM, RC2TI)
+print("celestial to terrestrial matrix (including polar motion)")
 pprint(RC2IT)

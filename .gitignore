@@ -1,6 +1,9 @@
 *.py[cod]
+MANIFEST
+README
 
 error_py275.txt
+command.txt
 doc/_build
 
 # C extensions

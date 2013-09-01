@@ -66,3 +66,10 @@ you need sphinx and its dependencies to build the doc.
     
     sphinx-build . _build
 
+also, usual on-line documentation is available with:
+
+    pydoc erfa
+
+and
+
+   >>> help(erfa)
