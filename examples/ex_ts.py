@@ -45,7 +45,7 @@ print('''
 transform UTC to other times.
 an observer at north latitude +19°28'52''.5,
 west longitude 155°55'59''.6,
-at sea level, on January 15 at 21:24:37.5 UTC
+at sea level, on 2006 January 15 at 21:24:37.5 UTC
 requires the time in all other supported time scales''')
 
 # site terrestrial coordinates (WGS84)

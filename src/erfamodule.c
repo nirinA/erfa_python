@@ -114,7 +114,7 @@ erfa_bpn2xy(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(erfa_bpn2xy_doc,
-"bpn2xy(rbpn[3][3] -> x, y\n\n"
+"bpn2xy(rbpn) -> x, y\n\n"
 "Extract from the bias-precession-nutation matrix\n"
 "the X,Y coordinates of the Celestial Intermediate Pole.\n"
 "Given:\n"
@@ -274,9 +274,9 @@ PyDoc_STRVAR(erfa_c2ixy_doc,
 "date when the CIP X,Y coordinates are known. IAU 2000.\n"
 "Given:\n"
 "    d1,d2      TT as 2-part Julian Date\n"
-"    x, y       the Celestial Intermediate Pole\n"
+"    x, y       Celestial Intermediate Pole\n"
 "Returned:\n"
-"    rc2i       the celestial-to-intermediate matrix");
+"    rc2i       celestial-to-intermediate matrix");
 
 static PyObject *
 erfa_c2ixys(PyObject *self, PyObject *args)
@@ -304,7 +304,7 @@ PyDoc_STRVAR(erfa_c2ixys_doc,
 " given the CIP X,Y and the CIO locator s.\n"
 "Given:\n"
 "    x, y       Celestial Intermediate Pole\n"
-"    s          the CIO locator \n"
+"    s          CIO locator \n"
 "Returned:\n"
 "   rc2i        celestial-to-intermediate matrix");
 
@@ -335,9 +335,9 @@ PyDoc_STRVAR(erfa_c2t00a_doc,
 "Given:\n"
 "    tta,ttb    TT as 2-part Julian Date\n"
 "    uta,utb    UT1 as 2-part Julian Date\n"
-"    xp, yp     the coordinates of the pole (radians)\n"
+"    xp, yp     coordinates of the pole (radians)\n"
 "Returned:\n"
-"    rc2t       the celestial-to-terrestrial matrix");
+"    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
 erfa_c2t00b(PyObject *self, PyObject *args)
@@ -366,9 +366,9 @@ PyDoc_STRVAR(erfa_c2t00b_doc,
 "Given:\n"
 "    tta,ttb    TT as 2-part Julian Date\n"
 "    uta,utb    UT1 as 2-part Julian Date\n"
-"    xp, yp     the coordinates of the pole (radians)\n"
+"    xp, yp     coordinates of the pole (radians)\n"
 "Returned:\n"
-"    rc2t       the celestial-to-terrestrial matrix");
+"    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
 erfa_c2t06a(PyObject *self, PyObject *args)
@@ -397,9 +397,9 @@ PyDoc_STRVAR(erfa_c2t06a_doc,
 "Given:\n"
 "    tta,ttb    TT as 2-part Julian Date\n"
 "    uta,utb    UT1 as 2-part Julian Date\n"
-"    xp, yp     the coordinates of the pole (radians)\n"
+"    xp, yp     coordinates of the pole (radians)\n"
 "Returned:\n"
-"    rc2t       the celestial-to-terrestrial matrix"
+"    rc2t       celestial-to-terrestrial matrix"
 );
 
 static PyObject *
@@ -454,7 +454,7 @@ PyDoc_STRVAR(erfa_c2tcio_doc,
 "    era        Earth rotation angle\n"
 "    rpom       polar-motion matrix\n"
 "Returned:t\n"
-"    rc2t       the celestial-to-terrestrial matrix");
+"    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
 erfa_c2teqx(PyObject *self, PyObject *args)
@@ -509,7 +509,7 @@ PyDoc_STRVAR(erfa_c2teqx_doc,
 "    gst        Greenwich (apparent) Sidereal Time\n"
 "    rpom       polar-motion matrix\n"
 "Returned:\n"
-"    rc2t       the celestial-to-terrestrial matrix");
+"    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
 erfa_c2tpe(PyObject *self, PyObject *args)
@@ -1399,7 +1399,7 @@ PyDoc_STRVAR(erfa_fasa03_doc,
 "Given:\n"
 "    t          TDB as Julian centuries since J2000.0\n"
 "Returned:\n"
-"    l          , in radians, the mean longitude of Saturn.");
+"    l          mean longitude of Saturn, in radians.");
 
 static PyObject *
 erfa_faur03(PyObject *self, PyObject *args)
@@ -1536,7 +1536,7 @@ PyDoc_STRVAR(erfa_fw2m_doc,
 "    phib       F-W angle phi_bar (radians)\n"
 "    si         F-W angle psi (radians)\n"
 "    eps        F-W angle epsilon (radians)\n"
-"  Returned:\n"
+"Returned:\n"
 "    r          rotation matrix");
 
 static PyObject *
@@ -1558,7 +1558,7 @@ PyDoc_STRVAR(erfa_fw2xy_doc,
 "    phib       F-W angle phi_bar (radians)\n"
 "    psi        F-W angle psi (radians)\n"
 "    eps        F-W angle epsilon (radians)\n"
-"  Returned:\n"
+"Returned:\n"
 "    x,y        CIP X,Y (radians)");
 
 static PyObject *
@@ -3566,18 +3566,25 @@ erfa_a2af(PyObject *self, PyObject *args)
         return NULL;
     }
     eraA2af(ndp, a, &sign, idmsf);
+#if PY_VERSION_HEX >= 0x03000000
     return Py_BuildValue("Ciiii",sign,idmsf[0],idmsf[1],idmsf[2],idmsf[3]);
+#else
+    return Py_BuildValue("ciiii",sign,idmsf[0],idmsf[1],idmsf[2],idmsf[3]);
+#endif
 }
 
 PyDoc_STRVAR(erfa_a2af_doc,
-"a2af(ndp, angle) -> sign, degrees, arcminutes, arcseconds, fraction\n\n"
+"a2af(n, a) -> +/-, d, m, s, f\n\n"
 "Decompose radians into degrees, arcminutes, arcseconds, fraction.\n"
 "Given:\n"
-"   ndp     resolution\n"
-"   angle   angle in radians\n"
+"   n           resolution\n"
+"   a           angle in radians\n"
 "Returned:\n"
-"   sign    char    '+' or '-'\n"
-"   idmsf[4]  degrees, arcminutes, arcseconds, fraction");
+"   sign        '+' or '-'\n"
+"   d           degrees\n"
+"   m           arcminutes\n"
+"   s           arcseconds\n"
+"   f           fraction");
 
 static PyObject *
 erfa_a2tf(PyObject *self, PyObject *args)
@@ -3589,18 +3596,25 @@ erfa_a2tf(PyObject *self, PyObject *args)
         return NULL;
     }
     eraA2tf(ndp, a, &sign, ihmsf);
+#if PY_VERSION_HEX >= 0x03000000
     return Py_BuildValue("Ciiii",sign,ihmsf[0],ihmsf[1],ihmsf[2],ihmsf[3]);
+#else
+    return Py_BuildValue("ciiii",sign,ihmsf[0],ihmsf[1],ihmsf[2],ihmsf[3]);
+#endif
 }
 
 PyDoc_STRVAR(erfa_a2tf_doc,
-"a2tf(ndp, angle) -> sign, hours, minutes, seconds, fraction\n\n"
+"a2tf(n, a) -> +/-, h, m, s, f\n\n"
 "Decompose radians into hours, minutes, seconds, fraction.\n"
 "Given:\n"
-"   ndp     resolution\n"
-"   angle   angle in radians\n"
+"   n           resolution\n"
+"   a           angle in radians\n"
 "Returned:\n"
-"   sign    '+' or '-'\n"
-"   hours, minutes, seconds, fraction");
+"   sign        '+' or '-'\n"
+"   h           hours\n"
+"   m           minutes\n"
+"   s           seconds\n"
+"   f           fraction");
 
 static PyObject *
 erfa_af2a(PyObject *self, PyObject *args)
@@ -3619,15 +3633,15 @@ erfa_af2a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(erfa_af2a_doc,
-"af2a(degrees, arcminutes, arcseconds) -> radians\n"
+"af2a(d, m, s) -> r\n"
 "Convert degrees, arcminutes, arcseconds to radians.\n"
 "Given:\n"
-"   s       sign:  '-' = negative, otherwise positive\n"
-"   ideg    degrees\n"
-"   iamin   arcminutes\n"
-"   asec    arcseconds\n"
+"    sign       '-' = negative, otherwise positive\n"
+"    d          degrees\n"
+"    m          arcminutes\n"
+"    s          arcseconds\n"
 "Returned:\n"
-"   rad     angle in radians");
+"    r          angle in radians");
 
 static PyObject *
 erfa_anp(PyObject *self, PyObject *arg)
@@ -3644,9 +3658,9 @@ PyDoc_STRVAR(erfa_anp_doc,
 "anp(a) -> 0 <= a < 2pi\n\n"
 "Normalize angle into the range 0 <= a < 2pi.\n"
 "Given:\n"
-"   a   angle (radians)\n"
+"    a          angle (radians)\n"
 "Returned:\n"
-"   a   angle in range 0-2pi");
+"    a          angle in range 0-2pi");
 
 static PyObject *
 erfa_anpm(PyObject *self, PyObject *arg)
@@ -3663,9 +3677,9 @@ PyDoc_STRVAR(erfa_anpm_doc,
 "anpm(a) -> -pi <= a < +pi\n\n"
 "Normalize angle into the range -pi <= a < +pi.\n"
 "Given:\n"
-"   a   angle (radians)\n"
+"    a          angle (radians)\n"
 "Returned:\n"
-"   a   angle in range 0-2pi");
+"    a          angle in range 0-2pi");
 
 static PyObject *
 erfa_c2s(PyObject *self, PyObject *args)
@@ -3683,29 +3697,27 @@ erfa_c2s(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(erfa_c2s_doc,
-"c2s((p0,p1,p2)) -> theta, phi\n\n"
+"c2s(p) -> theta, phi\n\n"
 "P-vector to spherical coordinates.\n"
 "Given:\n"
-"   p[3]    p-vector\n"
+"    p          p-vector\n"
 "Returned:\n"
-"   theta   longitude angle (radians)\n"
-"   phi     latitude angle (radians)");
+"    theta      longitude angle (radians)\n"
+"    phi        latitude angle (radians)");
 
 static PyObject *
 erfa_cp(PyObject *self, PyObject *args)
 {
     double p[3], c[3];
     double p0,p1,p2;
-    if (!PyArg_ParseTuple(args, "(ddd)",
-                        &p0,&p1,&p2)) {
+    if (!PyArg_ParseTuple(args, "(ddd)",&p0,&p1,&p2)) {
         return NULL;
     }
     p[0] = p0;
     p[1] = p1;
     p[2] = p2;
     eraCp(p, c);
-    return Py_BuildValue("ddd",
-    c[0],c[1],c[2]);
+    return Py_BuildValue("ddd",c[0],c[1],c[2]);
 }
 
 PyDoc_STRVAR(erfa_cp_doc,
@@ -3733,7 +3745,7 @@ erfa_cpv(PyObject *self, PyObject *args)
     pv[1][2] = p12;
     eraCpv(pv, c);
     return Py_BuildValue("(ddd)(ddd)",
-    c[0][0],c[0][1],c[0][2],c[1][0],c[1][1],c[1][2]);    
+                           c[0][0],c[0][1],c[0][2],c[1][0],c[1][1],c[1][2]);    
 }
 
 PyDoc_STRVAR(erfa_cpv_doc,
@@ -3750,7 +3762,7 @@ erfa_cr(PyObject *self, PyObject *args)
     double r[3][3], c[3][3];
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))",
-                        &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22)) {
+                                   &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22)) {
         return NULL;
     }
     r[0][0] = r00;
@@ -3787,7 +3799,11 @@ erfa_d2tf(PyObject *self, PyObject *args)
         return NULL;
     }
     eraD2tf(ndp, d, &sign, df);
+#if PY_VERSION_HEX >= 0x03000000
     return Py_BuildValue("Ciiii", sign,df[0],df[1],df[2],df[3]);
+#else
+    return Py_BuildValue("ciiii", sign,df[0],df[1],df[2],df[3]);
+#endif
 }
 
 PyDoc_STRVAR(erfa_d2tf_doc,
@@ -3797,7 +3813,7 @@ PyDoc_STRVAR(erfa_d2tf_doc,
 "    n          resolution\n"
 "    d          interval in days\n"
 "Returned:\n"
-"    sign    '+' or '-'\n"
+"    sign       '+' or '-'\n"
 "    h          hours\n"
 "    m          minutes\n"
 "    s          seconds\n"

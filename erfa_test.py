@@ -1,6 +1,8 @@
 import unittest
-from test import support
-
+try:
+    from test import support
+except ImportError:
+    from test import test_support as support
 import math
 import erfa
 
