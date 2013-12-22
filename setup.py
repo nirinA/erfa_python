@@ -15,10 +15,16 @@ moduleerfa = Extension('erfa',
                     sources = ['src/erfamodule.c'])
 
 setup (name = 'erfa_python',
-       version = '2013.09.04',
+       version = '2013.12.03',
        description = 'Python wrapper for ERFA library',
-       url='https://github.com/nirinA/erfa_python',
-       author='nirinA raseliarison',
-       author_email='nirina.raseliarison@gmail.com',
+       url = 'https://github.com/nirinA/erfa_python',
+       author = 'nirinA raseliarison',
+       author_email = 'nirina.raseliarison@gmail.com',
        ext_modules = [moduleerfa, ],
+       classifiers = [
+           'Development Status :: alpha',
+           'Programming Language :: Python :: 2.7',
+           'Programming Language :: Python :: 3.x',
+           'Topic :: Astronomy',
+           ],
        license="Public Domain")

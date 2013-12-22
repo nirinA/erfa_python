@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ===========
 erfa_python
 ===========
@@ -7,9 +6,14 @@ this is a Python wrapper for ERFA (Essential Routines for
 Fundamental Astronomy).
 
 for installation, see ``doc/installation.rst``
-=======
-erfa_python
-===========
 
-Python wrapper for ERFA library
->>>>>>> 16f418a3041f1e59df729efe226419e89a50097e
+----------
+what's new
+----------
+
+. 20131222
+**********
+
+- added a few routines from the latest SOFA release.
+
+CAUTION: this version was tested with Python 3.4.0b1 only!

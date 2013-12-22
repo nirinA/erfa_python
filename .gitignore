@@ -5,6 +5,7 @@ README
 error_py275.txt
 command.txt
 doc/_build
+examples/ex_ephem.py
 
 # C extensions
 *.so

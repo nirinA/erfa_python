@@ -22,6 +22,26 @@ at $HOME/lib, /usr/lib64, /usr/lib, or /usr/local/lib.
 if your erfa_c library is in other location, you need to adjust
 INC_DIR and LIB_DIR in ``setup.py`` to point out their location.
 
+*********************************************
+building ERFA against the latest SOFA release
+*********************************************
+
+in order to build the ERFA library that includes the latest
+routines released within the SOFA library, you need to
+download the SOFA package from here:
+
+    http://www.iausofa.org/2013_1202_C/sofa_c-20131202.tar.gz
+
+run this script:
+
+    https://github.com/liberfa/erfa-fetch/blob/master/sofa_deriver.py
+
+and run the usual:
+
+    make
+
+to build and install ERFA.
+
 -----------------------
 building and installing
 -----------------------

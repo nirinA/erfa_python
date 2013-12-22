@@ -12,6 +12,289 @@ class Validate(unittest.TestCase):
      int:     self.assertEqual(value, expected)
      char:    self.assertEqual(value, expected)
     '''
+## astrometry tools
+    def test_ab(self):
+        pnat = (-0.76321968546737951,-0.60869453983060384,-0.21676408580639883)
+        v = (2.1044018893653786e-5,-8.9108923304429319e-5,-3.8633714797716569e-5)
+        s = 0.99980921395708788
+        bm1 = 0.99999999506209258
+        ppr = erfa.ab(pnat, v, s, bm1)
+        self.assertAlmostEqual(ppr[0], -0.7631631094219556269, places=12)
+        self.assertAlmostEqual(ppr[1], -0.6087553082505590832, places=12)
+        self.assertAlmostEqual(ppr[2], -0.2167926269368471279, places=12)
+
+    def test_apcg(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        ebpv=((0.901310875,-0.417402664,-0.180982288),
+              ( 0.00742727954,0.0140507459,0.00609045792))
+        ehp=(0.903358544,-0.415395237,-0.180084014)
+        astrom=erfa.apcg(date1,date2,ebpv,ehp)
+        self.assertAlmostEqual(astrom.pmt, 12.65133794027378508, places=11)
+        self.assertAlmostEqual(astrom.eb[0], 0.901310875, places=12)
+        self.assertAlmostEqual(astrom.eb[1], -0.417402664, places=12,)
+        self.assertAlmostEqual(astrom.eb[2], -0.180982288, places=12)
+        self.assertAlmostEqual(astrom.eh[0], 0.8940025429324143045, places=12,)
+        self.assertAlmostEqual(astrom.eh[1], -0.4110930268679817955, places=12)
+        self.assertAlmostEqual(astrom.eh[2], -0.1782189004872870264, places=12)
+        self.assertAlmostEqual(astrom.em, 1.010465295811013146, places=12)
+        self.assertAlmostEqual(astrom.v[0], 0.4289638897813379954e-4, places=16)
+        self.assertAlmostEqual(astrom.v[1], 0.8115034021720941898e-4, places=16)
+        self.assertAlmostEqual(astrom.v[2], 0.3517555123437237778e-4, places=16)
+        self.assertAlmostEqual(astrom.bm1, 0.9999999951686013336, places=15) #failed at 16
+        self.assertAlmostEqual(astrom.bpn[0][0], 1.0, 10)
+        self.assertAlmostEqual(astrom.bpn[1][0], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[2][0], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[0][1], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[1][1], 1.0, 10)
+        self.assertAlmostEqual(astrom.bpn[2][1], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[0][2], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[1][2], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[2][2], 1.0, 10)
+
+    def test_apcg13(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        astrom=erfa.apcg13(date1,date2)
+        self.assertAlmostEqual(astrom.pmt, 12.65133794027378508, places=12)
+        self.assertAlmostEqual(astrom.eb[0], 0.9013108747340644755, places=12)
+        self.assertAlmostEqual(astrom.eb[1], -0.4174026640406119957, places=12)
+        self.assertAlmostEqual(astrom.eb[2], -0.1809822877867817771, places=12)
+        self.assertAlmostEqual(astrom.eh[0], 0.8940025429255499549, places=12)
+        self.assertAlmostEqual(astrom.eh[1], -0.4110930268331896318, places=12)
+        self.assertAlmostEqual(astrom.eh[2], -0.1782189006019749850, places=12)
+        self.assertAlmostEqual(astrom.em, 1.010465295964664178, places=12)
+        self.assertAlmostEqual(astrom.v[0], 0.4289638897157027528e-4, places=16)
+        self.assertAlmostEqual(astrom.v[1], 0.8115034002544663526e-4, places=16)
+        self.assertAlmostEqual(astrom.v[2], 0.3517555122593144633e-4, places=16)
+        self.assertAlmostEqual(astrom.bm1, 0.9999999951686013498, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][0], 1.0, 10)
+        self.assertAlmostEqual(astrom.bpn[1][0], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[2][0], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[0][1], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[1][1], 1.0, 10)
+        self.assertAlmostEqual(astrom.bpn[2][1], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[0][2], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[1][2], 0.0, 10)
+        self.assertAlmostEqual(astrom.bpn[2][2], 1.0, 10)
+
+    def test_apci(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        ebpv = ((0.901310875,-0.417402664,-0.180982288),
+                 (0.00742727954,0.0140507459,0.00609045792))
+        ehp = (0.903358544,-0.415395237,-0.180084014)
+        x =  0.0013122272
+        y = -2.92808623e-5
+        s =  3.05749468e-8
+        astrom = erfa.apci(date1, date2, ebpv, ehp, x, y, s)
+        self.assertAlmostEqual(astrom.pmt, 12.65133794027378508, places=11)
+        self.assertAlmostEqual(astrom.eb[0], 0.901310875, places=12)
+        self.assertAlmostEqual(astrom.eb[1], -0.417402664, places=12)
+        self.assertAlmostEqual(astrom.eb[2], -0.180982288, places=12)
+        self.assertAlmostEqual(astrom.eh[0], 0.8940025429324143045, places=12)
+        self.assertAlmostEqual(astrom.eh[1], -0.4110930268679817955, places=12)
+        self.assertAlmostEqual(astrom.eh[2], -0.1782189004872870264, places=12)
+        self.assertAlmostEqual(astrom.em, 1.010465295811013146, places=12)
+        self.assertAlmostEqual(astrom.v[0], 0.4289638897813379954e-4, places=16)
+        self.assertAlmostEqual(astrom.v[1], 0.8115034021720941898e-4, places=16)
+        self.assertAlmostEqual(astrom.v[2], 0.3517555123437237778e-4, places=16)
+        self.assertAlmostEqual(astrom.bm1, 0.9999999951686013336, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][0], 0.9999991390295159156, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][0], 0.4978650072505016932e-7, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][0], 0.1312227200000000000e-2, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][1], -0.1136336653771609630e-7, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][1], 0.9999999995713154868, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][1], -0.2928086230000000000e-4, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][2], -0.1312227200895260194e-2, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][2], 0.2928082217872315680e-4, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][2], 0.9999991386008323373, places=12)
+
+    def test_apci13(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        astrom, eo = erfa.apci13(date1, date2)
+        self.assertAlmostEqual(astrom.pmt, 12.65133794027378508, places=11)
+        self.assertAlmostEqual(astrom.eb[0], 0.9013108747340644755, places=12)
+        self.assertAlmostEqual(astrom.eb[1], -0.4174026640406119957, places=12)
+        self.assertAlmostEqual(astrom.eb[2], -0.1809822877867817771, places=12)
+        self.assertAlmostEqual(astrom.eh[0], 0.8940025429255499549, places=12)
+        self.assertAlmostEqual(astrom.eh[1], -0.4110930268331896318, places=12)
+        self.assertAlmostEqual(astrom.eh[2], -0.1782189006019749850, places=12)
+        self.assertAlmostEqual(astrom.em, 1.010465295964664178, places=12)
+        self.assertAlmostEqual(astrom.v[0], 0.4289638897157027528e-4, places=16)
+        self.assertAlmostEqual(astrom.v[1], 0.8115034002544663526e-4, places=16)
+        self.assertAlmostEqual(astrom.v[2], 0.3517555122593144633e-4, places=16)
+        self.assertAlmostEqual(astrom.bm1, 0.9999999951686013498, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][0], 0.9999992060376761710, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][0], 0.4124244860106037157e-7, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][0], 0.1260128571051709670e-2, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][1], -0.1282291987222130690e-7, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][1], 0.9999999997456835325, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][1], -0.2255288829420524935e-4, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][2], -0.1260128571661374559e-2, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][2], 0.2255285422953395494e-4, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][2], 0.9999992057833604343, places=12)
+        self.assertAlmostEqual(eo, -0.2900618712657375647e-2, places=12)
+
+    def test_apco(self):
+        date1 = 2456384.5
+        date2 = 0.970031644
+        ebpv = ((-0.974170438,-0.211520082,-0.0917583024),
+                (0.00364365824,-0.0154287319,-0.00668922024))
+        ehp = (-0.973458265,-0.209215307,-0.0906996477)
+        x = 0.0013122272
+        y = -2.92808623e-5
+        s = 3.05749468e-8
+        theta = 3.14540971
+        elong = -0.527800806
+        phi = -1.2345856
+        hm = 2738.0
+        xp = 2.47230737e-7
+        yp = 1.82640464e-6
+        sp = -3.01974337e-11
+        refa = 0.000201418779
+        refb = -2.36140831e-7
+        astrom = erfa.apco(date1, date2, ebpv, ehp, x, y, s,
+                           theta, elong, phi, hm, xp, yp, sp,
+                           refa, refb)
+        self.assertAlmostEqual(astrom.pmt, 13.25248468622587269, places=11)
+        self.assertAlmostEqual(astrom.eb[0], -0.9741827110630897003, places=12)
+        self.assertAlmostEqual(astrom.eb[1], -0.2115130190135014340, places=12)
+        self.assertAlmostEqual(astrom.eb[2], -0.09179840186968295686, places=12)
+        self.assertAlmostEqual(astrom.eh[0], -0.9736425571689670428, places=12)
+        self.assertAlmostEqual(astrom.eh[1], -0.2092452125848862201, places=12)
+        self.assertAlmostEqual(astrom.eh[2], -0.09075578152261439954, places=12)
+        self.assertAlmostEqual(astrom.em, 0.9998233241710617934, places=12)
+        self.assertAlmostEqual(astrom.v[0], 0.2078704985147609823e-4, places=16)
+        self.assertAlmostEqual(astrom.v[1], -0.8955360074407552709e-4, places=16)
+        self.assertAlmostEqual(astrom.v[2], -0.3863338980073114703e-4, places=16)
+        self.assertAlmostEqual(astrom.bm1, 0.9999999950277561600, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][0], 0.9999991390295159156, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][0], 0.4978650072505016932e-7, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][0], 0.1312227200000000000e-2, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][1], -0.1136336653771609630e-7, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][1], 0.9999999995713154868, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][1], -0.2928086230000000000e-4, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][2], -0.1312227200895260194e-2, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][2], 0.2928082217872315680e-4, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][2], 0.9999991386008323373, places=12)
+        self.assertAlmostEqual(astrom.along, -0.5278008060301974337, places=12)
+        self.assertAlmostEqual(astrom.xpl, 0.1133427418174939329e-5, places=17)
+        self.assertAlmostEqual(astrom.ypl, 0.1453347595745898629e-5, places=17)
+        self.assertAlmostEqual(astrom.sphi, -0.9440115679003211329, places=12)
+        self.assertAlmostEqual(astrom.cphi, 0.3299123514971474711, places=12)
+        self.assertAlmostEqual(astrom.diurab, 0, 10)
+        self.assertAlmostEqual(astrom.eral, 2.617608903969802566, places=12)
+        self.assertAlmostEqual(astrom.refa, 0.2014187790000000000e-3, places=15)
+        self.assertAlmostEqual(astrom.refb, -0.2361408310000000000e-6, places=18)
+
+    def test_apco13(self):
+        utc1 = 2456384.5
+        utc2 = 0.969254051
+        dut1 = 0.1550675
+        elong = -0.527800806
+        phi = -1.2345856
+        hm = 2738.0
+        p = 2.47230737e-7
+        xp = 2.47230737e-7
+        yp = 1.82640464e-6
+        phpa = 731.0
+        tc = 12.8
+        rh = 0.59
+        wl = 0.55
+        astrom, eo = erfa.apco13(utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl)
+        self.assertAlmostEqual(astrom.pmt, 13.25248468622475727, places=11)
+        self.assertAlmostEqual(astrom.eb[0], -0.9741827107321449445, places=12)
+        self.assertAlmostEqual(astrom.eb[1], -0.2115130190489386190, places=12)
+        self.assertAlmostEqual(astrom.eb[2], -0.09179840189515518726, places=12)
+        self.assertAlmostEqual(astrom.eh[0], -0.9736425572586866640, places=12)
+        self.assertAlmostEqual(astrom.eh[1], -0.2092452121602867431, places=12)
+        self.assertAlmostEqual(astrom.eh[2], -0.09075578153903832650, places=12)
+        self.assertAlmostEqual(astrom.em, 0.9998233240914558422, places=12)
+        self.assertAlmostEqual(astrom.v[0], 0.2078704986751370303e-4, places=16)
+        self.assertAlmostEqual(astrom.v[1], -0.8955360100494469232e-4, places=16)
+        self.assertAlmostEqual(astrom.v[2], -0.3863338978840051024e-4, places=16)
+        self.assertAlmostEqual(astrom.bm1, 0.9999999950277561368, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][0], 0.9999991390295147999, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][0], 0.4978650075315529277e-7, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][0], 0.001312227200850293372, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][1], -0.1136336652812486604e-7, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][1], 0.9999999995713154865, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][1], -0.2928086230975367296e-4, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][2], -0.001312227201745553566, places=12)
+        self.assertAlmostEqual(astrom.bpn[1][2], 0.2928082218847679162e-4, places=12)
+        self.assertAlmostEqual(astrom.bpn[2][2], 0.9999991386008312212, places=12)
+        self.assertAlmostEqual(astrom.along, -0.5278008060301974337, places=12)
+        self.assertAlmostEqual(astrom.xpl, 0.1133427418174939329e-5, places=17)
+        self.assertAlmostEqual(astrom.ypl, 0.1453347595745898629e-5, places=17)
+        self.assertAlmostEqual(astrom.sphi, -0.9440115679003211329, places=12)
+        self.assertAlmostEqual(astrom.cphi, 0.3299123514971474711, places=12)
+        self.assertAlmostEqual(astrom.diurab, 0, 10)
+        self.assertAlmostEqual(astrom.eral, 2.617608909189066140, places=12)
+        self.assertAlmostEqual(astrom.refa, 0.2014187785940396921e-3, places=15)
+        self.assertAlmostEqual(astrom.refb, -0.2361408314943696227e-6, places=18)
+        self.assertAlmostEqual(eo, -0.003020548354802412839, places=14)
+
+    def test_apcs(self):
+        date1 = 2456384.5
+        date2 = 0.970031644
+        pv = ((-1836024.09,1056607.72,-5998795.26),
+              (-77.0361767,-133.310856,0.0971855934))
+        ebpv = ((-0.974170438,-0.211520082,-0.0917583024),
+                (0.00364365824,-0.0154287319,-0.00668922024))
+        ehp = (-0.973458265,-0.209215307,-0.0906996477)
+        astrom = erfa.apcs(date1, date2, pv, ebpv, ehp)
+        self.assertAlmostEqual(astrom.pmt, 13.25248468622587269, places=11)
+        self.assertAlmostEqual(astrom.eb[0], -0.9741827110630456169, places=12)
+        self.assertAlmostEqual(astrom.eb[1], -0.2115130190136085494, places=12)
+        self.assertAlmostEqual(astrom.eb[2], -0.09179840186973175487, places=12)
+        self.assertAlmostEqual(astrom.eh[0], -0.9736425571689386099, places=12)
+        self.assertAlmostEqual(astrom.eh[1], -0.2092452125849967195, places=12)
+        self.assertAlmostEqual(astrom.eh[2], -0.09075578152266466572, places=12)
+        self.assertAlmostEqual(astrom.em, 0.9998233241710457140, places=12)
+        self.assertAlmostEqual(astrom.v[0], 0.2078704985513566571e-4, places=16)
+        self.assertAlmostEqual(astrom.v[1], -0.8955360074245006073e-4, places=16)
+        self.assertAlmostEqual(astrom.v[2], -0.3863338980073572719e-4, places=16)
+        self.assertAlmostEqual(astrom.bm1, 0.9999999950277561601, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][0], 1, 10)
+        self.assertAlmostEqual(astrom.bpn[1][0], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[2][0], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[0][1], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[1][1], 1, 10)
+        self.assertAlmostEqual(astrom.bpn[2][1], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[0][2], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[1][2], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[2][2], 1, 10)
+
+    def test_apcs13(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        pv = ((-6241497.16,401346.896,-1251136.04),
+              (-29.264597,-455.021831,0.0266151194))
+        astrom = erfa.apcs13(date1, date2, pv)
+        self.assertAlmostEqual(astrom.pmt, 12.65133794027378508, places=11)
+        self.assertAlmostEqual(astrom.eb[0], 0.9012691529023298391, places=12)
+        self.assertAlmostEqual(astrom.eb[1], -0.4173999812023068781, places=12)
+        self.assertAlmostEqual(astrom.eb[2], -0.1809906511146821008, places=12)
+        self.assertAlmostEqual(astrom.eh[0], 0.8939939101759726824, places=12)
+        self.assertAlmostEqual(astrom.eh[1], -0.4111053891734599955, places=12)
+        self.assertAlmostEqual(astrom.eh[2], -0.1782336880637689334, places=12)
+        self.assertAlmostEqual(astrom.em, 1.010428384373318379, places=12)
+        self.assertAlmostEqual(astrom.v[0], 0.4279877278327626511e-4, places=16)
+        self.assertAlmostEqual(astrom.v[1], 0.7963255057040027770e-4, places=16)
+        self.assertAlmostEqual(astrom.v[2], 0.3517564000441374759e-4, places=16)
+        self.assertAlmostEqual(astrom.bm1, 0.9999999952947981330, places=12)
+        self.assertAlmostEqual(astrom.bpn[0][0], 1, 10)
+        self.assertAlmostEqual(astrom.bpn[1][0], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[2][0], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[0][1], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[1][1], 1, 10)
+        self.assertAlmostEqual(astrom.bpn[2][1], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[0][2], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[1][2], 0, 10)
+        self.assertAlmostEqual(astrom.bpn[2][2], 1, 10)
+
 ## astronomy library
     def test_bi00(self):
         dp, de, dr = erfa.bi00()
