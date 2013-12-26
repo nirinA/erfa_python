@@ -1,11 +1,12 @@
 #define PY_SSIZE_T_CLEAN
 #include "Python.h"
+#include "structseq.h"
 #include <math.h>
 #include <time.h>
 #include "erfa.h"
 #include "erfam.h"
 
-static PyObject *erfaError;
+static PyObject *_erfaError;
 
 static int initialized;
 
@@ -14,11 +15,6 @@ static PyTypeObject AstromType;
 static PyTypeObject LdbodyType;
 
 /* local function */
-static void
-in_place(PyObject *self)
-{
-}
-
 static PyObject *
 _to_py_vector(double v[3])
 {
@@ -69,7 +65,6 @@ _to_py_astrom(eraASTROM *a)
     return v;
 }
 
-
 static PyStructSequence_Field ASTROM_type_fields[] = {
     {"pmt", "PM time interval (SSB, Julian years)"},
     {"eb", "SSB to observer (vector, au)"},
@@ -92,7 +87,7 @@ static PyStructSequence_Field ASTROM_type_fields[] = {
 };
 
 static PyStructSequence_Desc ASTROM_type_desc = {
-    "erfa.ASTROM",
+    "_erfa.ASTROM",
     "Star-independent astrometry parameters\n"
 "(Vectors eb, eh, em and v are all with respect to BCRS axes.)",
     ASTROM_type_fields,
@@ -107,13 +102,13 @@ static PyStructSequence_Field LDBODY_type_fields[] = {
 };
 
 static PyStructSequence_Desc LDBODY_type_desc = {
-    "erfa.LDBODY",
+    "_erfa.LDBODY",
     "Body parameters for light deflection",
     LDBODY_type_fields,
     3,
 };
 static PyObject *
-erfa_ab(PyObject *self, PyObject *args)
+_erfa_ab(PyObject *self, PyObject *args)
 {
     double pnat[3], v[3], s, bm1, ppr[3];
     if (!PyArg_ParseTuple(args, "(ddd)(ddd)dd",
@@ -123,7 +118,7 @@ erfa_ab(PyObject *self, PyObject *args)
     return Py_BuildValue("(ddd)",ppr[0], ppr[1], ppr[2]);
 }
 
-PyDoc_STRVAR(erfa_ab_doc,
+PyDoc_STRVAR(_erfa_ab_doc,
 "\nab(pnat[3], v[3], s, bm1) -> ppr\n"
 "Apply aberration to transform natural direction into proper direction.\n"
 "Given:\n"
@@ -135,7 +130,7 @@ PyDoc_STRVAR(erfa_ab_doc,
 "    ppr        proper direction to source (unit vector)");
 
 static PyObject *
-erfa_apcg(PyObject *self, PyObject *args)
+_erfa_apcg(PyObject *self, PyObject *args)
 {
     double date1, date2, ebpv[2][3], ehp[3];
     eraASTROM astrom;
@@ -149,7 +144,7 @@ erfa_apcg(PyObject *self, PyObject *args)
     return _to_py_astrom(&astrom);
 }
 
-PyDoc_STRVAR(erfa_apcg_doc,
+PyDoc_STRVAR(_erfa_apcg_doc,
 "\napcg(date1, date2, ebpv[2][3], ehp[3]) -> astrom\n"
 "For a geocentric observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and GCRS coordinates.\n"
@@ -167,7 +162,7 @@ PyDoc_STRVAR(erfa_apcg_doc,
 "    astrom     star-independent astrometry parameters");
 
 static PyObject *
-erfa_apcg13(PyObject *self, PyObject *args)
+_erfa_apcg13(PyObject *self, PyObject *args)
 {
     double date1, date2;
     eraASTROM astrom;
@@ -177,7 +172,7 @@ erfa_apcg13(PyObject *self, PyObject *args)
     return _to_py_astrom(&astrom);
 }
 
-PyDoc_STRVAR(erfa_apcg13_doc,
+PyDoc_STRVAR(_erfa_apcg13_doc,
 "\napcg13(date1, date2) -> astrom\n"
 "For a geocentric observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and GCRS coordinates.\n"
@@ -194,7 +189,7 @@ PyDoc_STRVAR(erfa_apcg13_doc,
 "    astrom     star-independent astrometry parameters");
 
 static PyObject *
-erfa_apci(PyObject *self, PyObject *args)
+_erfa_apci(PyObject *self, PyObject *args)
 {
     double date1, date2, ebpv[2][3], ehp[3], x, y, s;
     eraASTROM astrom;
@@ -209,7 +204,7 @@ erfa_apci(PyObject *self, PyObject *args)
     return _to_py_astrom(&astrom);
 }
 
-PyDoc_STRVAR(erfa_apci_doc,
+PyDoc_STRVAR(_erfa_apci_doc,
 "\napci(date1, date2, ebpv[2][3], ehp[3], x, y, s) -> astrom\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and geocentric CIRS\n"
@@ -229,7 +224,7 @@ PyDoc_STRVAR(erfa_apci_doc,
 "    astrom     star-independent astrometry parameters");
 
 static PyObject *
-erfa_apci13(PyObject *self, PyObject *args)
+_erfa_apci13(PyObject *self, PyObject *args)
 {
     double date1, date2, eo;
     eraASTROM astrom;
@@ -239,7 +234,7 @@ erfa_apci13(PyObject *self, PyObject *args)
     return Py_BuildValue("Od", _to_py_astrom(&astrom), eo);
 }
 
-PyDoc_STRVAR(erfa_apci13_doc,
+PyDoc_STRVAR(_erfa_apci13_doc,
 "\napci13(date1, date2) -> astrom, eo\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and geocentric CIRS\n"
@@ -257,7 +252,7 @@ PyDoc_STRVAR(erfa_apci13_doc,
 "    eo         equation of the origins (ERA-GST)");
 
 static PyObject *
-erfa_apco(PyObject *self, PyObject *args)
+_erfa_apco(PyObject *self, PyObject *args)
 {
     double date1, date2, ebpv[2][3], ehp[3], x, y, s;
     double theta, elong, phi, hm, xp, yp;
@@ -279,7 +274,7 @@ erfa_apco(PyObject *self, PyObject *args)
     return _to_py_astrom(&astrom);
 }
 
-PyDoc_STRVAR(erfa_apco_doc,
+PyDoc_STRVAR(_erfa_apco_doc,
 "\napco(date1, date2, ebpv[2][3], ehp[3], x, y, s,theta,,elong, phi, hm,xp, yp, refa, refb) -> astrom\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and observed\n"
@@ -305,7 +300,7 @@ PyDoc_STRVAR(erfa_apco_doc,
 "    astrom     star-independent astrometry parameters");
 
 static PyObject *
-erfa_apco13(PyObject *self, PyObject *args)
+_erfa_apco13(PyObject *self, PyObject *args)
 {
     int j;
     double utc1, utc2, dut1;
@@ -319,17 +314,17 @@ erfa_apco13(PyObject *self, PyObject *args)
         return NULL;
     j = eraApco13(utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl, &astrom, &eo);
     if (j == +1) {
-        PyErr_SetString(erfaError, "doubious year");
+        PyErr_SetString(_erfaError, "doubious year");
         return NULL;
     }
     else if (j == -1) {
-        PyErr_SetString(erfaError, "unacceptable date");
+        PyErr_SetString(_erfaError, "unacceptable date");
         return NULL;
     }
     return Py_BuildValue("Od", _to_py_astrom(&astrom), eo);
 }
 
-PyDoc_STRVAR(erfa_apco13_doc,
+PyDoc_STRVAR(_erfa_apco13_doc,
 "\napco13(utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> astrom, eo\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and geocentric CIRS\n"
@@ -357,7 +352,7 @@ PyDoc_STRVAR(erfa_apco13_doc,
 "    eo         equation of the origins (ERA-GST)");
 
 static PyObject *
-erfa_apcs(PyObject *self, PyObject *args)
+_erfa_apcs(PyObject *self, PyObject *args)
 {
     double date1, date2, pv[2][3], ebpv[2][3], ehp[3];
     eraASTROM astrom;
@@ -373,7 +368,7 @@ erfa_apcs(PyObject *self, PyObject *args)
     return _to_py_astrom(&astrom);
 }
 
-PyDoc_STRVAR(erfa_apcs_doc,
+PyDoc_STRVAR(_erfa_apcs_doc,
 "\napcs(date1, date2, pv[2][3], ebpv[2][3], ehp[3]) -> astrom\n"
 "For an observer whose geocentric position and velocity are known,\n"
 "prepare star-independent astrometry parameters for transformations\n"
@@ -392,7 +387,7 @@ PyDoc_STRVAR(erfa_apcs_doc,
 "    astrom     star-independent astrometry parameters");
 
 static PyObject *
-erfa_apcs13(PyObject *self, PyObject *args)
+_erfa_apcs13(PyObject *self, PyObject *args)
 {
     double date1, date2, pv[2][3];
     eraASTROM astrom;
@@ -405,7 +400,7 @@ erfa_apcs13(PyObject *self, PyObject *args)
     return _to_py_astrom(&astrom);
 }
 
-PyDoc_STRVAR(erfa_apcs13_doc,
+PyDoc_STRVAR(_erfa_apcs13_doc,
 "\napcs13(date1, date2, pv[2][3]) -> astrom\n"
 "For an observer whose geocentric position and velocity are known,\n"
 "prepare star-independent astrometry parameters for transformations\n"
@@ -422,7 +417,893 @@ PyDoc_STRVAR(erfa_apcs13_doc,
 "    astrom     star-independent astrometry parameters");
 
 static PyObject *
-erfa_bi00(PyObject *self)
+_erfa_apio(PyObject *self, PyObject *args)
+{
+    double sp, theta, elong, phi, hm, xp, yp, refa, refb;
+    eraASTROM astrom;
+    if (!PyArg_ParseTuple(args, "ddddddddd",
+                          &sp, &theta, &elong, &phi, &hm,
+                          &xp, &yp, &refa, &refb))      
+        return NULL;
+    eraApio(sp,theta,elong,phi,hm,xp,yp,refa,refb, &astrom);
+    return _to_py_astrom(&astrom);
+}
+
+PyDoc_STRVAR(_erfa_apio_doc,
+"\napio(sp,theta,elong,phi,hm,xp,yp,refa,refb) -> astrom\n"
+"For a terrestrial observer, prepare star-independent astrometry\n"
+"parameters for transformations between CIRS and observed\n"
+"coordinates.  The caller supplies the Earth orientation information\n"
+"and the refraction constants as well as the site coordinates.\n"
+"Given:\n"
+"    sp         the TIO locator s'\n"
+"    theta      Earth rotation angle (radians)\n"
+"    elong      longitude (radians, east +ve)\n"
+"    phi        latitude (geodetic, radians)\n"
+"    hm         height above ellipsoid (m, geodetic3)\n"
+"    xp,yp      polar motion coordinates (radians)\n"
+"    refa       refraction constant A (radians)\n"
+"    refb       refraction constant B (radians)\n"
+"Returned:\n""   x       \n"
+"    astrom     star-independent astrometry parameters");
+
+static PyObject *
+_erfa_apio13(PyObject *self, PyObject *args)
+{
+    int j;
+    double utc1, utc2, dut1;
+    double elong, phi, hm, xp, yp;
+    double phpa, tc, rh, wl;
+    eraASTROM astrom;
+    if (!PyArg_ParseTuple(args, "dddddddddddd",
+                                 &utc1, &utc2, &dut1,
+                                 &elong, &phi, &hm, &xp, &yp,
+                                 &phpa, &tc, &rh, &wl))      
+        return NULL;
+    j = eraApio13(utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl, &astrom);
+    if (j == +1) {
+        PyErr_SetString(_erfaError, "doubious year");
+        return NULL;
+    }
+    else if (j == -1) {
+        PyErr_SetString(_erfaError, "unacceptable date");
+        return NULL;
+    }
+    return _to_py_astrom(&astrom);
+}
+
+PyDoc_STRVAR(_erfa_apio13_doc,
+"\napio13(utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> astrom, eo\n"
+"For a terrestrial observer, prepare star-independent astrometry\n"
+"parameters for transformations between CIRS and observed\n"
+"coordinates.  The caller supplies UTC, site coordinates, ambient air\n"
+"conditions and observing wavelength.\n"
+"Given:\n"
+"    utc1   double     UTC as a 2-part...\n"
+"    utc2   double     ...quasi Julian Date\n"
+"    dut1   double     UT1-UTC (seconds)\n"
+"    elong  double     longitude (radians, east +ve)\n"
+"    phi    double     latitude (geodetic, radians)\n"
+"    hm     double     height above ellipsoid (m, geodetic)\n"
+"    xp,yp  double     polar motion coordinates (radians)\n"
+"    phpa   double     pressure at the observer (hPa = mB)\n"
+"    tc     double     ambient temperature at the observer (deg C)\n"
+"    rh     double     relative humidity at the observer (range 0-1)\n"
+"    wl     double     wavelength (micrometers)\n"
+"Returned:\n"
+"    astrom     star-independent astrometry parameters");
+
+static PyObject *
+_erfa_atci13(PyObject *self, PyObject *args)
+{
+     double rc, dc, pr, pd, px, rv, date1, date2;
+     double ri, di, eo;
+    if (!PyArg_ParseTuple(args, "dddddddd",
+                                 &rc, &dc, &pr, &pd, &px, &rv, &date1, &date2))      
+        return NULL;
+    eraAtci13(rc, dc, pr, pd, px, rv, date1, date2, &ri, &di, &eo);
+    return Py_BuildValue("ddd", ri, di, eo);
+}
+
+PyDoc_STRVAR(_erfa_atci13_doc,
+"\natci13(rc, dc, pr, pd, px, rv, date1, date2) -> ri, di, eo\n"
+"Transform ICRS star data, epoch J2000.0, to CIRS.\n"
+"Given:\n"
+"    rc     ICRS right ascension at J2000.0 (radians)\n"
+"    dc     ICRS declination at J2000.0 (radians)\n"
+"    pr     RA proper motion (radians/year)\n"
+"    pd     Dec proper motion (radians/year)\n"
+"    px     parallax (arcsec)\n"
+"    rv     radial velocity (km/s, +ve if receding)\n"
+"    date1  TDB as a 2-part...\n"
+"    date2  ...Julian Date\n"
+"Returned:\n"
+"    ri,di  CIRS geocentric RA,Dec (radians)\n"
+"    eo     double*  equation of the origins (ERA-GST)");
+
+static PyObject *
+_erfa_atciq(PyObject *self, PyObject *args)
+{
+    double rc, dc, pr, pd, px, rv;
+    double ri, di;
+    double pmt, eb[3], eh[3], em, v[3], bm1, bpn[3][3];
+    double along, phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb;
+    eraASTROM astrom;
+    if (!PyArg_ParseTuple(args, "ddddddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
+                          &rc, &dc, &pr, &pd, &px, &rv,
+                          &pmt, &eb[0], &eb[1], &eb[2],
+                          &eh[0], &eh[1], &eh[2], &em,
+                          &v[0], &v[1], &v[2], &bm1,
+                          &bpn[0][0],&bpn[0][1],&bpn[0][2],
+                          &bpn[1][0],&bpn[1][1],&bpn[1][2],      
+                          &bpn[2][0],&bpn[2][1],&bpn[2][2],
+                          &along, &phi, &xpl, &ypl, &sphi, &cphi, &diurab,
+                          &eral, &refa, &refb))      
+        return NULL;
+    astrom.pmt = pmt;
+    astrom.eb[0] = eb[0];
+    astrom.eb[1] = eb[1];
+    astrom.eb[2] = eb[2];
+    astrom.eh[0] = eh[0];
+    astrom.eh[1] = eh[1];
+    astrom.eh[2] = eh[2];
+    astrom.em = em;
+    astrom.v[0] = v[0];
+    astrom.v[1] = v[1];
+    astrom.v[2] = v[2];
+    astrom.bm1 = bm1;
+    astrom.bpn[0][0] = bpn[0][0];
+    astrom.bpn[0][1] = bpn[0][1];
+    astrom.bpn[0][2] = bpn[0][2];
+    astrom.bpn[1][0] = bpn[1][0];
+    astrom.bpn[1][1] = bpn[1][1];
+    astrom.bpn[1][2] = bpn[1][2];
+    astrom.bpn[2][0] = bpn[2][0];
+    astrom.bpn[2][1] = bpn[2][1];
+    astrom.bpn[2][2] = bpn[2][2];
+    astrom.along = along;
+    astrom.phi = phi;
+    astrom.xpl = xpl;
+    astrom.ypl = ypl;
+    astrom.sphi = sphi;
+    astrom.cphi = cphi;
+    astrom.diurab = diurab;
+    astrom.eral = eral;
+    astrom.refa = refa;
+    astrom.refb = refb;
+    eraAtciq(rc, dc, pr, pd, px, rv, &astrom, &ri, &di);
+    return Py_BuildValue("dd", ri, di);
+}
+
+PyDoc_STRVAR(_erfa_atciq_doc,
+"\natciq( rc, dc, pr, pd, px, rv, astrom) -> ri,di\n"
+"Quick ICRS, epoch J2000.0, to CIRS transformation, given precomputed\n"
+"star-independent astrometry parameters.\n"
+"\n"
+"Use of this function is appropriate when efficiency is important and\n"
+"where many star positions are to be transformed for one date.  The\n"
+"star-independent parameters can be obtained by calling one of the\n"
+"functions apci[13], apcg[13], apco[13] or apcs[13].\n"
+"\n"
+"If the parallax and proper motions are zero the eraAtciqz function\n"
+"can be used instead.\n"
+"Given:\n"
+"    rc,dc      ICRS RA,Dec at J2000.0 (radians)\n"
+"    pr         RA proper motion (radians/year)\n"
+"    pd         Dec proper motion (radians/year)\n"
+"    px         parallax (arcsec)\n"
+"    rv         radial velocity (km/s, +ve if receding)\n"
+"    astrom     star-independent astrometry parameters\n"
+"Returned:\n"
+"    ri,di      CIRS RA,Dec (radians)\n");
+
+static PyObject *
+_erfa_atciqz(PyObject *self, PyObject *args)
+{
+    double rc, dc;
+    double ri, di;
+    double pmt, eb[3], eh[3], em, v[3], bm1, bpn[3][3];
+    double along, phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb;
+    eraASTROM astrom;
+    if (!PyArg_ParseTuple(args, "ddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
+                          &rc, &dc,
+                          &pmt, &eb[0], &eb[1], &eb[2],
+                          &eh[0], &eh[1], &eh[2], &em,
+                          &v[0], &v[1], &v[2], &bm1,
+                          &bpn[0][0],&bpn[0][1],&bpn[0][2],
+                          &bpn[1][0],&bpn[1][1],&bpn[1][2],      
+                          &bpn[2][0],&bpn[2][1],&bpn[2][2],
+                          &along, &phi, &xpl, &ypl, &sphi, &cphi, &diurab,
+                          &eral, &refa, &refb))      
+        return NULL;
+    astrom.pmt = pmt;
+    astrom.eb[0] = eb[0];
+    astrom.eb[1] = eb[1];
+    astrom.eb[2] = eb[2];
+    astrom.eh[0] = eh[0];
+    astrom.eh[1] = eh[1];
+    astrom.eh[2] = eh[2];
+    astrom.em = em;
+    astrom.v[0] = v[0];
+    astrom.v[1] = v[1];
+    astrom.v[2] = v[2];
+    astrom.bm1 = bm1;
+    astrom.bpn[0][0] = bpn[0][0];
+    astrom.bpn[0][1] = bpn[0][1];
+    astrom.bpn[0][2] = bpn[0][2];
+    astrom.bpn[1][0] = bpn[1][0];
+    astrom.bpn[1][1] = bpn[1][1];
+    astrom.bpn[1][2] = bpn[1][2];
+    astrom.bpn[2][0] = bpn[2][0];
+    astrom.bpn[2][1] = bpn[2][1];
+    astrom.bpn[2][2] = bpn[2][2];
+    astrom.along = along;
+    astrom.phi = phi;
+    astrom.xpl = xpl;
+    astrom.ypl = ypl;
+    astrom.sphi = sphi;
+    astrom.cphi = cphi;
+    astrom.diurab = diurab;
+    astrom.eral = eral;
+    astrom.refa = refa;
+    astrom.refb = refb;
+    eraAtciqz(rc, dc, &astrom, &ri, &di);
+    return Py_BuildValue("dd", ri, di);
+}
+
+PyDoc_STRVAR(_erfa_atciqz_doc,
+"\natciqz( rc, dc, astrom) -> ri,di\n"
+"Quick ICRS to CIRS transformation, given precomputed star-\n"
+"independent astrometry parameters, and assuming zero parallax and proper motion.\n"
+"\n"
+"Use of this function is appropriate when efficiency is important and\n"
+"where many star positions are to be transformed for one date.  The\n"
+"star-independent parameters can be obtained by calling one of the\n"
+"functions apci[13], apcg[13], apco[13] or apcs[13].\n"
+"\n"
+"The corresponding function for the case of non-zero parallax and\n"
+"proper motion is atciq.\n"
+"Given:\n"
+"    rc,dc      ICRS RA,Dec at J2000.0 (radians)\n"
+"    astrom     star-independent astrometry parameters\n"
+"Returned:\n"
+"    ri,di      CIRS RA,Dec (radians)\n");
+
+static PyObject *
+_erfa_atco13(PyObject *self, PyObject *args)
+{
+    int j;
+    double rc, dc, pr, pd, px, rv, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl;
+    double aob, zob, hob, dob, rob, eo;
+    if (!PyArg_ParseTuple(args, "dddddddddddddddddd",
+                          &rc, &dc,
+                          &pr, &pd, &px, &rv, &utc1, &utc2, &dut1,
+                          &elong, &phi, &hm, &xp, &yp,
+                          &phpa, &tc, &rh, &wl))
+        return NULL;
+    j = eraAtco13(rc, dc, pr, pd, px, rv, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl,
+                  &aob, &zob, &hob, &dob, &rob, &eo);
+    if (j == +1) {
+        PyErr_SetString(_erfaError, "doubious year");
+        return NULL;
+    }
+    else if (j == -1) {
+        PyErr_SetString(_erfaError, "unacceptable date");
+        return NULL;
+    }
+    return Py_BuildValue("dddddd", aob, zob, hob, dob, rob, eo);
+}
+
+PyDoc_STRVAR(_erfa_atco13_doc,
+"\natco13(rc, dc, pr, pd, px, rv, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> aob, zob, hob, dob, rob, eo\n"
+"ICRS RA,Dec to observed place.  The caller supplies UTC, site\n"
+"coordinates, ambient air conditions and observing wavelength.\n"
+"\n"
+"ERFA models are used for the Earth ephemeris, bias-precession-\n"
+"nutation, Earth orientation and refraction.\n"
+"Given:\n"
+"    rc,dc  ICRS right ascension at J2000.0 (radians)\n"
+"    pr     RA proper motion (radians/year)\n"
+"    pd     Dec proper motion (radians/year)\n"
+"    px     parallax (arcsec)\n"
+"    rv     radial velocity (km/s, +ve if receding)\n"
+"    utc1   UTC as a 2-part...\n"
+"    utc2    ...quasi Julian Date\n"
+"    dut1   UT1-UTC (seconds)\n"
+"    elong  longitude (radians, east +ve)\n"
+"    phi    latitude (geodetic, radians)\n"
+"    hm     height above ellipsoid (m, geodetic)\n"
+"    xp,yp  polar motion coordinates (radians)\n"
+"    phpa   pressure at the observer (hPa = mB)\n"
+"    tc     ambient temperature at the observer (deg C)\n"
+"    rh     relative humidity at the observer (range 0-1)\n"
+"    wl     wavelength (micrometers)\n"
+"Returned:\n"
+"    aob    observed azimuth (radians: N=0,E=90)\n"
+"    zob    observed zenith distance (radians)\n"
+"    hob    observed hour angle (radians)\n"
+"    dob    observed declination (radians)\n"
+"    rob    observed right ascension (CIO-based, radians)\n"
+"    eo     equation of the origins (ERA-GST)");
+
+static PyObject *
+_erfa_atic13(PyObject *self, PyObject *args)
+{
+    double ri, di, date1, date2;
+    double rc, dc, eo;
+    if (!PyArg_ParseTuple(args, "dddd", &ri, &di, &date1, &date2))
+        return NULL;
+    eraAtic13(ri, di, date1, date2, &rc, &dc, &eo);
+    return Py_BuildValue("ddd", rc, dc, eo);
+}
+
+PyDoc_STRVAR(_erfa_atic13_doc,
+"\natic13(ri, di, date1, date2) -> rc, dc, eo\n"
+"Transform star RA,Dec from geocentric CIRS to ICRS astrometric.\n"
+"Given:\n"
+"    ri,di  CIRS geocentric RA,Dec (radians)\n"
+"    date1  TDB as a 2-part...\n"
+"    date2  ...Julian Date\n"
+"Returned:\n"
+"    rc,dc  ICRS astrometric RA,Dec (radians)\n"
+"    eo     equation of the origins (ERA-GST)");
+
+static PyObject *
+_erfa_aticq(PyObject *self, PyObject *args)
+{
+    double rc, dc, ri, di;
+    double pmt, eb[3], eh[3], em, v[3], bm1, bpn[3][3];
+    double along, phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb;
+    eraASTROM astrom;
+    if (!PyArg_ParseTuple(args, "ddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
+                          &ri, &di,
+                          &pmt, &eb[0], &eb[1], &eb[2],
+                          &eh[0], &eh[1], &eh[2], &em,
+                          &v[0], &v[1], &v[2], &bm1,
+                          &bpn[0][0],&bpn[0][1],&bpn[0][2],
+                          &bpn[1][0],&bpn[1][1],&bpn[1][2],      
+                          &bpn[2][0],&bpn[2][1],&bpn[2][2],
+                          &along, &phi, &xpl, &ypl, &sphi, &cphi, &diurab,
+                          &eral, &refa, &refb))      
+        return NULL;
+    astrom.pmt = pmt;
+    astrom.eb[0] = eb[0];
+    astrom.eb[1] = eb[1];
+    astrom.eb[2] = eb[2];
+    astrom.eh[0] = eh[0];
+    astrom.eh[1] = eh[1];
+    astrom.eh[2] = eh[2];
+    astrom.em = em;
+    astrom.v[0] = v[0];
+    astrom.v[1] = v[1];
+    astrom.v[2] = v[2];
+    astrom.bm1 = bm1;
+    astrom.bpn[0][0] = bpn[0][0];
+    astrom.bpn[0][1] = bpn[0][1];
+    astrom.bpn[0][2] = bpn[0][2];
+    astrom.bpn[1][0] = bpn[1][0];
+    astrom.bpn[1][1] = bpn[1][1];
+    astrom.bpn[1][2] = bpn[1][2];
+    astrom.bpn[2][0] = bpn[2][0];
+    astrom.bpn[2][1] = bpn[2][1];
+    astrom.bpn[2][2] = bpn[2][2];
+    astrom.along = along;
+    astrom.phi = phi;
+    astrom.xpl = xpl;
+    astrom.ypl = ypl;
+    astrom.sphi = sphi;
+    astrom.cphi = cphi;
+    astrom.diurab = diurab;
+    astrom.eral = eral;
+    astrom.refa = refa;
+    astrom.refb = refb;
+    eraAticq(ri, di, &astrom, &rc, &dc);
+    return Py_BuildValue("dd", rc, dc);
+}
+
+PyDoc_STRVAR(_erfa_aticq_doc,
+"\naticq(ri,di, astrom) -> rc, dc\n"
+"Quick CIRS RA,Dec to ICRS astrometric place, given the star-\n"
+"independent astrometry parameters.\n"
+"\n"
+"Use of this function is appropriate when efficiency is important and\n"
+"where many star positions are all to be transformed for one date.  The\n"
+"star-independent parameters can be obtained by calling one of the\n"
+"functions apci[13], apcg[13], apco[13] or apcs[13].\n"
+"Given:\n"
+"    ri,di      CIRS RA,Dec (radians)\n"
+"    astrom     star-independent astrometry parameters\n"
+"Returned:\n"
+"    rc,dc      ICRS astrometric RA,Dec (radians)\n");
+
+static PyObject *
+_erfa_atio13(PyObject *self, PyObject *args)
+{
+    int j;
+    double ri, di, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl;
+    double aob, zob, hob, dob, rob;
+    if (!PyArg_ParseTuple(args, "dddddddddddddd",
+                          &ri, &di, &utc1, &utc2, &dut1,
+                          &elong, &phi, &hm, &xp, &yp,
+                          &phpa, &tc, &rh, &wl))
+        return NULL;
+    j = eraAtio13(ri, di, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl,
+                  &aob, &zob, &hob, &dob, &rob);
+    if (j == +1) {
+        PyErr_SetString(_erfaError, "doubious year");
+        return NULL;
+    }
+    else if (j == -1) {
+        PyErr_SetString(_erfaError, "unacceptable date");
+        return NULL;
+    }
+    return Py_BuildValue("ddddd", aob, zob, hob, dob, rob);
+}
+
+PyDoc_STRVAR(_erfa_atio13_doc,
+"\natio13(ri, di, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> aob, zob, hob, dob, rob\n"
+"CIRS RA,Dec to observed place.  The caller supplies UTC, site\n"
+"coordinates, ambient air conditions and observing wavelength.\n"
+"Given:\n"
+"    ri     CIRS right ascension (CIO-based, radians)\n"
+"    di     CIRS declination (radians)\n"
+"    utc1   UTC as a 2-part...\n"
+"    utc2    ...quasi Julian Date\n"
+"    dut1   UT1-UTC (seconds)\n"
+"    elong  longitude (radians, east +ve)\n"
+"    phi    geodetic latitude (radians)\n"
+"    hm     height above ellipsoid (m, geodetic)\n"
+"    xp,yp  polar motion coordinates (radians)\n"
+"    phpa   pressure at the observer (hPa = mB)\n"
+"    tc     ambient temperature at the observer (deg C)\n"
+"    rh     relative humidity at the observer (range 0-1)\n"
+"    wl     wavelength (micrometers)\n"
+"Returned:\n"
+"    aob    observed azimuth (radians: N=0,E=90)\n"
+"    zob    observed zenith distance (radians)\n"
+"    hob    observed hour angle (radians)\n"
+"    dob    observed declination (radians)\n"
+"    rob    observed right ascension (CIO-based, radians)");
+
+static PyObject *
+_erfa_atioq(PyObject *self, PyObject *args)
+{
+    double ri, di;
+    double pmt, eb[3], eh[3], em, v[3], bm1, bpn[3][3];
+    double along, phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb;
+    double aob, zob, hob, dob, rob;
+    eraASTROM astrom;
+    if (!PyArg_ParseTuple(args, "ddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
+                          &ri, &di,
+                          &pmt, &eb[0], &eb[1], &eb[2],
+                          &eh[0], &eh[1], &eh[2], &em,
+                          &v[0], &v[1], &v[2], &bm1,
+                          &bpn[0][0],&bpn[0][1],&bpn[0][2],
+                          &bpn[1][0],&bpn[1][1],&bpn[1][2],      
+                          &bpn[2][0],&bpn[2][1],&bpn[2][2],
+                          &along, &phi, &xpl, &ypl, &sphi, &cphi, &diurab,
+                          &eral, &refa, &refb))      
+        return NULL;
+    astrom.pmt = pmt;
+    astrom.eb[0] = eb[0];
+    astrom.eb[1] = eb[1];
+    astrom.eb[2] = eb[2];
+    astrom.eh[0] = eh[0];
+    astrom.eh[1] = eh[1];
+    astrom.eh[2] = eh[2];
+    astrom.em = em;
+    astrom.v[0] = v[0];
+    astrom.v[1] = v[1];
+    astrom.v[2] = v[2];
+    astrom.bm1 = bm1;
+    astrom.bpn[0][0] = bpn[0][0];
+    astrom.bpn[0][1] = bpn[0][1];
+    astrom.bpn[0][2] = bpn[0][2];
+    astrom.bpn[1][0] = bpn[1][0];
+    astrom.bpn[1][1] = bpn[1][1];
+    astrom.bpn[1][2] = bpn[1][2];
+    astrom.bpn[2][0] = bpn[2][0];
+    astrom.bpn[2][1] = bpn[2][1];
+    astrom.bpn[2][2] = bpn[2][2];
+    astrom.along = along;
+    astrom.phi = phi;
+    astrom.xpl = xpl;
+    astrom.ypl = ypl;
+    astrom.sphi = sphi;
+    astrom.cphi = cphi;
+    astrom.diurab = diurab;
+    astrom.eral = eral;
+    astrom.refa = refa;
+    astrom.refb = refb;
+    eraAtioq(ri, di, &astrom, &aob, &zob, &hob, &dob, &rob);
+    return Py_BuildValue("ddddd", aob, zob, hob, dob, rob);
+}
+
+PyDoc_STRVAR(_erfa_atioq_doc,
+"\natioq(ri,di, astrom) -> aob, zob, hob, dob, rob\n"
+"Quick CIRS to observed place transformation.\n"
+"\n"
+"Use of this function is appropriate when efficiency is important and\n"
+"where many star positions are all to be transformed for one date.  The\n"
+"star-independent parameters can be obtained by calling\n"
+"apio[13], or apco[13].\n"
+"Given:\n"
+"    ri,di      CIRS RA,Dec (radians)\n"
+"    astrom     star-independent astrometry parameters\n"
+"Returned:\n"
+"    aob    observed azimuth (radians: N=0,E=90)\n"
+"    zob    observed zenith distance (radians)\n"
+"    hob    observed hour angle (radians)\n"
+"    dob    observed declination (radians)\n"
+"    rob    observed right ascension (CIO-based, radians)");
+
+static PyObject *
+_erfa_atoc13(PyObject *self, PyObject *args)
+{
+    int j;
+    const char *type;
+    double ob1, ob2, utc1, utc2, dut1;
+    double elong, phi, hm, xp, yp, phpa, tc, rh, wl;
+    double rc, dc;
+#if PY_VERSION_HEX >= 0x03000000
+    if (!PyArg_ParseTuple(args, "sdddddddddddddd",
+#else
+    if (!PyArg_ParseTuple(args, "sdddddddddddddd",
+#endif
+                                 &type, &ob1, &ob2, &utc1, &utc2, &dut1,
+                                 &elong, &phi, &hm, &xp, &yp, &phpa, &tc, &rh, &wl))      
+        return NULL;
+    if (type) {
+        j = eraAtoc13(type, ob1, ob2, utc1, utc2, dut1,
+                      elong, phi, hm, xp, yp, phpa, tc, rh, wl,
+                      &rc, &dc);
+    }
+    else {
+        PyErr_SetString(_erfaError, "unknown type of coordinates");
+        return NULL;
+    }
+    if (j == +1) {
+        PyErr_SetString(_erfaError, "doubious year");
+        return NULL;
+    }
+    else if (j == -1) {
+        PyErr_SetString(_erfaError, "unacceptable date");
+        return NULL;
+    }
+    return Py_BuildValue("dd", rc, dc);
+}
+
+PyDoc_STRVAR(_erfa_atoc13_doc,
+"\natoc13(type, ob1, ob2, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> rc, dc\n"
+"Observed place at a groundbased site to to ICRS astrometric RA,Dec.\n"
+"The caller supplies UTC, site coordinates, ambient air conditions\n"
+"and observing wavelength.\n"
+"Given:\n"
+"    type   type of coordinates - ''R'', ''H'' or ''A''\n"
+"    ob1    observed Az, HA or RA (radians; Az is N=0,E=90)\n"
+"    ob2    observed ZD or Dec (radians)\n"
+"    utc1   UTC as a 2-part...\n"
+"    utc2   ...quasi Julian Date\n"
+"    dut1   UT1-UTC (seconds\n"
+"    elong  longitude (radians, east +ve)\n"
+"    phi    geodetic latitude (radians)\n"
+"    hm     height above ellipsoid (m, geodetic)\n"
+"    xp,yp  polar motion coordinates (radians)\n"
+"    phpa   pressure at the observer (hPa = mB)\n"
+"    tc     ambient temperature at the observer (deg C)\n"
+"    rh     relative humidity at the observer (range 0-1)\n"
+"    wl     wavelength (micrometers)\n"
+"Returned:\n"
+"    rc,dc  ICRS astrometric RA,Dec (radians)");
+
+static PyObject *
+_erfa_atoi13(PyObject *self, PyObject *args)
+{
+    int j;
+    const char *type;
+    double ob1, ob2, utc1, utc2, dut1;
+    double elong, phi, hm, xp, yp, phpa, tc, rh, wl;
+    double ri, di;
+    if (!PyArg_ParseTuple(args, "sdddddddddddddd",
+                                 &type, &ob1, &ob2, &utc1, &utc2, &dut1,
+                                 &elong, &phi, &hm, &xp, &yp, &phpa, &tc, &rh, &wl))      
+        return NULL;
+    j = eraAtoi13(type, ob1, ob2, utc1, utc2, dut1,
+                   elong, phi, hm, xp, yp, phpa, tc, rh, wl,
+                   &ri, &di);
+    if (j == +1) {
+        PyErr_SetString(_erfaError, "doubious year");
+        return NULL;
+    }
+    else if (j == -1) {
+        PyErr_SetString(_erfaError, "unacceptable date");
+        return NULL;
+    }
+    return Py_BuildValue("dd", ri, di);
+}
+
+PyDoc_STRVAR(_erfa_atoi13_doc,
+"\natoi13(type, ob1, ob2, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> ri, di\n"
+"Observed place at a groundbased site to to ICRS astrometric RA,Dec.\n"
+"The caller supplies UTC, site coordinates, ambient air conditions\n"
+"and observing wavelength.\n"
+"Given:\n"
+"    type   type of coordinates - ''R'', ''H'' or ''A''\n"
+"    ob1    observed Az, HA or RA (radians; Az is N=0,E=90)\n"
+"    ob2    observed ZD or Dec (radians)\n"
+"    utc1   UTC as a 2-part...\n"
+"    utc2   ...quasi Julian Date\n"
+"    dut1   UT1-UTC (seconds\n"
+"    elong  longitude (radians, east +ve)\n"
+"    phi    geodetic latitude (radians)\n"
+"    hm     height above ellipsoid (m, geodetic)\n"
+"    xp,yp  polar motion coordinates (radians)\n"
+"    phpa   pressure at the observer (hPa = mB)\n"
+"    tc     ambient temperature at the observer (deg C)\n"
+"    rh     relative humidity at the observer (range 0-1)\n"
+"    wl     wavelength (micrometers)\n"
+"Returned:\n"
+"    ri     CIRS right ascension (CIO-based, radians)\n"
+"    di     CIRS declination (radians)");
+
+static PyObject *
+_erfa_atoiq(PyObject *self, PyObject *args)
+{
+    const char *type;
+    double ob1, ob2;
+    double ri, di;
+    double pmt, eb[3], eh[3], em, v[3], bm1, bpn[3][3];
+    double along, phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb;
+    eraASTROM astrom;
+    if (!PyArg_ParseTuple(args, "sddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
+                          &type, &ob1, &ob2,
+                          &pmt, &eb[0], &eb[1], &eb[2],
+                          &eh[0], &eh[1], &eh[2], &em,
+                          &v[0], &v[1], &v[2], &bm1,
+                          &bpn[0][0],&bpn[0][1],&bpn[0][2],
+                          &bpn[1][0],&bpn[1][1],&bpn[1][2],      
+                          &bpn[2][0],&bpn[2][1],&bpn[2][2],
+                          &along, &phi, &xpl, &ypl, &sphi, &cphi, &diurab,
+                          &eral, &refa, &refb))      
+        return NULL;
+    astrom.pmt = pmt;
+    astrom.eb[0] = eb[0];
+    astrom.eb[1] = eb[1];
+    astrom.eb[2] = eb[2];
+    astrom.eh[0] = eh[0];
+    astrom.eh[1] = eh[1];
+    astrom.eh[2] = eh[2];
+    astrom.em = em;
+    astrom.v[0] = v[0];
+    astrom.v[1] = v[1];
+    astrom.v[2] = v[2];
+    astrom.bm1 = bm1;
+    astrom.bpn[0][0] = bpn[0][0];
+    astrom.bpn[0][1] = bpn[0][1];
+    astrom.bpn[0][2] = bpn[0][2];
+    astrom.bpn[1][0] = bpn[1][0];
+    astrom.bpn[1][1] = bpn[1][1];
+    astrom.bpn[1][2] = bpn[1][2];
+    astrom.bpn[2][0] = bpn[2][0];
+    astrom.bpn[2][1] = bpn[2][1];
+    astrom.bpn[2][2] = bpn[2][2];
+    astrom.along = along;
+    astrom.phi = phi;
+    astrom.xpl = xpl;
+    astrom.ypl = ypl;
+    astrom.sphi = sphi;
+    astrom.cphi = cphi;
+    astrom.diurab = diurab;
+    astrom.eral = eral;
+    astrom.refa = refa;
+    astrom.refb = refb;
+    eraAtoiq(type, ob1, ob2, &astrom, &ri, &di);
+    return Py_BuildValue("dd", ri, di);
+}
+
+PyDoc_STRVAR(_erfa_atoiq_doc,
+"\natoiq(type, ob1, ob2, astrom) -> ri, di\n"
+"Observed place at a groundbased site to to ICRS astrometric RA,Dec.\n"
+"The caller supplies UTC, site coordinates, ambient air conditions\n"
+"and observing wavelength.\n"
+"Given:\n"
+"    type   type of coordinates - ''R'', ''H'' or ''A''\n"
+"    ob1    observed Az, HA or RA (radians; Az is N=0,E=90)\n"
+"    ob2    observed ZD or Dec (radians)\n"
+"    astrom star-independent astrometry parameters\n"
+"Returned:\n"
+"    ri     CIRS right ascension (CIO-based, radians)\n"
+"    di     CIRS declination (radians)");
+
+static PyObject *
+_erfa_ld(PyObject *self, PyObject *args)
+{
+    double bm, p[3], q[3], e[3], em, dlim, p1[3];
+    if (!PyArg_ParseTuple(args, "d(ddd)(ddd)(ddd)dd",
+                                 &bm,
+                                 &p[0], &p[1], &p[2],
+                                 &q[0], &q[1], &q[2],
+                                 &e[0], &e[1], &e[2],
+                                 &em, &dlim))
+        return NULL;
+    eraLd(bm, p, q, e, em, dlim, p1);
+    return Py_BuildValue("(ddd)", p1[0], p1[1], p1[2]);
+}
+
+PyDoc_STRVAR(_erfa_ld_doc,
+"\nld(bm, p[3], q[3], e[3], em, dlim) -> p1[3]\n"
+"Apply light deflection by a solar-system body, as part of\n"
+"transforming coordinate direction into natural direction.\n"
+"Given:\n"
+"    bm     mass of the gravitating body (solar masses)\n"
+"    p      direction from observer to source (unit vector)\n"
+"    q      direction from body to source (unit vector)\n"
+"    e      direction from body to observer (unit vector)\n"
+"    em     distance from body to observer (au)\n"
+"    dlim   deflection limiter\n"
+"Returned:\n"
+"    p1     observer to deflected source (unit vector)");
+
+static PyObject *
+_erfa_ldsun(PyObject *self, PyObject *args)
+{
+    double p[3], e[3], em, p1[3];
+    if (!PyArg_ParseTuple(args, "(ddd)(ddd)d",
+                                 &p[0], &p[1], &p[2],
+                                 &e[0], &e[1], &e[2],
+                                 &em))
+        return NULL;
+    eraLdsun(p, e, em, p1);
+    return Py_BuildValue("(ddd)", p1[0], p1[1], p1[2]);
+}
+
+PyDoc_STRVAR(_erfa_ldsun_doc,
+"\nldsun(p[3], e[3], em) -> p1[3]\n"
+"Light deflection by the Sun.\n"
+"Given:\n"
+"    p      direction from observer to source (unit vector)\n"
+"    e      direction from Sun to observer (unit vector)\n"
+"    em     distance from Sun to observer (au)\n"
+"Returned:\n"
+"    p1     observer to deflected source (unit vector)");
+
+static PyObject *
+_erfa_pmpx(PyObject *self, PyObject *args)
+{
+    double rc, dc, pr, pd, px, rv, pmt, pob[3], pco[3];
+    if (!PyArg_ParseTuple(args, "ddddddd(ddd)",
+                                 &rc, &dc, &pr, &pd, &px, &rv, &pmt,
+                                 &pob[0], &pob[1], &pob[2]))
+        return NULL;
+    eraPmpx(rc, dc, pr, pd, px, rv, pmt, pob, pco);
+    return Py_BuildValue("(ddd)", pco[0], pco[1], pco[2]);
+}
+
+PyDoc_STRVAR(_erfa_pmpx_doc,
+"\npmpx(rc, dc, pr, pd, px, rv, pmt, pob[3],) -> pco[3]\n"
+"Proper motion and parallax.\n"
+"Given:\n"
+"    rc,dc  ICRS RA,Dec at catalog epoch (radians)\n"
+"    pr     RA proper motion (radians/year; Note 1)\n"
+"    pd     Dec proper motion (radians/year)\n"
+"    px     parallax (arcsec)\n"
+"    rv     radial velocity (km/s, +ve if receding)\n"
+"    pmt    proper motion time interval (SSB, Julian years)\n"
+"    pob    SSB to observer vector (au)\n"
+"Returned:\n"
+"    pco    coordinate direction (BCRS unit vector)");
+
+static PyObject *
+_erfa_pmsafe(PyObject *self, PyObject *args)
+{
+    double ra1, dec1, pmr1, pmd1, px1, rv1, ep1a, ep1b, ep2a, ep2b;
+    double ra2, dec2, pmr2, pmd2, px2, rv2;
+    int j;
+    if (!PyArg_ParseTuple(args, "dddddddddd",
+                                 &ra1, &dec1, &pmr1, &pmd1, &px1,
+                                 &rv1, &ep1a, &ep1b, &ep2a, &ep2b))
+        return NULL;
+    j = eraPmsafe(ra1, dec1, pmr1, pmd1, px1, rv1,
+                  ep1a, ep1b, ep2a, ep2b,
+                  &ra2, &dec2, &pmr2, &pmd2, &px2, &rv2);
+    if (j == -1) {
+        PyErr_SetString(_erfaError, "system error (should not occur)");
+        return NULL;
+    }
+    else if (j == 1) {
+        PyErr_SetString(_erfaError, "distance overridden");
+        return NULL;
+    }
+    else if (j == 2) {
+        PyErr_SetString(_erfaError, "excessive velocity");
+        return NULL;
+    }
+    else if (j == 4) {
+        PyErr_SetString(_erfaError, "solution didn't converge");
+        return NULL;
+    }
+    return Py_BuildValue("dddddd", ra2, dec2, pmr2, pmd2, px2, rv2);
+}
+
+PyDoc_STRVAR(_erfa_pmsafe_doc,
+"\npmsafe(ra1, dec1, pmr1, pmd1, px1, rv1, ep1a, ep1b, ep2a, ep2b, -> ra2, dec2, pmr2, pmd2, px2, rv2)\n"
+"Star proper motion:  update star catalog data for space motion, with\n"
+"special handling to handle the zero parallax case.\n"
+"Given:\n"
+"    ra1    right ascension (radians), before\n"
+"    dec1   declination (radians), before\n"
+"    pmr1   RA proper motion (radians/year), before\n"
+"    pmd1   Dec proper motion (radians/year), before\n"
+"    px1    parallax (arcseconds), before\n"
+"    rv1    radial velocity (km/s, +ve = receding), before\n"
+"    ep1a   ''before'' epoch, part A\n"
+"    ep1b   ''before'' epoch, part B\n"
+"    ep2a   ''after'' epoch, part A\n"
+"    ep2b   ''after'' epoch, part B\n"
+"Returned:\n"
+"    ra2    double      right ascension (radians), after\n"
+"    dec2   double      declination (radians), after\n"
+"    pmr2   double      RA proper motion (radians/year), after\n"
+"    pmd2   double      Dec proper motion (radians/year), after\n"
+"    px2    double      parallax (arcseconds), after\n"
+"    rv2    double      radial velocity (km/s, +ve = receding), after");
+
+static PyObject *
+_erfa_pvtob(PyObject *self, PyObject *args)
+{
+    double elong, phi, hm, xp, yp, sp, theta, pv[2][3];
+    if (!PyArg_ParseTuple(args, "ddddddd",
+                                 &elong, &phi, &hm, &xp, &yp, &sp, &theta))
+        return NULL;
+    eraPvtob(elong, phi, hm, xp, yp, sp, theta, pv);
+    return Py_BuildValue("((ddd)(ddd))",
+                          pv[0][0], pv[0][1], pv[0][2],
+                          pv[1][0], pv[1][1], pv[1][2]);
+}
+
+PyDoc_STRVAR(_erfa_pvtob_doc,
+"\npvtob(elong, phi, hm, xp, yp, sp, theta) -> pv[2][3]\n"
+"Position and velocity of a terrestrial observing station.\n"
+"Given:\n"
+"    elong   double       longitude (radians, east +ve)\n"
+"    phi     double       latitude (geodetic, radians))\n"
+"    hm      double       height above ref. ellipsoid (geodetic, m)\n"
+"    xp,yp   double       coordinates of the pole (radians))\n"
+"    sp      double       the TIO locator s' (radians))\n"
+"    theta   double       Earth rotation angle (radians)\n"
+"Returned:\n"
+"    pv      position/velocity vector (m, m/s, CIRS)");
+
+static PyObject *
+_erfa_refco(PyObject *self, PyObject *args)
+{
+    double phpa, tc, rh, wl;
+    double refa, refb;
+    if (!PyArg_ParseTuple(args, "dddd", &phpa, &tc, &rh, &wl))
+        return NULL;
+    eraRefco(phpa, tc, rh, wl, &refa, &refb);
+    return Py_BuildValue("dd", refa, refb);
+}
+
+PyDoc_STRVAR(_erfa_refco_doc,
+"\nrefco(phpa, tc, rh, wl) -> refa, refb\n"
+"Determine the constants A and B in the atmospheric refraction model\n"
+"dZ = A tan Z + B tan^3 Z.\n"
+"\n"
+"Z is the ''observed'' zenith distance (i.e. affected by refraction)\n"
+"and dZ is what to add to Z to give the ''topocentric'' (i.e. in vacuo)\n"
+"zenith distance.\n"
+"Given:\n"
+"   phpa   pressure at the observer (hPa = millibar)\n"
+"   tc     ambient temperature at the observer (deg C)\n"
+"   rh     relative humidity at the observer (range 0-1)\n"
+"   wl     wavelength (micrometers)\n"
+"Returned:\n"
+"   refa   tan Z coefficient (radians)\n"
+"   refb   tan^3 Z coefficient (radians)");
+
+static PyObject *
+_erfa_bi00(PyObject *self)
 {
     double dpsibi, depsbi, dra;
     eraBi00(&dpsibi, &depsbi, &dra);
@@ -434,15 +1315,15 @@ erfa_bi00(PyObject *self)
     }
 }
 
-PyDoc_STRVAR(erfa_bi00_doc,
-"bi00() -> dpsibi,depsbi,dra\n\n"
+PyDoc_STRVAR(_erfa_bi00_doc,
+"\nbi00() -> dpsibi,depsbi,dra\n"
 "Frame bias components of IAU 2000 precession-nutation models (part of MHB2000 with additions).\n"
 "Returned:\n"
 "    dpsibi,depsbi    obliquity and correction\n"
 "    dra              the ICRS RA of the J2000.0 mean equinox");
 
 static PyObject *
-erfa_bp00(PyObject *self, PyObject *args)
+_erfa_bp00(PyObject *self, PyObject *args)
 {
     double d1, d2, rb[3][3], rp[3][3], rbp[3][3];
     int ok;
@@ -461,7 +1342,7 @@ erfa_bp00(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_bp00_doc,
+PyDoc_STRVAR(_erfa_bp00_doc,
 "\nbp00(d1, d2) -> rb, rp, rbp\n\n"
 "Frame bias and precession, IAU 2000.\n"
 "Given:\n"
@@ -472,7 +1353,7 @@ PyDoc_STRVAR(erfa_bp00_doc,
 "    rbp        bias-precession matrix");
 
 static PyObject *
-erfa_bp06(PyObject *self, PyObject *args)
+_erfa_bp06(PyObject *self, PyObject *args)
 {
     double d1, d2, rb[3][3], rp[3][3], rbp[3][3];
     int ok;
@@ -491,7 +1372,7 @@ erfa_bp06(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_bp06_doc,
+PyDoc_STRVAR(_erfa_bp06_doc,
 "bp06(d1, d2) -> rb, rp, rbp\n\n"
 "Frame bias and precession, IAU 2006.\n"
 "Given:\n"
@@ -502,23 +1383,15 @@ PyDoc_STRVAR(erfa_bp06_doc,
 "    rbp        bias-precession matrix");
 
 static PyObject *
-erfa_bpn2xy(PyObject *self, PyObject *args)
+_erfa_bpn2xy(PyObject *self, PyObject *args)
 {
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22;
     double x, y, rbpn[3][3];
     int ok;
     ok = PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))",
-    &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22);
+                                   &rbpn[0][0],&rbpn[0][1],&rbpn[0][2],
+                                   &rbpn[1][0],&rbpn[1][1],&rbpn[1][2],
+                                   &rbpn[2][0],&rbpn[2][1],&rbpn[2][2]);
     if (ok) {
-        rbpn[0][0] = r00;
-        rbpn[0][1] = r01;
-        rbpn[0][2] = r02;
-        rbpn[1][0] = r10;
-        rbpn[1][1] = r11;
-        rbpn[1][2] = r12;
-        rbpn[2][0] = r20;
-        rbpn[2][1] = r21;
-        rbpn[2][2] = r22;
         eraBpn2xy(rbpn, &x, &y);
         return Py_BuildValue("dd", x, y);
     }
@@ -527,7 +1400,7 @@ erfa_bpn2xy(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_bpn2xy_doc,
+PyDoc_STRVAR(_erfa_bpn2xy_doc,
 "bpn2xy(rbpn) -> x, y\n\n"
 "Extract from the bias-precession-nutation matrix\n"
 "the X,Y coordinates of the Celestial Intermediate Pole.\n"
@@ -537,7 +1410,7 @@ PyDoc_STRVAR(erfa_bpn2xy_doc,
 "    x,y        celestial Intermediate Pole");
 
 static PyObject *
-erfa_c2i00a(PyObject *self, PyObject *args)
+_erfa_c2i00a(PyObject *self, PyObject *args)
 {
     double d1, d2, rc2i[3][3];
     int ok;
@@ -556,7 +1429,7 @@ erfa_c2i00a(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2i00a_doc,
+PyDoc_STRVAR(_erfa_c2i00a_doc,
 "c2i00a(d1, d2) -> rc2i\n\n"
 "Form the celestial-to-intermediate matrix\n"
 "for a given date using the IAU 2000A precession-nutation model.\n"
@@ -566,26 +1439,24 @@ PyDoc_STRVAR(erfa_c2i00a_doc,
 "    rc2i       celestial-to-intermediate matrix\n");
 
 static PyObject *
-erfa_c2i00b(PyObject *self, PyObject *args)
+_erfa_c2i00b(PyObject *self, PyObject *args)
 {
     double d1, d2, rc2i[3][3];
     int ok;
     ok = PyArg_ParseTuple(args, "dd", &d1, &d2);
     if (ok) {
         eraC2i00b(d1, d2, rc2i);
-        return Py_BuildValue(
-        "((ddd)(ddd)(ddd))",
-        rc2i[0][0],rc2i[0][1],rc2i[0][2],
-        rc2i[1][0],rc2i[1][1],rc2i[1][2],
-        rc2i[2][0],rc2i[2][1],rc2i[2][2]
-        );
+        return Py_BuildValue("((ddd)(ddd)(ddd))",
+                                rc2i[0][0],rc2i[0][1],rc2i[0][2],
+                                rc2i[1][0],rc2i[1][1],rc2i[1][2],
+                                rc2i[2][0],rc2i[2][1],rc2i[2][2]);
     }
     else {
         return NULL;
     }
 }
 
-PyDoc_STRVAR(erfa_c2i00b_doc,
+PyDoc_STRVAR(_erfa_c2i00b_doc,
 "c2i00b(d1, d2) -> rc2i\n\n"
 "Form the celestial-to-intermediate matrix for a given\n"
 "date using the IAU 2000B precession-nutation model.\n"
@@ -595,26 +1466,24 @@ PyDoc_STRVAR(erfa_c2i00b_doc,
 "    rc2i       celestial-to-intermediate matrix");
 
 static PyObject *
-erfa_c2i06a(PyObject *self, PyObject *args)
+_erfa_c2i06a(PyObject *self, PyObject *args)
 {
     double d1, d2, rc2i[3][3];
     int ok;
     ok = PyArg_ParseTuple(args, "dd", &d1, &d2);
     if (ok) {
         eraC2i06a(d1, d2, rc2i);
-        return Py_BuildValue(
-        "((ddd)(ddd)(ddd))",
-        rc2i[0][0],rc2i[0][1],rc2i[0][2],
-        rc2i[1][0],rc2i[1][1],rc2i[1][2],
-        rc2i[2][0],rc2i[2][1],rc2i[2][2]
-        );
+        return Py_BuildValue("((ddd)(ddd)(ddd))",
+                                rc2i[0][0],rc2i[0][1],rc2i[0][2],
+                                rc2i[1][0],rc2i[1][1],rc2i[1][2],
+                                rc2i[2][0],rc2i[2][1],rc2i[2][2]);
     }
     else {
         return NULL;
     }
 }
 
-PyDoc_STRVAR(erfa_c2i06a_doc,
+PyDoc_STRVAR(_erfa_c2i06a_doc,
 "c2i06a(d1, d2) -> rc2i\n\n"
 "Form the celestial-to-intermediate matrix for a given date \n"
 "using the IAU 2006 precession and IAU 200A nutation model.\n"
@@ -624,7 +1493,7 @@ PyDoc_STRVAR(erfa_c2i06a_doc,
 "    rc2i       celestial-to-intermediate matrix");
 
 static PyObject *
-erfa_c2ibpn(PyObject *self, PyObject *args)
+_erfa_c2ibpn(PyObject *self, PyObject *args)
 {
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
     double d1, d2, rbpn[3][3], rc2i[3][3];
@@ -653,7 +1522,7 @@ erfa_c2ibpn(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2ibpn_doc,
+PyDoc_STRVAR(_erfa_c2ibpn_doc,
 "c2ibpn(d1, d2, rbpn) -> rc2i\n\n"
 "Form the celestial-to-intermediate matrix for a given date\n"
 "and given the bias-precession-nutation matrix. IAU 2000.\n"
@@ -664,7 +1533,7 @@ PyDoc_STRVAR(erfa_c2ibpn_doc,
 "    rc2i       celestial-to-intermediate matrix");
 
 static PyObject *
-erfa_c2ixy(PyObject *self, PyObject *args)
+_erfa_c2ixy(PyObject *self, PyObject *args)
 {
     double d1, d2, x, y, rc2i[3][3];
     int ok;
@@ -682,7 +1551,7 @@ erfa_c2ixy(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2ixy_doc,
+PyDoc_STRVAR(_erfa_c2ixy_doc,
 "c2ixy(d1, d2, x, y) -> rc2i\n\n"
 "Form the celestial to intermediate-frame-of-date matrix for a given\n"
 "date when the CIP X,Y coordinates are known. IAU 2000.\n"
@@ -693,7 +1562,7 @@ PyDoc_STRVAR(erfa_c2ixy_doc,
 "    rc2i       celestial-to-intermediate matrix");
 
 static PyObject *
-erfa_c2ixys(PyObject *self, PyObject *args)
+_erfa_c2ixys(PyObject *self, PyObject *args)
 {
     double x, y, s, rc2i[3][3];
     int ok;
@@ -712,7 +1581,7 @@ erfa_c2ixys(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2ixys_doc,
+PyDoc_STRVAR(_erfa_c2ixys_doc,
 "c2ixys(x, y, s) -> rc2i\n\n"
 "Form the celestial to intermediate-frame-of-date matrix\n"
 " given the CIP X,Y and the CIO locator s.\n"
@@ -723,7 +1592,7 @@ PyDoc_STRVAR(erfa_c2ixys_doc,
 "   rc2i        celestial-to-intermediate matrix");
 
 static PyObject *
-erfa_c2t00a(PyObject *self, PyObject *args)
+_erfa_c2t00a(PyObject *self, PyObject *args)
 {
     double tta,ttb,uta,utb,xp,yp,rc2t[3][3];
     int ok;
@@ -742,7 +1611,7 @@ erfa_c2t00a(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2t00a_doc,
+PyDoc_STRVAR(_erfa_c2t00a_doc,
 "c2t00a(tta,ttb,uta,utb,xp,yp) -> rc2t\n\n"
 "Form the celestial to terrestrial matrix given the date, the UT1 and\n"
 "the polar motion, using the IAU 2000A nutation model.\n"
@@ -754,7 +1623,7 @@ PyDoc_STRVAR(erfa_c2t00a_doc,
 "    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
-erfa_c2t00b(PyObject *self, PyObject *args)
+_erfa_c2t00b(PyObject *self, PyObject *args)
 {
     double tta,ttb,uta,utb,xp,yp,rc2t[3][3];
     int ok;
@@ -773,7 +1642,7 @@ erfa_c2t00b(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2t00b_doc,
+PyDoc_STRVAR(_erfa_c2t00b_doc,
 "c2t00b(tta,ttb,uta,utb,xp,yp) -> rc2t\n\n"
 "Form the celestial to terrestrial matrix given the date, the UT1 and\n"
 "the polar motion, using the IAU 2000B nutation model.\n"
@@ -785,7 +1654,7 @@ PyDoc_STRVAR(erfa_c2t00b_doc,
 "    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
-erfa_c2t06a(PyObject *self, PyObject *args)
+_erfa_c2t06a(PyObject *self, PyObject *args)
 {
     double tta,ttb,uta,utb,xp,yp,rc2t[3][3];
     int ok;
@@ -804,7 +1673,7 @@ erfa_c2t06a(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2t06a_doc,
+PyDoc_STRVAR(_erfa_c2t06a_doc,
 "c2t06a(tta,ttb,uta,utb,xp,yp) -> rc2t\n\n"
 "Form the celestial to terrestrial matrix given the date, the UT1 and\n"
 "the polar motion, using the IAU 2006 precession and IAU 2000A nutation models.\n"
@@ -817,7 +1686,7 @@ PyDoc_STRVAR(erfa_c2t06a_doc,
 );
 
 static PyObject *
-erfa_c2tcio(PyObject *self, PyObject *args)
+_erfa_c2tcio(PyObject *self, PyObject *args)
 {
     double c00,c01,c02,c10,c11,c12,c20,c21,c22,rc2i[3][3];
     double era, rc2t[3][3];
@@ -859,7 +1728,7 @@ erfa_c2tcio(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2tcio_doc,
+PyDoc_STRVAR(_erfa_c2tcio_doc,
 "c2tcio(rc2i, era, rpom) -> rc2t\n\n"
 "Assemble the celestial to terrestrial matrix from CIO-based components\n"
 "(the celestial-to-intermediate matrix, the Earth Rotation Angle and the polar motion matrix)\n"
@@ -871,7 +1740,7 @@ PyDoc_STRVAR(erfa_c2tcio_doc,
 "    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
-erfa_c2teqx(PyObject *self, PyObject *args)
+_erfa_c2teqx(PyObject *self, PyObject *args)
 {
     double c00,c01,c02,c10,c11,c12,c20,c21,c22,rc2i[3][3];
     double gst, rc2t[3][3];
@@ -913,7 +1782,7 @@ erfa_c2teqx(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2teqx_doc,
+PyDoc_STRVAR(_erfa_c2teqx_doc,
 "c2teqx(rbpn, gst, rpom -> rc2t\n\n"
 "Assemble the celestial to terrestrial matrix from equinox-based\n"
 "components (the celestial-to-true matrix, the Greenwich Apparent\n"
@@ -926,7 +1795,7 @@ PyDoc_STRVAR(erfa_c2teqx_doc,
 "    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
-erfa_c2tpe(PyObject *self, PyObject *args)
+_erfa_c2tpe(PyObject *self, PyObject *args)
 {
     double tta,ttb,uta,utb,dpsi,deps,xp,yp,rc2t[3][3];
     int ok;
@@ -945,7 +1814,7 @@ erfa_c2tpe(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2tpe_doc,
+PyDoc_STRVAR(_erfa_c2tpe_doc,
 "c2tpe(tta,ttb,uta,utb,dpsi,deps,xp,yp) -> rc2t\n\n"
 "Form the celestial to terrestrial matrix given the date, the UT1,\n"
 "the nutation and the polar motion.  IAU 2000.\n"
@@ -958,7 +1827,7 @@ PyDoc_STRVAR(erfa_c2tpe_doc,
 "    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
-erfa_c2txy(PyObject *self, PyObject *args)
+_erfa_c2txy(PyObject *self, PyObject *args)
 {
     double tta,ttb,uta,utb,x,y,xp,yp,rc2t[3][3];
     int ok;
@@ -977,7 +1846,7 @@ erfa_c2txy(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_c2txy_doc,
+PyDoc_STRVAR(_erfa_c2txy_doc,
 "c2txy(tta,ttb,uta,utb,x,y,xp,yp) -> rc2t\n\n"
 "Form the celestial to terrestrial matrix given the date, the UT1,\n"
 "the CIP coordinates and the polar motion.  IAU 2000."
@@ -990,7 +1859,7 @@ PyDoc_STRVAR(erfa_c2txy_doc,
 "    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
-erfa_cal2jd(PyObject *self, PyObject *args)
+_erfa_cal2jd(PyObject *self, PyObject *args)
 {
     int iy, im, id;
     double dmj0, dmj;
@@ -1004,22 +1873,22 @@ erfa_cal2jd(PyObject *self, PyObject *args)
     }
     if (status < 0){
         if (status == -1){
-            PyErr_SetString(erfaError, "bad year");
+            PyErr_SetString(_erfaError, "bad year");
             return NULL;
         }
         else if (status == -2){
-            PyErr_SetString(erfaError, "bad month");
+            PyErr_SetString(_erfaError, "bad month");
             return NULL;
         }
         else if (status == -3){
-            PyErr_SetString(erfaError, "bad day");
+            PyErr_SetString(_erfaError, "bad day");
             return NULL;
         }
     }
     return Py_BuildValue("dd", dmj0, dmj);
 }
 
-PyDoc_STRVAR(erfa_cal2jd_doc,
+PyDoc_STRVAR(_erfa_cal2jd_doc,
 "cal2jd(year, month, day) -> 2400000.5,djm\n\n"
 "Gregorian Calendar to Julian Date.\n"
 "Given:\n"
@@ -1028,7 +1897,7 @@ PyDoc_STRVAR(erfa_cal2jd_doc,
 "    2400000.5,djm    MJD zero-point and Modified Julian Date for 0 hrs");
 
 static PyObject *
-erfa_d2dtf(PyObject *self, PyObject *args)
+_erfa_d2dtf(PyObject *self, PyObject *args)
 {
     double d1, d2;
     int n, ok, status;
@@ -1042,17 +1911,17 @@ erfa_d2dtf(PyObject *self, PyObject *args)
         return NULL;
     }
     if (status > 0){
-        PyErr_SetString(erfaError, "doubious year: date predates UTC or too far in the future");
+        PyErr_SetString(_erfaError, "doubious year: date predates UTC or too far in the future");
         return NULL;
     }
     if (status < 0){
-        PyErr_SetString(erfaError, "unaceptable date");
+        PyErr_SetString(_erfaError, "unaceptable date");
         return NULL;
     }
     return Py_BuildValue("iiiiiii", iy,im,id,ihmsf[0],ihmsf[1],ihmsf[2],ihmsf[3]);
 }
 
-PyDoc_STRVAR(erfa_d2dtf_doc,
+PyDoc_STRVAR(_erfa_d2dtf_doc,
 "d2dtf(n, d1, d2 | scale) -> year, month, day, hours, minutes, seconds, fraction\n\n"
 "Format for output a 2-part Julian Date (or in the case of UTC a\n"
 "quasi-JD form that includes special provision for leap seconds).\n"
@@ -1067,7 +1936,7 @@ PyDoc_STRVAR(erfa_d2dtf_doc,
 );
 
 static PyObject *
-erfa_dat(PyObject *self, PyObject *args)
+_erfa_dat(PyObject *self, PyObject *args)
 {
     int y, m, d, status;
     double fd, deltat;
@@ -1075,31 +1944,31 @@ erfa_dat(PyObject *self, PyObject *args)
         return NULL;
     status = eraDat(y,m,d,fd,&deltat);
     if (status > 0){
-        PyErr_SetString(erfaError, "doubious year: date before UTC:1960 January 1.0.");
+        PyErr_SetString(_erfaError, "doubious year: date before UTC:1960 January 1.0.");
         return NULL;
     }
     else if (status < 0){
         if (status == -1){
-            PyErr_SetString(erfaError, "unaceptable date, bad year");
+            PyErr_SetString(_erfaError, "unaceptable date, bad year");
             return NULL;
         }
         else if (status == -2){
-            PyErr_SetString(erfaError, "unaceptable date, bad month");
+            PyErr_SetString(_erfaError, "unaceptable date, bad month");
             return NULL;
         }
         else if (status == -3){
-            PyErr_SetString(erfaError, "unaceptable date, bad day");
+            PyErr_SetString(_erfaError, "unaceptable date, bad day");
             return NULL;
         }      
         else if (status == -4){
-            PyErr_SetString(erfaError, "bad fraction day, should be < 1.");
+            PyErr_SetString(_erfaError, "bad fraction day, should be < 1.");
             return NULL;
         }      
     }
     return PyFloat_FromDouble(deltat);
 }
 
-PyDoc_STRVAR(erfa_dat_doc,
+PyDoc_STRVAR(_erfa_dat_doc,
 "dat(y,m,d,fd) -> delta t\n\n"
 "For a given UTC date, calculate delta(AT) = TAI-UTC.\n"
 "Given:\n"
@@ -1111,7 +1980,7 @@ PyDoc_STRVAR(erfa_dat_doc,
 "    deltat     TAI minus UTC, seconds");
 
 static PyObject *
-erfa_dtdb(PyObject *self, PyObject *args)
+_erfa_dtdb(PyObject *self, PyObject *args)
 {
     double tdbtt, jd1, jd2, ut1, elon, u, v;
     if (! PyArg_ParseTuple(args, "dddddd", &jd1, &jd2, &ut1, &elon, &u, &v))
@@ -1120,7 +1989,7 @@ erfa_dtdb(PyObject *self, PyObject *args)
     return PyFloat_FromDouble(tdbtt);
 }
 
-PyDoc_STRVAR(erfa_dtdb_doc,
+PyDoc_STRVAR(_erfa_dtdb_doc,
 "dtdb(d1, d2, ut, elon, u, v) -> TDB-TT\n\n"
 "An approximation to TDB-TT, the difference between barycentric\n"
 "dynamical time and terrestrial time, for an observer on the Earth.\n"
@@ -1132,7 +2001,7 @@ PyDoc_STRVAR(erfa_dtdb_doc,
 "    v          distance north of equatorial plane (km)");
 
 static PyObject *
-erfa_dtf2d(PyObject *self, PyObject *args)
+_erfa_dtf2d(PyObject *self, PyObject *args)
 {
     int iy, im, id, ihr, imn, ok, status;
     double sec, dj1, dj2;
@@ -1141,39 +2010,39 @@ erfa_dtf2d(PyObject *self, PyObject *args)
     if (ok) {
         status = eraDtf2d(scale, iy, im, id, ihr, imn, sec, &dj1, &dj2);
         if (status == 3) {
-            PyErr_SetString(erfaError, "both of next two");
+            PyErr_SetString(_erfaError, "both of next two");
             return NULL;
         }
         else if (status == 2) {
-            PyErr_SetString(erfaError, "time is after end of day");
+            PyErr_SetString(_erfaError, "time is after end of day");
             return NULL;
         }
         else if (status == 1) {
-            PyErr_SetString(erfaError, "dubious year");
+            PyErr_SetString(_erfaError, "dubious year");
             return NULL;
         }
         else if (status == -1) {
-            PyErr_SetString(erfaError, "bad year");
+            PyErr_SetString(_erfaError, "bad year");
             return NULL;
         }
         else if (status == -2) {
-            PyErr_SetString(erfaError, "bad month");
+            PyErr_SetString(_erfaError, "bad month");
             return NULL;
         }
         else if (status == -3) {
-            PyErr_SetString(erfaError, "bad day");
+            PyErr_SetString(_erfaError, "bad day");
             return NULL;
         }
         else if (status == -4) {
-            PyErr_SetString(erfaError, "bad hour");
+            PyErr_SetString(_erfaError, "bad hour");
             return NULL;
         }
         else if (status == -5) {
-            PyErr_SetString(erfaError, "bad minute");
+            PyErr_SetString(_erfaError, "bad minute");
             return NULL;
         }
         else if (status == -6) {
-            PyErr_SetString(erfaError, "bad second (<0)");
+            PyErr_SetString(_erfaError, "bad second (<0)");
             return NULL;
         }
         else {
@@ -1185,7 +2054,7 @@ erfa_dtf2d(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_dtf2d_doc,
+PyDoc_STRVAR(_erfa_dtf2d_doc,
 "dtf2d(y,m,d,hr,mn,sec |scale) -> d1,d2\n\n"
 "Encode date and time fields into 2-part Julian Date (or in the case\n"
 "of UTC a quasi-JD form that includes special provision for leap seconds).\n"
@@ -1198,7 +2067,7 @@ PyDoc_STRVAR(erfa_dtf2d_doc,
 "   d1,d2     2-part Julian Date");
 
 static PyObject *
-erfa_ee00(PyObject *self, PyObject *args)
+_erfa_ee00(PyObject *self, PyObject *args)
 {
     double d1,d2,epsa,dpsi,ee;
     int ok;
@@ -1212,7 +2081,7 @@ erfa_ee00(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_ee00_doc,
+PyDoc_STRVAR(_erfa_ee00_doc,
 "ee00(d1,d2,epsa,dpsi) -> ee\n\n"
 "The equation of the equinoxes compatible with IAU 2000 resolutions,\n"
 "given the nutation in longitude and the mean obliquity.\n"
@@ -1224,7 +2093,7 @@ PyDoc_STRVAR(erfa_ee00_doc,
 "    ee         equation of the equinoxes");
 
 static PyObject *
-erfa_ee00a(PyObject *self, PyObject *args)
+_erfa_ee00a(PyObject *self, PyObject *args)
 {
     double d1,d2,ee;
     int ok;
@@ -1238,7 +2107,7 @@ erfa_ee00a(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_ee00a_doc,
+PyDoc_STRVAR(_erfa_ee00a_doc,
 "ee00a(d1,d2) -> ee\n\n"
 "equation of the equinoxes, compatible with IAU 2000 resolutions.\n"
 "Given:\n"
@@ -1247,7 +2116,7 @@ PyDoc_STRVAR(erfa_ee00a_doc,
 "    ee         equation of the equinoxes");
 
 static PyObject *
-erfa_ee00b(PyObject *self, PyObject *args)
+_erfa_ee00b(PyObject *self, PyObject *args)
 {
     double d1,d2,ee;
     int ok;
@@ -1261,7 +2130,7 @@ erfa_ee00b(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_ee00b_doc,
+PyDoc_STRVAR(_erfa_ee00b_doc,
 "ee00b(d1,d2) -> ee\n\n"
 "Equation of the equinoxes, compatible with IAU 2000 resolutions\n"
 "but using the truncated nutation model IAU 2000B.\n"
@@ -1271,7 +2140,7 @@ PyDoc_STRVAR(erfa_ee00b_doc,
 "    ee         equation of the equinoxes");
 
 static PyObject *
-erfa_ee06a(PyObject *self, PyObject *args)
+_erfa_ee06a(PyObject *self, PyObject *args)
 {
     double d1,d2,ee;
     int ok;
@@ -1285,7 +2154,7 @@ erfa_ee06a(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_ee06a_doc,
+PyDoc_STRVAR(_erfa_ee06a_doc,
 "ee06a(d1,d2) -> ee\n\n"
 "Equation of the equinoxes, compatible with IAU 2000 resolutions and \n"
 "IAU 2006/2000A precession-nutation.\n"
@@ -1295,7 +2164,7 @@ PyDoc_STRVAR(erfa_ee06a_doc,
 "    ee         equation of the equinoxes");
 
 static PyObject *
-erfa_eect00(PyObject *self, PyObject *args)
+_erfa_eect00(PyObject *self, PyObject *args)
 {
     double d1,d2,ct;
     int ok;
@@ -1309,7 +2178,7 @@ erfa_eect00(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_eect00_doc,
+PyDoc_STRVAR(_erfa_eect00_doc,
 "eect00(d1,d2) -> ct\n\n"
 "Equation of the equinoxes complementary terms, consistent with IAU 2000 resolutions.\n"
 "Given:\n"
@@ -1318,7 +2187,7 @@ PyDoc_STRVAR(erfa_eect00_doc,
 "    ct        complementary terms");
 
 static PyObject *
-erfa_eform(PyObject *self, PyObject *args)
+_erfa_eform(PyObject *self, PyObject *args)
 {
     int n, status, ok;
     double a, f;
@@ -1326,7 +2195,7 @@ erfa_eform(PyObject *self, PyObject *args)
     if (ok) {
         status = eraEform(n, &a, &f);
         if (status) {
-            PyErr_SetString(erfaError, "illegal identifier; n should be 1,2 or 3");
+            PyErr_SetString(_erfaError, "illegal identifier; n should be 1,2 or 3");
             return NULL;
         }            
         return Py_BuildValue("dd",a,f);
@@ -1336,7 +2205,7 @@ erfa_eform(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_eform_doc,
+PyDoc_STRVAR(_erfa_eform_doc,
 "eform(n) -> a, f\n\n"
 "Earth reference ellipsoids.\n"
 "Given:\n"
@@ -1349,7 +2218,7 @@ PyDoc_STRVAR(erfa_eform_doc,
 "    f          flattening");
 
 static PyObject *
-erfa_eo06a(PyObject *self, PyObject *args)
+_erfa_eo06a(PyObject *self, PyObject *args)
 {
     double d1, d2, eo;
     int ok;
@@ -1363,7 +2232,7 @@ erfa_eo06a(PyObject *self, PyObject *args)
     }    
 }
 
-PyDoc_STRVAR(erfa_eo06a_doc,
+PyDoc_STRVAR(_erfa_eo06a_doc,
 "eo06a(d1, d2) -> eo\n"
 "equation of the origins, IAU 2006 precession and IAU 2000A nutation.\n"
 "Given:\n"
@@ -1372,7 +2241,7 @@ PyDoc_STRVAR(erfa_eo06a_doc,
 "    eo         equation of the origins (radians)");
 
 static PyObject *
-erfa_eors(PyObject *self, PyObject *args)
+_erfa_eors(PyObject *self, PyObject *args)
 {
     double rnpb[3][3], s, eo;
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
@@ -1397,7 +2266,7 @@ erfa_eors(PyObject *self, PyObject *args)
     }        
 }
 
-PyDoc_STRVAR(erfa_eors_doc,
+PyDoc_STRVAR(_erfa_eors_doc,
 "eors(rnpb, s) -> eo\n\n"
 "Equation of the origins, given the classical NPB matrix and the quantity s\n"
 "Given:\n"
@@ -1407,7 +2276,7 @@ PyDoc_STRVAR(erfa_eors_doc,
 "    eo         equation of the origins in radians");
 
 static PyObject *
-erfa_epb(PyObject *self, PyObject *args)
+_erfa_epb(PyObject *self, PyObject *args)
 {
     double d1, d2, b;
     int ok;
@@ -1421,7 +2290,7 @@ erfa_epb(PyObject *self, PyObject *args)
     }                
 }
 
-PyDoc_STRVAR(erfa_epb_doc,
+PyDoc_STRVAR(_erfa_epb_doc,
 "epb(d1, d2) -> b\n\n"
 "Julian Date to Besselian Epoch\n"
 "Given:\n"
@@ -1430,7 +2299,7 @@ PyDoc_STRVAR(erfa_epb_doc,
 "    b          Besselian Epoch.");
 
 static PyObject *
-erfa_epb2jd(PyObject *self, PyObject *args)
+_erfa_epb2jd(PyObject *self, PyObject *args)
 {
     double epb, jd0, jd1;
     if (!PyArg_ParseTuple(args, "d", &epb)) {
@@ -1440,7 +2309,7 @@ erfa_epb2jd(PyObject *self, PyObject *args)
     return Py_BuildValue("dd",jd0,jd1);
 }
 
-PyDoc_STRVAR(erfa_epb2jd_doc,
+PyDoc_STRVAR(_erfa_epb2jd_doc,
 "epb2jd(epb) -> 2400000.5 djm\n\n"
 "Given:\n"
 "    epb        Besselian Epoch,\n"
@@ -1448,7 +2317,7 @@ PyDoc_STRVAR(erfa_epb2jd_doc,
 "    djm        Modified Julian Date");
 
 static PyObject *
-erfa_epj(PyObject *self, PyObject *args)
+_erfa_epj(PyObject *self, PyObject *args)
 {
     double d1, d2, j;
     int ok;
@@ -1462,7 +2331,7 @@ erfa_epj(PyObject *self, PyObject *args)
     }                
 }
 
-PyDoc_STRVAR(erfa_epj_doc,
+PyDoc_STRVAR(_erfa_epj_doc,
 "epj(d1, d2) -> b\n\n"
 "Julian Date to Julian Epoch.\n"
 "Given:\n"
@@ -1471,7 +2340,7 @@ PyDoc_STRVAR(erfa_epj_doc,
 "    b          Julian Epoch");
 
 static PyObject *
-erfa_epj2jd(PyObject *self, PyObject *args)
+_erfa_epj2jd(PyObject *self, PyObject *args)
 {
     double epj, jd0, jd1;
     if (!PyArg_ParseTuple(args, "d", &epj)) {
@@ -1481,7 +2350,7 @@ erfa_epj2jd(PyObject *self, PyObject *args)
     return Py_BuildValue("dd",jd0,jd1);
 }
 
-PyDoc_STRVAR(erfa_epj2jd_doc,
+PyDoc_STRVAR(_erfa_epj2jd_doc,
 "epj2jd(epj) -> 2400000.5 djm\n\n"
 "Julian Epoch to Julian Date\n"
 "Given:\n"
@@ -1490,7 +2359,7 @@ PyDoc_STRVAR(erfa_epj2jd_doc,
 "    djm        Modified Julian Date");
 
 static PyObject *
-erfa_epv00(PyObject *self, PyObject *args, PyObject *kwds)
+_erfa_epv00(PyObject *self, PyObject *args, PyObject *kwds)
 {
     static char *kwlist[] = {"dj1", "dj2", "prec", NULL};
     double dj1, dj2;
@@ -1507,7 +2376,7 @@ erfa_epv00(PyObject *self, PyObject *args, PyObject *kwds)
            pvb[0][0], pvb[0][1], pvb[0][2], pvb[1][0], pvb[1][1], pvb[1][2]);
         }
         else {
-            PyErr_SetString(erfaError, "date outside the range 1900-2100 AD, set prec!=0 to force computation");
+            PyErr_SetString(_erfaError, "date outside the range 1900-2100 AD, set prec!=0 to force computation");
             return NULL;
         }
     }
@@ -1518,7 +2387,7 @@ erfa_epv00(PyObject *self, PyObject *args, PyObject *kwds)
     }
 }
 
-PyDoc_STRVAR(erfa_epv00_doc,
+PyDoc_STRVAR(_erfa_epv00_doc,
 "epv00(d1,d2 |prec=0) -> pvh, pvb\n\n"
 "Earth position and velocity, heliocentric and barycentric,\n"
 "with respect to the Barycentric Celestial Reference System.\n"
@@ -1530,7 +2399,7 @@ PyDoc_STRVAR(erfa_epv00_doc,
 "    pvb        barycentric Earth position/velocity");
 
 static PyObject *
-erfa_eqeq94(PyObject *self, PyObject *args)
+_erfa_eqeq94(PyObject *self, PyObject *args)
 {
     double d1, d2, ee;
     int ok;
@@ -1544,7 +2413,7 @@ erfa_eqeq94(PyObject *self, PyObject *args)
     }   
 }
 
-PyDoc_STRVAR(erfa_eqeq94_doc,
+PyDoc_STRVAR(_erfa_eqeq94_doc,
 "eqeq94(d1,d2) -> ee\n\n"
 "Equation of the equinoxes, IAU 1994 model.\n"
 "Given:\n"
@@ -1553,7 +2422,7 @@ PyDoc_STRVAR(erfa_eqeq94_doc,
 "    ee         equation of the equinoxes");
 
 static PyObject *
-erfa_era00(PyObject *self, PyObject *args)
+_erfa_era00(PyObject *self, PyObject *args)
 {
     double d1, d2, era;
     int ok;
@@ -1567,7 +2436,7 @@ erfa_era00(PyObject *self, PyObject *args)
     }   
 }
 
-PyDoc_STRVAR(erfa_era00_doc,
+PyDoc_STRVAR(_erfa_era00_doc,
 "era00(d1,d2) -> era\n\n"
 "Earth rotation angle (IAU 2000 model).\n"
 "Given:\n"
@@ -1576,7 +2445,7 @@ PyDoc_STRVAR(erfa_era00_doc,
 "    era         Earth rotation angle (radians), range 0-2pi");
 
 static PyObject *
-erfa_fad03(PyObject *self, PyObject *args)
+_erfa_fad03(PyObject *self, PyObject *args)
 {
     double t,d;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1586,7 +2455,7 @@ erfa_fad03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",d);
 }
 
-PyDoc_STRVAR(erfa_fad03_doc,
+PyDoc_STRVAR(_erfa_fad03_doc,
 "fad03(t) -> d\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean elongation of the Moon from the Sun.\n"
@@ -1596,7 +2465,7 @@ PyDoc_STRVAR(erfa_fad03_doc,
 "    d          mean elongation of the Moon from the Sun, radians.");
 
 static PyObject *
-erfa_fae03(PyObject *self, PyObject *args)
+_erfa_fae03(PyObject *self, PyObject *args)
 {
     double t,e;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1606,7 +2475,7 @@ erfa_fae03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",e);
 }
 
-PyDoc_STRVAR(erfa_fae03_doc,
+PyDoc_STRVAR(_erfa_fae03_doc,
 "fae03(t) -> e\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Earth.\n"
@@ -1616,7 +2485,7 @@ PyDoc_STRVAR(erfa_fae03_doc,
 "    e          mean longitude of Earth, radians.");
 
 static PyObject *
-erfa_faf03(PyObject *self, PyObject *args)
+_erfa_faf03(PyObject *self, PyObject *args)
 {
     double t,f;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1626,7 +2495,7 @@ erfa_faf03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",f);
 }
 
-PyDoc_STRVAR(erfa_faf03_doc,
+PyDoc_STRVAR(_erfa_faf03_doc,
 "faf03(t) -> f\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of the Moon minus mean longitude of the ascending node.\n"
@@ -1636,7 +2505,7 @@ PyDoc_STRVAR(erfa_faf03_doc,
 "    f          mean longitude of the Moon minus mean longitude of the ascending node, radians.");
 
 static PyObject *
-erfa_faju03(PyObject *self, PyObject *args)
+_erfa_faju03(PyObject *self, PyObject *args)
 {
     double t,l;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1646,7 +2515,7 @@ erfa_faju03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",l);
 }
 
-PyDoc_STRVAR(erfa_faju03_doc,
+PyDoc_STRVAR(_erfa_faju03_doc,
 "faju03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Jupiter.\n"
@@ -1656,7 +2525,7 @@ PyDoc_STRVAR(erfa_faju03_doc,
 "    l          mean longitude of Jupiter., in radians.");
 
 static PyObject *
-erfa_fal03(PyObject *self, PyObject *args)
+_erfa_fal03(PyObject *self, PyObject *args)
 {
     double t,l;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1666,7 +2535,7 @@ erfa_fal03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",l);
 }
 
-PyDoc_STRVAR(erfa_fal03_doc,
+PyDoc_STRVAR(_erfa_fal03_doc,
 "fal03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean anomaly of the Moon.\n"
@@ -1676,7 +2545,7 @@ PyDoc_STRVAR(erfa_fal03_doc,
 "    l          mean anomaly of the Moon, in radians.");
 
 static PyObject *
-erfa_falp03(PyObject *self, PyObject *args)
+_erfa_falp03(PyObject *self, PyObject *args)
 {
     double t,lp;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1686,7 +2555,7 @@ erfa_falp03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",lp);
 }
 
-PyDoc_STRVAR(erfa_falp03_doc,
+PyDoc_STRVAR(_erfa_falp03_doc,
 "fal03(t) -> lp\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean anomaly of the Sun.\n"
@@ -1696,7 +2565,7 @@ PyDoc_STRVAR(erfa_falp03_doc,
 "    lp         mean anomaly of the Sun, in radians.");
 
 static PyObject *
-erfa_fama03(PyObject *self, PyObject *args)
+_erfa_fama03(PyObject *self, PyObject *args)
 {
     double t,l;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1706,7 +2575,7 @@ erfa_fama03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",l);
 }
 
-PyDoc_STRVAR(erfa_fama03_doc,
+PyDoc_STRVAR(_erfa_fama03_doc,
 "fama03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Mars.\n"
@@ -1716,7 +2585,7 @@ PyDoc_STRVAR(erfa_fama03_doc,
 "    l          mean longitude of Mars, in radians.");
 
 static PyObject *
-erfa_fame03(PyObject *self, PyObject *args)
+_erfa_fame03(PyObject *self, PyObject *args)
 {
     double t,l;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1726,7 +2595,7 @@ erfa_fame03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",l);
 }
 
-PyDoc_STRVAR(erfa_fame03_doc,
+PyDoc_STRVAR(_erfa_fame03_doc,
 "fame03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Mercury.\n"
@@ -1736,7 +2605,7 @@ PyDoc_STRVAR(erfa_fame03_doc,
 "    l          mean longitude of Mercury, in radians.");
 
 static PyObject *
-erfa_fane03(PyObject *self, PyObject *args)
+_erfa_fane03(PyObject *self, PyObject *args)
 {
     double t,l;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1746,7 +2615,7 @@ erfa_fane03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",l);
 }
 
-PyDoc_STRVAR(erfa_fane03_doc,
+PyDoc_STRVAR(_erfa_fane03_doc,
 "fane03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Neptune.\n"
@@ -1756,7 +2625,7 @@ PyDoc_STRVAR(erfa_fane03_doc,
 "    l          mean longitude of Neptune, in radians.");
 
 static PyObject *
-erfa_faom03(PyObject *self, PyObject *args)
+_erfa_faom03(PyObject *self, PyObject *args)
 {
     double t,l;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1766,7 +2635,7 @@ erfa_faom03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",l);
 }
 
-PyDoc_STRVAR(erfa_faom03_doc,
+PyDoc_STRVAR(_erfa_faom03_doc,
 "faom03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Moon's ascending node.\n"
@@ -1776,7 +2645,7 @@ PyDoc_STRVAR(erfa_faom03_doc,
 "    l          mean longitude of Moon's ascending node, in radians.");
 
 static PyObject *
-erfa_fapa03(PyObject *self, PyObject *args)
+_erfa_fapa03(PyObject *self, PyObject *args)
 {
     double t,l;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1786,7 +2655,7 @@ erfa_fapa03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",l);
 }
 
-PyDoc_STRVAR(erfa_fapa03_doc,
+PyDoc_STRVAR(_erfa_fapa03_doc,
 "fapa03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "general accumulated precession in longitude.\n"
@@ -1796,7 +2665,7 @@ PyDoc_STRVAR(erfa_fapa03_doc,
 "    l          general accumulated precession in longitude, in radians.");
 
 static PyObject *
-erfa_fasa03(PyObject *self, PyObject *args)
+_erfa_fasa03(PyObject *self, PyObject *args)
 {
     double t,l;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1806,7 +2675,7 @@ erfa_fasa03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",l);
 }
 
-PyDoc_STRVAR(erfa_fasa03_doc,
+PyDoc_STRVAR(_erfa_fasa03_doc,
 "fasa03(t) -> l\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Saturn.\n"
@@ -1816,7 +2685,7 @@ PyDoc_STRVAR(erfa_fasa03_doc,
 "    l          mean longitude of Saturn, in radians.");
 
 static PyObject *
-erfa_faur03(PyObject *self, PyObject *args)
+_erfa_faur03(PyObject *self, PyObject *args)
 {
     double t,l;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1826,7 +2695,7 @@ erfa_faur03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",l);
 }
 
-PyDoc_STRVAR(erfa_faur03_doc,
+PyDoc_STRVAR(_erfa_faur03_doc,
 "faur03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Uranus.\n"
@@ -1836,7 +2705,7 @@ PyDoc_STRVAR(erfa_faur03_doc,
 "    l          mean longitude of Uranus, in radians.");
 
 static PyObject *
-erfa_fave03(PyObject *self, PyObject *args)
+_erfa_fave03(PyObject *self, PyObject *args)
 {
     double t,l;
     if (!PyArg_ParseTuple(args, "d", &t)) {
@@ -1846,7 +2715,7 @@ erfa_fave03(PyObject *self, PyObject *args)
     return Py_BuildValue("d",l);
 }
 
-PyDoc_STRVAR(erfa_fave03_doc,
+PyDoc_STRVAR(_erfa_fave03_doc,
 "faver03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003)\n"
 "mean longitude of Venus."
@@ -1856,7 +2725,7 @@ PyDoc_STRVAR(erfa_fave03_doc,
 "    l          mean longitude of Venus, in radians.");
 
 static PyObject *
-erfa_fk52h(PyObject *self, PyObject *args)
+_erfa_fk52h(PyObject *self, PyObject *args)
 {
     double r5, d5, dr5, dd5, px5, rv5;
     double rh, dh, drh, ddh, pxh, rvh;
@@ -1868,7 +2737,7 @@ erfa_fk52h(PyObject *self, PyObject *args)
     return Py_BuildValue("dddddd", rh, dh, drh, ddh, pxh, rvh);
 }
 
-PyDoc_STRVAR(erfa_fk52h_doc,
+PyDoc_STRVAR(_erfa_fk52h_doc,
 "fk52h(r5, d5, dr5, dd5, px5,rv5) -> rh, dh, drh, ddh, pxh, rvh)\n\n"
 "Transform FK5 (J2000.0) star data into the Hipparcos system.\n"
 "Given (all FK5, equinox J2000.0, epoch J2000.0):\n"
@@ -1887,7 +2756,7 @@ PyDoc_STRVAR(erfa_fk52h_doc,
 "    rvh        radial velocity (km/s, positive = receding)");
 
 static PyObject *
-erfa_fk5hip(PyObject *self)
+_erfa_fk5hip(PyObject *self)
 {
     double r5h[3][3], s5h[3];
     eraFk5hip(r5h, s5h);
@@ -1898,7 +2767,7 @@ erfa_fk5hip(PyObject *self)
         s5h[0],s5h[1],s5h[2]);
 }
 
-PyDoc_STRVAR(erfa_fk5hip_doc,
+PyDoc_STRVAR(_erfa_fk5hip_doc,
 "fk5hip() -> r5h, s5h\n\n"
 "FK5 to Hipparcos rotation and spin.\n"
 "Returned:\n"
@@ -1906,7 +2775,7 @@ PyDoc_STRVAR(erfa_fk5hip_doc,
 "    s5         r-vector: FK5 spin wrt Hipparcos.");
 
 static PyObject *
-erfa_fk5hz(PyObject *self, PyObject *args)
+_erfa_fk5hz(PyObject *self, PyObject *args)
 {
     double r5,d5,d1,d2,rh,dh;
     if (!PyArg_ParseTuple(args, "dddd", &r5, &d5, &d1, &d2)) {
@@ -1916,7 +2785,7 @@ erfa_fk5hz(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", rh, dh);
 }
 
-PyDoc_STRVAR(erfa_fk5hz_doc,
+PyDoc_STRVAR(_erfa_fk5hz_doc,
 "fk5hz(r5, d5, d1, d2) -> rh, dh\n\n"
 "Transform an FK5 (J2000.0) star position into the system of the\n"
 "Hipparcos catalogue, assuming zero Hipparcos proper motion.\n"
@@ -1929,7 +2798,7 @@ PyDoc_STRVAR(erfa_fk5hz_doc,
 "    dh         Hipparcos Dec (radians)");
 
 static PyObject *
-erfa_fw2m(PyObject *self, PyObject *args)
+_erfa_fw2m(PyObject *self, PyObject *args)
 {
     double gamb, phib, psi, eps, r[3][3];
     if (!PyArg_ParseTuple(args, "dddd", &gamb, &phib, &psi, &eps)) {
@@ -1942,7 +2811,7 @@ erfa_fw2m(PyObject *self, PyObject *args)
         r[2][0],r[2][1],r[2][2]);
 }
 
-PyDoc_STRVAR(erfa_fw2m_doc,
+PyDoc_STRVAR(_erfa_fw2m_doc,
 "fw2m(gamb, phib, psi, eps) -> r\n\n"
 "Form rotation matrix given the Fukushima-Williams angles.\n"
 "Given:\n"
@@ -1954,7 +2823,7 @@ PyDoc_STRVAR(erfa_fw2m_doc,
 "    r          rotation matrix");
 
 static PyObject *
-erfa_fw2xy(PyObject *self, PyObject *args)
+_erfa_fw2xy(PyObject *self, PyObject *args)
 {
     double gamb, phib, psi, eps, x, y;
     if (!PyArg_ParseTuple(args, "dddd", &gamb, &phib, &psi, &eps)) {
@@ -1964,7 +2833,7 @@ erfa_fw2xy(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", x, y);
 }
 
-PyDoc_STRVAR(erfa_fw2xy_doc,
+PyDoc_STRVAR(_erfa_fw2xy_doc,
 "fw2xy(gamb, phib, psi, eps) -> x, y\n\n"
 "Form CIP X,Y given Fukushima-Williams bias-precession-nutation angles.\n"
 "Given:\n"
@@ -1976,7 +2845,7 @@ PyDoc_STRVAR(erfa_fw2xy_doc,
 "    x,y        CIP X,Y (radians)");
 
 static PyObject *
-erfa_gc2gd(PyObject *self, PyObject *args)
+_erfa_gc2gd(PyObject *self, PyObject *args)
 {
     double xyz[3], elong, phi, height;
     double x, y, z;
@@ -1988,11 +2857,11 @@ erfa_gc2gd(PyObject *self, PyObject *args)
         xyz[2] = z;
         status = eraGc2gd(n, xyz, &elong, &phi, &height);
         if (status == -1) {
-            PyErr_SetString(erfaError, "illegal identifier; n should be 1,2 or 3");
+            PyErr_SetString(_erfaError, "illegal identifier; n should be 1,2 or 3");
             return NULL;
         }            
         else if (status == -2) {
-            PyErr_SetString(erfaError, "internal error");
+            PyErr_SetString(_erfaError, "internal error");
             return NULL;
         }  
         else {
@@ -2004,7 +2873,7 @@ erfa_gc2gd(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_gc2gd_doc,
+PyDoc_STRVAR(_erfa_gc2gd_doc,
 "gc2gd(n, xyz[3]) -> elong, phi, height\n\n"
 "Transform geocentric coordinates to geodetic\n"
 "using the specified reference ellipsoid.\n"
@@ -2017,7 +2886,7 @@ PyDoc_STRVAR(erfa_gc2gd_doc,
 "    height     height above ellipsoid (geodetic)");
 
 static PyObject *
-erfa_gc2gde(PyObject *self, PyObject *args)
+_erfa_gc2gde(PyObject *self, PyObject *args)
 {
     double xyz[3], a, f, elong, phi, height;
     double x, y, z;
@@ -2029,11 +2898,11 @@ erfa_gc2gde(PyObject *self, PyObject *args)
         xyz[2] = z;
         status = eraGc2gde(a, f, xyz, &elong, &phi, &height);
         if (status == -1) {
-            PyErr_SetString(erfaError, "illegal f");
+            PyErr_SetString(_erfaError, "illegal f");
             return NULL;
         }            
         else if (status == -2) {
-            PyErr_SetString(erfaError, "illegal a");
+            PyErr_SetString(_erfaError, "illegal a");
             return NULL;
         }  
         else {
@@ -2045,7 +2914,7 @@ erfa_gc2gde(PyObject *self, PyObject *args)
     }    
 }
 
-PyDoc_STRVAR(erfa_gc2gde_doc,
+PyDoc_STRVAR(_erfa_gc2gde_doc,
 "gc2gde(a, f, xyz) -> elong, phi, height\n\n"
 "Transform geocentric coordinates to geodetic\n"
 " for a reference ellipsoid of specified form.\n"
@@ -2059,7 +2928,7 @@ PyDoc_STRVAR(erfa_gc2gde_doc,
 "    height     height above ellipsoid (geodetic)");
 
 static PyObject *
-erfa_gd2gc(PyObject *self, PyObject *args)
+_erfa_gd2gc(PyObject *self, PyObject *args)
 {
     double elong, phi, height, xyz[3];
     int n, status, ok;
@@ -2067,11 +2936,11 @@ erfa_gd2gc(PyObject *self, PyObject *args)
     if (ok) {
         status = eraGd2gc(n, elong, phi, height, xyz);
         if (status == -1) {
-            PyErr_SetString(erfaError, "illegal identifier; n should be 1,2 or 3");
+            PyErr_SetString(_erfaError, "illegal identifier; n should be 1,2 or 3");
             return NULL;
         }            
         else if (status == -2) {
-            PyErr_SetString(erfaError, "illegal case");
+            PyErr_SetString(_erfaError, "illegal case");
             return NULL;
         }  
         else {
@@ -2083,7 +2952,7 @@ erfa_gd2gc(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_gd2gc_doc,
+PyDoc_STRVAR(_erfa_gd2gc_doc,
 "gd2gc(n, elong, phi, height) -> xyz\n\n"
 "Transform geodetic coordinates to geocentric\n"
 " using the specified reference ellipsoid.\n"
@@ -2096,7 +2965,7 @@ PyDoc_STRVAR(erfa_gd2gc_doc,
 "    xyz        geocentric vector in meters");
 
 static PyObject *
-erfa_gd2gce(PyObject *self, PyObject *args)
+_erfa_gd2gce(PyObject *self, PyObject *args)
 {
     double a, f, elong, phi, height, xyz[3];
     int status, ok;
@@ -2104,7 +2973,7 @@ erfa_gd2gce(PyObject *self, PyObject *args)
     if (ok) {
         status = eraGd2gce(a, f, elong, phi, height, xyz);
         if (status == -1) {
-            PyErr_SetString(erfaError, "illegal case");
+            PyErr_SetString(_erfaError, "illegal case");
             return NULL;
         }  
         else {
@@ -2116,7 +2985,7 @@ erfa_gd2gce(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_gd2gce_doc,
+PyDoc_STRVAR(_erfa_gd2gce_doc,
 "gd2gce(a, f, elong, phi, height) -> xyz\n\n"
 "Transform geodetic coordinates to geocentric for a reference\n"
 " for a reference ellipsoid of specified form\n"
@@ -2130,7 +2999,7 @@ PyDoc_STRVAR(erfa_gd2gce_doc,
 "    xyz        geocentric vector in meters");
 
 static PyObject *
-erfa_gmst00(PyObject *self, PyObject *args)
+_erfa_gmst00(PyObject *self, PyObject *args)
 {
     double uta, utb, tta, ttb, g;
     if (!PyArg_ParseTuple(args, "dddd", &uta, &utb, &tta, &ttb)) {
@@ -2140,7 +3009,7 @@ erfa_gmst00(PyObject *self, PyObject *args)
     return Py_BuildValue("d", g);
 }
 
-PyDoc_STRVAR(erfa_gmst00_doc,
+PyDoc_STRVAR(_erfa_gmst00_doc,
 "gmst00(uta, utb, tta, ttb) -> gmst\n\n"
 "Greenwich mean sidereal time\n"
 "(model consistent with IAU 2000 resolutions).\n"
@@ -2151,7 +3020,7 @@ PyDoc_STRVAR(erfa_gmst00_doc,
 "    g          Greenwich mean sidereal time (radians)");
 
 static PyObject *
-erfa_gmst06(PyObject *self, PyObject *args)
+_erfa_gmst06(PyObject *self, PyObject *args)
 {
     double uta, utb, tta, ttb, g;
     if (!PyArg_ParseTuple(args, "dddd", &uta, &utb, &tta, &ttb)) {
@@ -2161,7 +3030,7 @@ erfa_gmst06(PyObject *self, PyObject *args)
     return Py_BuildValue("d", g);
 }
 
-PyDoc_STRVAR(erfa_gmst06_doc,
+PyDoc_STRVAR(_erfa_gmst06_doc,
 "gmst06(uta, utb, tta, ttb) -> gmst\n\n"
 "Greenwich mean sidereal time\n"
 "(model consistent with IAU 2006resolutions).\n"
@@ -2172,7 +3041,7 @@ PyDoc_STRVAR(erfa_gmst06_doc,
 "    g          Greenwich mean sidereal time (radians)");
 
 static PyObject *
-erfa_gmst82(PyObject *self, PyObject *args)
+_erfa_gmst82(PyObject *self, PyObject *args)
 {
     double dj1, dj2, g;
     if (!PyArg_ParseTuple(args, "dd", &dj1, &dj2)) {
@@ -2182,7 +3051,7 @@ erfa_gmst82(PyObject *self, PyObject *args)
     return Py_BuildValue("d", g);
 }
 
-PyDoc_STRVAR(erfa_gmst82_doc,
+PyDoc_STRVAR(_erfa_gmst82_doc,
 "gmst82(d1, d2) -> gmst\n\n"
 "Universal Time to Greenwich mean sidereal time (IAU 1982 model)\n"
 "Given:\n"
@@ -2191,7 +3060,7 @@ PyDoc_STRVAR(erfa_gmst82_doc,
 "    g          Greenwich mean sidereal time (radians)");
 
 static PyObject *
-erfa_gst00a(PyObject *self, PyObject *args)
+_erfa_gst00a(PyObject *self, PyObject *args)
 {
     double uta, utb, tta, ttb, g;
     if (!PyArg_ParseTuple(args, "dddd", &uta, &utb, &tta, &ttb)) {
@@ -2201,7 +3070,7 @@ erfa_gst00a(PyObject *self, PyObject *args)
     return Py_BuildValue("d", g);
 }
 
-PyDoc_STRVAR(erfa_gst00a_doc,
+PyDoc_STRVAR(_erfa_gst00a_doc,
 "gst00a(uta, utb, tta, ttb) -> gast\n\n"
 "Greenwich apparent sidereal time\n"
 "(model consistent with IAU 2000resolutions).\n"
@@ -2212,7 +3081,7 @@ PyDoc_STRVAR(erfa_gst00a_doc,
 "    g          Greenwich apparent sidereal time (radians)");
 
 static PyObject *
-erfa_gst00b(PyObject *self, PyObject *args)
+_erfa_gst00b(PyObject *self, PyObject *args)
 {
     double uta, utb, g;
     if (!PyArg_ParseTuple(args, "dd", &uta, &utb)) {
@@ -2222,7 +3091,7 @@ erfa_gst00b(PyObject *self, PyObject *args)
     return Py_BuildValue("d", g);
 }
 
-PyDoc_STRVAR(erfa_gst00b_doc,
+PyDoc_STRVAR(_erfa_gst00b_doc,
 "gst00b(uta, utb) -> gast\n\n"
 "Greenwich apparent sidereal time (model consistent with IAU 2000\n"
 "resolutions but using the truncated nutation model IAU 2000B).\n"
@@ -2232,7 +3101,7 @@ PyDoc_STRVAR(erfa_gst00b_doc,
 "    g          Greenwich apparent sidereal time (radians)");
 
 static PyObject *
-erfa_gst06(PyObject *self, PyObject *args)
+_erfa_gst06(PyObject *self, PyObject *args)
 {
     double uta, utb, tta, ttb, rnpb[3][3];
     double r00,r01,r02,r10,r11,r12,r20,r21,r22, g;
@@ -2258,7 +3127,7 @@ erfa_gst06(PyObject *self, PyObject *args)
     }        
 }
 
-PyDoc_STRVAR(erfa_gst06_doc,
+PyDoc_STRVAR(_erfa_gst06_doc,
 "gst06(uta, utb, tta, ttb, rnpb[3][3]) -> gast\n\n"
 "Greenwich apparent sidereal time, IAU 2006, given the NPB matrix.\n"
 "Given:\n"
@@ -2269,7 +3138,7 @@ PyDoc_STRVAR(erfa_gst06_doc,
 "    g          Greenwich apparent sidereal time");
 
 static PyObject *
-erfa_gst06a(PyObject *self, PyObject *args)
+_erfa_gst06a(PyObject *self, PyObject *args)
 {
     double uta, utb, tta, ttb, g;
     if (!PyArg_ParseTuple(args, "dddd", &uta, &utb, &tta, &ttb)) {
@@ -2279,7 +3148,7 @@ erfa_gst06a(PyObject *self, PyObject *args)
     return Py_BuildValue("d", g);
 }
 
-PyDoc_STRVAR(erfa_gst06a_doc,
+PyDoc_STRVAR(_erfa_gst06a_doc,
 "gst06a(uta, utb, tta, ttb) -> gast\n\n"
 "Greenwich apparent sidereal time\n"
 "(model consistent with IAU 2000and 2006 resolutions).\n"
@@ -2290,7 +3159,7 @@ PyDoc_STRVAR(erfa_gst06a_doc,
 "    g          Greenwich apparent sidereal time (radians)");
 
 static PyObject *
-erfa_gst94(PyObject *self, PyObject *args)
+_erfa_gst94(PyObject *self, PyObject *args)
 {
     double uta, utb, g;
     if (!PyArg_ParseTuple(args, "dd", &uta, &utb)) {
@@ -2300,7 +3169,7 @@ erfa_gst94(PyObject *self, PyObject *args)
     return Py_BuildValue("d", g);
 }
 
-PyDoc_STRVAR(erfa_gst94_doc,
+PyDoc_STRVAR(_erfa_gst94_doc,
 "gst94(uta, utb) -> gast\n\n"
 "Greenwich apparent sidereal time\n"
 "(consistent with IAU 1982/94 resolutions)\n"
@@ -2310,7 +3179,7 @@ PyDoc_STRVAR(erfa_gst94_doc,
 "    g          Greenwich mean sidereal time (radians)");
 
 static PyObject *
-erfa_h2fk5(PyObject *self, PyObject *args)
+_erfa_h2fk5(PyObject *self, PyObject *args)
 {
     double rh, dh, drh, ddh, pxh, rvh;
     double r5, d5, dr5, dd5, px5, rv5;
@@ -2321,7 +3190,7 @@ erfa_h2fk5(PyObject *self, PyObject *args)
     return Py_BuildValue("dddddd", r5, d5, dr5, dd5, px5, rv5);
 }
 
-PyDoc_STRVAR(erfa_h2fk5_doc,
+PyDoc_STRVAR(_erfa_h2fk5_doc,
 "h2fk5(rh, dh, drh, ddh, pxh, rvh) -> r5, d5, dr5, dd5, px5, rv5\n\n"
 "Transform Hipparcos star data into the FK5 (J2000.0) system.\n"
 "Given (all Hipparcos, epoch J2000.0):\n"
@@ -2340,7 +3209,7 @@ PyDoc_STRVAR(erfa_h2fk5_doc,
 "     rv5   radial velocity (km/s, positive = receding)");
 
 static PyObject *
-erfa_hfk5z(PyObject *self, PyObject *args)
+_erfa_hfk5z(PyObject *self, PyObject *args)
 {
     double rh, dh, d1, d2;
     double r5, d5, dr5, dd5;
@@ -2351,7 +3220,7 @@ erfa_hfk5z(PyObject *self, PyObject *args)
     return Py_BuildValue("dddd", r5, d5, dr5, dd5);    
 }
 
-PyDoc_STRVAR(erfa_hfk5z_doc,
+PyDoc_STRVAR(_erfa_hfk5z_doc,
 "hf5kz(rh, dh, d1, d2) -> r5, d5, dr5, dd5\n\n"
 "Transform a Hipparcos star position into FK5 J2000.0, assuming\n"
 "zero Hipparcos proper motion.\n"
@@ -2366,7 +3235,7 @@ PyDoc_STRVAR(erfa_hfk5z_doc,
 "     dd5   Dec proper motion (rad/year)");
 
 static PyObject *
-erfa_jd2cal(PyObject *self, PyObject *args)
+_erfa_jd2cal(PyObject *self, PyObject *args)
 {
     double dj1, dj2, fd;
     int iy, im, id, status;
@@ -2375,13 +3244,13 @@ erfa_jd2cal(PyObject *self, PyObject *args)
     }
     status = eraJd2cal(dj1, dj2, &iy, &im, &id, &fd);
     if (status) {
-        PyErr_SetString(erfaError, "unacceptable date");
+        PyErr_SetString(_erfaError, "unacceptable date");
         return NULL;
     }
     return Py_BuildValue("iiid", iy, im, id, fd);    
 }
 
-PyDoc_STRVAR(erfa_jd2cal_doc,
+PyDoc_STRVAR(_erfa_jd2cal_doc,
 "jd2cal(dj1, dj2) -> year, month, day, fraction of day\n\n"
 "Julian Date to Gregorian year, month, day, and fraction of a day.\n"
 "Given:\n"
@@ -2393,7 +3262,7 @@ PyDoc_STRVAR(erfa_jd2cal_doc,
 "     fd    fraction of day");
 
 static PyObject *
-erfa_jdcalf(PyObject *self, PyObject *args)
+_erfa_jdcalf(PyObject *self, PyObject *args)
 {
     double dj1, dj2;
     int ndp, status, iymdf[4];
@@ -2402,11 +3271,11 @@ erfa_jdcalf(PyObject *self, PyObject *args)
     }
     status = eraJdcalf(ndp, dj1, dj2, iymdf);
     if (status == -1) {
-        PyErr_SetString(erfaError, "date out of range");
+        PyErr_SetString(_erfaError, "date out of range");
         return NULL;
     }
     if (status == 1) {
-        PyErr_SetString(erfaError, "n not in 0-9 (interpreted as 0)");
+        PyErr_SetString(_erfaError, "n not in 0-9 (interpreted as 0)");
         return NULL;
     }
     else {
@@ -2414,7 +3283,7 @@ erfa_jdcalf(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_jdcalf_doc,
+PyDoc_STRVAR(_erfa_jdcalf_doc,
 "jdcalf(n, d1, d2) -> y, m, d, fd\n\n"
 "Julian Date to Gregorian Calendar, expressed in a form convenient\n"
 "for formatting messages:  rounded to a specified precision.\n"
@@ -2428,7 +3297,7 @@ PyDoc_STRVAR(erfa_jdcalf_doc,
 "     fd        fraction of day");
 
 static PyObject *
-erfa_num00a(PyObject *self, PyObject *args)
+_erfa_num00a(PyObject *self, PyObject *args)
 {
     double d1, d2, rmatn[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2441,7 +3310,7 @@ erfa_num00a(PyObject *self, PyObject *args)
                             rmatn[2][0],rmatn[2][1],rmatn[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_num00a_doc,
+PyDoc_STRVAR(_erfa_num00a_doc,
 "num00a(d1, d2) -> rmatn\n\n"
 "Form the matrix of nutation for a given date, IAU 2000A model.\n"
 "Given:\n"
@@ -2450,7 +3319,7 @@ PyDoc_STRVAR(erfa_num00a_doc,
 "     rmatn     nutation matrix");
 
 static PyObject *
-erfa_num00b(PyObject *self, PyObject *args)
+_erfa_num00b(PyObject *self, PyObject *args)
 {
     double d1, d2, rmatn[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2463,7 +3332,7 @@ erfa_num00b(PyObject *self, PyObject *args)
     rmatn[2][0],rmatn[2][1],rmatn[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_num00b_doc,
+PyDoc_STRVAR(_erfa_num00b_doc,
 "num00b(d1, d2) -> rmatn\n\n"
 "Form the matrix of nutation for a given date, IAU 2000B model.\n"
 "Given:\n"
@@ -2472,7 +3341,7 @@ PyDoc_STRVAR(erfa_num00b_doc,
 "     rmatn     nutation matrix");
 
 static PyObject *
-erfa_num06a(PyObject *self, PyObject *args)
+_erfa_num06a(PyObject *self, PyObject *args)
 {
     double d1, d2, rmatn[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2485,7 +3354,7 @@ erfa_num06a(PyObject *self, PyObject *args)
     rmatn[2][0],rmatn[2][1],rmatn[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_num06a_doc,
+PyDoc_STRVAR(_erfa_num06a_doc,
 "num06a(d1, d2) -> rmatn\n\n"
 "Form the matrix of nutation for a given date, IAU 2006/2000A model.\n"
 "Given:\n"
@@ -2494,7 +3363,7 @@ PyDoc_STRVAR(erfa_num06a_doc,
 "     rmatn     nutation matrix");
 
 static PyObject *
-erfa_numat(PyObject *self, PyObject *args)
+_erfa_numat(PyObject *self, PyObject *args)
 {
     double epsa, dpsi, deps, rmatn[3][3];
     if (!PyArg_ParseTuple(args, "ddd", &epsa, &dpsi, &deps)) {
@@ -2507,7 +3376,7 @@ erfa_numat(PyObject *self, PyObject *args)
     rmatn[2][0],rmatn[2][1],rmatn[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_numat_doc,
+PyDoc_STRVAR(_erfa_numat_doc,
 "numat(epsa, dpsi, deps) -> rmatn\n\n"
 "Form the matrix of nutation.\n"
 "Given:\n"
@@ -2517,7 +3386,7 @@ PyDoc_STRVAR(erfa_numat_doc,
 "     rmatn         nutation matrix");
 
 static PyObject *
-erfa_nut00a(PyObject *self, PyObject *args)
+_erfa_nut00a(PyObject *self, PyObject *args)
 {
     double d1, d2, dpsi, deps;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2527,7 +3396,7 @@ erfa_nut00a(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", dpsi, deps);
 }
 
-PyDoc_STRVAR(erfa_nut00a_doc,
+PyDoc_STRVAR(_erfa_nut00a_doc,
 "nut00a(d1, d2) -> dpsi, deps\n\n"
 "Nutation, IAU 2000A model (MHB2000 luni-solar and planetary nutation\n"
 "with free core nutation omitted).\n"
@@ -2537,7 +3406,7 @@ PyDoc_STRVAR(erfa_nut00a_doc,
 "   dpsi,deps   nutation, luni-solar + planetary\n");
 
 static PyObject *
-erfa_nut00b(PyObject *self, PyObject *args)
+_erfa_nut00b(PyObject *self, PyObject *args)
 {
     double d1, d2, dpsi, deps;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2547,7 +3416,7 @@ erfa_nut00b(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", dpsi, deps);
 }
 
-PyDoc_STRVAR(erfa_nut00b_doc,
+PyDoc_STRVAR(_erfa_nut00b_doc,
 "nut00b(d1, d2) -> dpsi, deps\n\n"
 "Nutation, IAU 2000B.\n"
 "Given:\n"
@@ -2556,7 +3425,7 @@ PyDoc_STRVAR(erfa_nut00b_doc,
 "   dpsi,deps   nutation, luni-solar + planetary\n");
 
 static PyObject *
-erfa_nut06a(PyObject *self, PyObject *args)
+_erfa_nut06a(PyObject *self, PyObject *args)
 {
     double d1, d2, dpsi, deps;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2566,7 +3435,7 @@ erfa_nut06a(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", dpsi, deps);
 }
 
-PyDoc_STRVAR(erfa_nut06a_doc,
+PyDoc_STRVAR(_erfa_nut06a_doc,
 "nut06a(d1, d2) -> dpsi, deps\n\n"
 "IAU 2000A nutation with adjustments to match the IAU 2006 precession.\n"
 "Given:\n"
@@ -2575,7 +3444,7 @@ PyDoc_STRVAR(erfa_nut06a_doc,
 "   dpsi,deps   nutation, luni-solar + planetary\n");
 
 static PyObject *
-erfa_nut80(PyObject *self, PyObject *args)
+_erfa_nut80(PyObject *self, PyObject *args)
 {
     double d1, d2, dpsi, deps;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2585,7 +3454,7 @@ erfa_nut80(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", dpsi, deps);
 }
 
-PyDoc_STRVAR(erfa_nut80_doc,
+PyDoc_STRVAR(_erfa_nut80_doc,
 "nut80(d1, d2) -> dpsi, deps\n\n"
 "Nutation, IAU 1980 model.\n"
 "Given:\n"
@@ -2595,7 +3464,7 @@ PyDoc_STRVAR(erfa_nut80_doc,
 "    deps        nutation in obliquity (radians)\n");
 
 static PyObject *
-erfa_nutm80(PyObject *self, PyObject *args)
+_erfa_nutm80(PyObject *self, PyObject *args)
 {
     double d1, d2, rmatn[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2608,7 +3477,7 @@ erfa_nutm80(PyObject *self, PyObject *args)
     rmatn[2][0],rmatn[2][1],rmatn[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_nutm80_doc,
+PyDoc_STRVAR(_erfa_nutm80_doc,
 "nutm80(d1, d2) -> rmatn\n\n"
 "Form the matrix of nutation for a given date, IAU 1980 model.\n"
 "Given:\n"
@@ -2617,7 +3486,7 @@ PyDoc_STRVAR(erfa_nutm80_doc,
 "    rmatn[     nutation matrix");
 
 static PyObject *
-erfa_obl06(PyObject *self, PyObject *args)
+_erfa_obl06(PyObject *self, PyObject *args)
 {
     double d1, d2, obl;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2627,7 +3496,7 @@ erfa_obl06(PyObject *self, PyObject *args)
         return Py_BuildValue("d", obl);
 }
 
-PyDoc_STRVAR(erfa_obl06_doc,
+PyDoc_STRVAR(_erfa_obl06_doc,
 "obl06(d1, d2) -> obl\n\n"
 "Mean obliquity of the ecliptic, IAU 2006 precession model.\n"
 "Given:\n"
@@ -2636,7 +3505,7 @@ PyDoc_STRVAR(erfa_obl06_doc,
 "    obl        obliquity of the ecliptic (radians)");
 
 static PyObject *
-erfa_obl80(PyObject *self, PyObject *args)
+_erfa_obl80(PyObject *self, PyObject *args)
 {
     double d1, d2, obl;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2646,7 +3515,7 @@ erfa_obl80(PyObject *self, PyObject *args)
     return Py_BuildValue("d", obl);
 }
 
-PyDoc_STRVAR(erfa_obl80_doc,
+PyDoc_STRVAR(_erfa_obl80_doc,
 "obl80(d1, d2) -> obl\n\n"
 "Mean obliquity of the ecliptic, IAU 1980 model.\n"
 "Given:\n"
@@ -2655,7 +3524,7 @@ PyDoc_STRVAR(erfa_obl80_doc,
 "    obl        obliquity of the ecliptic (radians)");
 
 static PyObject *
-erfa_p06e(PyObject *self, PyObject *args)
+_erfa_p06e(PyObject *self, PyObject *args)
 {
     double d1,d2, eps0,psia,oma,bpa,bqa,pia,bpia,epsa,chia,za,zetaa,thetaa,pa,gam,phi,psi;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2668,7 +3537,7 @@ erfa_p06e(PyObject *self, PyObject *args)
     eps0,psia,oma,bpa,bqa,pia,bpia,epsa,chia,za,zetaa,thetaa,pa,gam,phi,psi);
 }
 
-PyDoc_STRVAR(erfa_p06e_doc,
+PyDoc_STRVAR(_erfa_p06e_doc,
 "p06e(d1, d2) -> eps0,psia,oma,bpa,bqa,pia,bpia,epsa,chia,za,zetaa,thetaa,pa,gam,phi,psi\n\n"
 "Precession angles, IAU 2006, equinox based.\n"
 "Given:\n"
@@ -2692,7 +3561,7 @@ PyDoc_STRVAR(erfa_p06e_doc,
 "   psi    psi_J2000   longitude difference of equator poles, J2000.0");
 
 static PyObject *
-erfa_pb06(PyObject *self, PyObject *args)
+_erfa_pb06(PyObject *self, PyObject *args)
 {
     double d1, d2, bzeta, bz, btheta;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2702,7 +3571,7 @@ erfa_pb06(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", bzeta, bz, btheta);
 }
 
-PyDoc_STRVAR(erfa_pb06_doc,
+PyDoc_STRVAR(_erfa_pb06_doc,
 "pb06(d1, d2) -> bzeta, bz, btheta\n\n"
 "Forms three Euler angles which implement general\n"
 "precession from epoch J2000.0, using the IAU 2006 model.\n"
@@ -2715,7 +3584,7 @@ PyDoc_STRVAR(erfa_pb06_doc,
 "   btheta  2nd rotation: radians ccw around y");
 
 static PyObject *
-erfa_pfw06(PyObject *self, PyObject *args)
+_erfa_pfw06(PyObject *self, PyObject *args)
 {
     double d1, d2, gamb, phib, psib, epsa;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2725,7 +3594,7 @@ erfa_pfw06(PyObject *self, PyObject *args)
     return Py_BuildValue("dddd", gamb, phib, psib, epsa);
 }
 
-PyDoc_STRVAR(erfa_pfw06_doc,
+PyDoc_STRVAR(_erfa_pfw06_doc,
 "pfw06(d1, d2) -> gamb, phib, psib, epsa\n\n"
 "Precession angles, IAU 2006 (Fukushima-Williams 4-angle formulation).\n"
 "Given:\n"
@@ -2737,7 +3606,7 @@ PyDoc_STRVAR(erfa_pfw06_doc,
 "   epsa    F-W angle epsilon_A (radians)");
 
 static PyObject *
-erfa_plan94(PyObject *self, PyObject *args)
+_erfa_plan94(PyObject *self, PyObject *args)
 {
     double d1, d2, pv[2][3];
     int np, status;
@@ -2746,15 +3615,15 @@ erfa_plan94(PyObject *self, PyObject *args)
     }
     status = eraPlan94(d1, d2, np, pv);
     if (status == -1){
-        PyErr_SetString(erfaError, "illegal np,  not in range(1,8) for planet");
+        PyErr_SetString(_erfaError, "illegal np,  not in range(1,8) for planet");
         return NULL;
     }
 /*    else if (status == 1){
-        PyErr_SetString(erfaError, "year outside range(1000:3000)");
+        PyErr_SetString(_erfaError, "year outside range(1000:3000)");
         return NULL;
     }*/
     else if (status == 2){
-        PyErr_SetString(erfaError, "computation failed to converge");
+        PyErr_SetString(_erfaError, "computation failed to converge");
         return NULL;
     }
     else {
@@ -2764,7 +3633,7 @@ erfa_plan94(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_plan94_doc,
+PyDoc_STRVAR(_erfa_plan94_doc,
 "plan94(d1, d2, np) -> pv\n\n"
 "Approximate heliocentric position and velocity of a nominated major\n"
 "planet:  Mercury, Venus, EMB, Mars, Jupiter, Saturn, Uranus or\n"
@@ -2778,7 +3647,7 @@ PyDoc_STRVAR(erfa_plan94_doc,
 "    pv         planet p,v (heliocentric, J2000.0, AU,AU/d)");
 
 static PyObject *
-erfa_pmat00(PyObject *self, PyObject *args)
+_erfa_pmat00(PyObject *self, PyObject *args)
 {
     double d1, d2, rbp[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2791,7 +3660,7 @@ erfa_pmat00(PyObject *self, PyObject *args)
     rbp[2][0],rbp[2][1],rbp[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_pmat00_doc,
+PyDoc_STRVAR(_erfa_pmat00_doc,
 "pmat00(d1, d2) -> rbp\n\n"
 "Precession matrix (including frame bias) from GCRS to a specified\n"
 "date, IAU 2000 model.\n"
@@ -2801,7 +3670,7 @@ PyDoc_STRVAR(erfa_pmat00_doc,
 "   rbp         bias-precession matrix");
 
 static PyObject *
-erfa_pmat06(PyObject *self, PyObject *args)
+_erfa_pmat06(PyObject *self, PyObject *args)
 {
     double d1, d2, rbp[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2814,7 +3683,7 @@ erfa_pmat06(PyObject *self, PyObject *args)
     rbp[2][0],rbp[2][1],rbp[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_pmat06_doc,
+PyDoc_STRVAR(_erfa_pmat06_doc,
 "pmat06(d1, d2) -> rbp\n\n"
 "Precession matrix (including frame bias) from GCRS to a specified\n"
 "date, IAU 2006 model.\n"
@@ -2824,7 +3693,7 @@ PyDoc_STRVAR(erfa_pmat06_doc,
 "   rbp         bias-precession matrix");
 
 static PyObject *
-erfa_pmat76(PyObject *self, PyObject *args)
+_erfa_pmat76(PyObject *self, PyObject *args)
 {
     double d1, d2, rmatp[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -2837,7 +3706,7 @@ erfa_pmat76(PyObject *self, PyObject *args)
     rmatp[2][0],rmatp[2][1],rmatp[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_pmat76_doc,
+PyDoc_STRVAR(_erfa_pmat76_doc,
 "pmat76(d1, d2) -> rmatp\n\n"
 "Precession matrix from J2000.0 to a specified date, IAU 1976 model.\n"
 "Given:\n"
@@ -2846,7 +3715,7 @@ PyDoc_STRVAR(erfa_pmat76_doc,
 "   rmatp       precession matrix, J2000.0 -> d1+d2");
 
 static PyObject *
-erfa_pn00(PyObject *self, PyObject *args)
+_erfa_pn00(PyObject *self, PyObject *args)
 {
     double d1,d2,dpsi,deps,epsa;
     double rb[3][3],rp[3][3],rbp[3][3],rn[3][3],rbpn[3][3];
@@ -2863,7 +3732,7 @@ erfa_pn00(PyObject *self, PyObject *args)
     rbpn[0][0],rbpn[0][1],rbpn[0][2],rbpn[1][0],rbpn[1][1],rbpn[1][2],rbpn[2][0],rbpn[2][1],rbpn[2][2]);
 }
 
-PyDoc_STRVAR(erfa_pn00_doc,
+PyDoc_STRVAR(_erfa_pn00_doc,
 "pn00(d1,d2,dpsi,deps) -> epsa,rb,rp,rbp,rn,rbpn\n\n"
 "Precession-nutation, IAU 2000 model:  a multi-purpose function,\n"
 "supporting classical (equinox-based) use directly and CIO-based\n"
@@ -2880,7 +3749,7 @@ PyDoc_STRVAR(erfa_pn00_doc,
 "   rbpn        GCRS-to-true matrix");
 
 static PyObject *
-erfa_pn00a(PyObject *self, PyObject *args)
+_erfa_pn00a(PyObject *self, PyObject *args)
 {
     double d1,d2,dpsi,deps,epsa;
     double rb[3][3],rp[3][3],rbp[3][3],rn[3][3],rbpn[3][3];
@@ -2897,7 +3766,7 @@ erfa_pn00a(PyObject *self, PyObject *args)
     rbpn[0][0],rbpn[0][1],rbpn[0][2],rbpn[1][0],rbpn[1][1],rbpn[1][2],rbpn[2][0],rbpn[2][1],rbpn[2][2]);
 }
 
-PyDoc_STRVAR(erfa_pn00a_doc,
+PyDoc_STRVAR(_erfa_pn00a_doc,
 "pn00a(d1,d2) -> dpsi,deps,epsa,rb,rp,rbp,rn,rbpn\n\n"
 "Precession-nutation, IAU 2000A model:  a multi-purpose function,\n"
 "supporting classical (equinox-based) use directly and CIO-based\n"
@@ -2914,7 +3783,7 @@ PyDoc_STRVAR(erfa_pn00a_doc,
 "   rbpn        GCRS-to-true matrix");
 
 static PyObject *
-erfa_pn00b(PyObject *self, PyObject *args)
+_erfa_pn00b(PyObject *self, PyObject *args)
 {
     double d1,d2,dpsi,deps,epsa;
     double rb[3][3],rp[3][3],rbp[3][3],rn[3][3],rbpn[3][3];
@@ -2931,7 +3800,7 @@ erfa_pn00b(PyObject *self, PyObject *args)
     rbpn[0][0],rbpn[0][1],rbpn[0][2],rbpn[1][0],rbpn[1][1],rbpn[1][2],rbpn[2][0],rbpn[2][1],rbpn[2][2]);
 }
 
-PyDoc_STRVAR(erfa_pn00b_doc,
+PyDoc_STRVAR(_erfa_pn00b_doc,
 "pn00b(d1,d2) -> dpsi,deps,epsa,rb,rp,rbp,rn,rbpn\n\n"
 "Precession-nutation, IAU 2000B model:  a multi-purpose function,\n"
 "supporting classical (equinox-based) use directly and CIO-based\n"
@@ -2948,7 +3817,7 @@ PyDoc_STRVAR(erfa_pn00b_doc,
 "   rbpn        GCRS-to-true matrix");
 
 static PyObject *
-erfa_pn06(PyObject *self, PyObject *args)
+_erfa_pn06(PyObject *self, PyObject *args)
 {
     double d1,d2,dpsi,deps,epsa;
     double rb[3][3],rp[3][3],rbp[3][3],rn[3][3],rbpn[3][3];
@@ -2965,7 +3834,7 @@ erfa_pn06(PyObject *self, PyObject *args)
     rbpn[0][0],rbpn[0][1],rbpn[0][2],rbpn[1][0],rbpn[1][1],rbpn[1][2],rbpn[2][0],rbpn[2][1],rbpn[2][2]);
 }
 
-PyDoc_STRVAR(erfa_pn06_doc,
+PyDoc_STRVAR(_erfa_pn06_doc,
 "pn06(d1,d2,dpsi,deps) -> epsa,rb,rp,rbp,rn,rbpn\n\n"
 "Precession-nutation, IAU 2006 model:  a multi-purpose function,\n"
 "supporting classical (equinox-based) use directly and CIO-based\n"
@@ -2982,7 +3851,7 @@ PyDoc_STRVAR(erfa_pn06_doc,
 "   rbpn        GCRS-to-true matrix");
 
 static PyObject *
-erfa_pn06a(PyObject *self, PyObject *args)
+_erfa_pn06a(PyObject *self, PyObject *args)
 {
     double d1,d2,dpsi,deps,epsa;
     double rb[3][3],rp[3][3],rbp[3][3],rn[3][3],rbpn[3][3];
@@ -2999,7 +3868,7 @@ erfa_pn06a(PyObject *self, PyObject *args)
     rbpn[0][0],rbpn[0][1],rbpn[0][2],rbpn[1][0],rbpn[1][1],rbpn[1][2],rbpn[2][0],rbpn[2][1],rbpn[2][2]);
 }
 
-PyDoc_STRVAR(erfa_pn06a_doc,
+PyDoc_STRVAR(_erfa_pn06a_doc,
 "pn06a(d1,d2) -> dpsi,deps,epsa,rb,rp,rbp,rn,rbpn\n\n"
 "Precession-nutation, IAU 2006/2000A model:  a multi-purpose function,\n"
 "supporting classical (equinox-based) use directly and CIO-based\n"
@@ -3016,7 +3885,7 @@ PyDoc_STRVAR(erfa_pn06a_doc,
 "   rbpn        GCRS-to-true matrix");
 
 static PyObject *
-erfa_pnm00a(PyObject *self, PyObject *args)
+_erfa_pnm00a(PyObject *self, PyObject *args)
 {
     double d1,d2,rbpn[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3027,7 +3896,7 @@ erfa_pnm00a(PyObject *self, PyObject *args)
     rbpn[0][0],rbpn[0][1],rbpn[0][2],rbpn[1][0],rbpn[1][1],rbpn[1][2],rbpn[2][0],rbpn[2][1],rbpn[2][2]);
 }
 
-PyDoc_STRVAR(erfa_pnm00a_doc,
+PyDoc_STRVAR(_erfa_pnm00a_doc,
 "pnm00a(d1, d2) -> rbpn\n\n"
 "Form the matrix of precession-nutation for a given date (including\n"
 "frame bias), equinox-based, IAU 2000A model.\n"
@@ -3037,7 +3906,7 @@ PyDoc_STRVAR(erfa_pnm00a_doc,
 "   rbpn        classical NPB matrix");
 
 static PyObject *
-erfa_pnm00b(PyObject *self, PyObject *args)
+_erfa_pnm00b(PyObject *self, PyObject *args)
 {
     double d1,d2,rbpn[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3048,7 +3917,7 @@ erfa_pnm00b(PyObject *self, PyObject *args)
     rbpn[0][0],rbpn[0][1],rbpn[0][2],rbpn[1][0],rbpn[1][1],rbpn[1][2],rbpn[2][0],rbpn[2][1],rbpn[2][2]);
 }
 
-PyDoc_STRVAR(erfa_pnm00b_doc,
+PyDoc_STRVAR(_erfa_pnm00b_doc,
 "pnm00b(d1, d2) -> rbpn\n\n"
 "Form the matrix of precession-nutation for a given date (including\n"
 "frame bias), equinox-based, IAU 2000B model.\n"
@@ -3058,7 +3927,7 @@ PyDoc_STRVAR(erfa_pnm00b_doc,
 "   rbpn        classical NPB matrix");
 
 static PyObject *
-erfa_pnm06a(PyObject *self, PyObject *args)
+_erfa_pnm06a(PyObject *self, PyObject *args)
 {
     double d1,d2,rbpn[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3069,7 +3938,7 @@ erfa_pnm06a(PyObject *self, PyObject *args)
     rbpn[0][0],rbpn[0][1],rbpn[0][2],rbpn[1][0],rbpn[1][1],rbpn[1][2],rbpn[2][0],rbpn[2][1],rbpn[2][2]);
 }
 
-PyDoc_STRVAR(erfa_pnm06a_doc,
+PyDoc_STRVAR(_erfa_pnm06a_doc,
 "pnm06a(d1, d2) -> rbpn\n\n"
 "Form the matrix of precession-nutation for a given date (including\n"
 "frame bias), IAU 2006 precession and IAU 2000A nutation models.\n"
@@ -3079,7 +3948,7 @@ PyDoc_STRVAR(erfa_pnm06a_doc,
 "   rbpn        classical NPB matrix");
 
 static PyObject *
-erfa_pnm80(PyObject *self, PyObject *args)
+_erfa_pnm80(PyObject *self, PyObject *args)
 {
     double d1, d2, rmatp[3][3];
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3092,7 +3961,7 @@ erfa_pnm80(PyObject *self, PyObject *args)
     rmatp[2][0],rmatp[2][1],rmatp[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_pnm80_doc,
+PyDoc_STRVAR(_erfa_pnm80_doc,
 "pnm80(d1, d2) -> rmatp\n\n"
 "Form the matrix of precession/nutation for a given date, IAU 1976\n"
 "precession model, IAU 1980 nutation model.\n"
@@ -3102,7 +3971,7 @@ PyDoc_STRVAR(erfa_pnm80_doc,
 "   rmatp           combined precession/nutation matrix");
 
 static PyObject *
-erfa_pom00(PyObject *self, PyObject *args)
+_erfa_pom00(PyObject *self, PyObject *args)
 {    
     double xp, yp, sp, rpom[3][3];
     if (!PyArg_ParseTuple(args, "ddd", &xp, &yp, &sp)) {
@@ -3115,7 +3984,7 @@ erfa_pom00(PyObject *self, PyObject *args)
     rpom[2][0],rpom[2][1],rpom[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_pom00_doc,
+PyDoc_STRVAR(_erfa_pom00_doc,
 "pom00(xp, yp, sp) -> rpom\n\n"
 "Form the matrix of polar motion for a given date, IAU 2000.\n"
 "Given:\n"
@@ -3125,7 +3994,7 @@ PyDoc_STRVAR(erfa_pom00_doc,
 "   rpom        polar-motion matrix");
 
 static PyObject *
-erfa_pr00(PyObject *self, PyObject *args)
+_erfa_pr00(PyObject *self, PyObject *args)
 {
     double d1, d2, dpsipr, depspr;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3135,7 +4004,7 @@ erfa_pr00(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", dpsipr, depspr);
 }
 
-PyDoc_STRVAR(erfa_pr00_doc,
+PyDoc_STRVAR(_erfa_pr00_doc,
 "pr00(d1,d2) -> dpsipr,depspr\n\n"
 "Precession-rate part of the IAU 2000 precession-nutation models\n"
 "(part of MHB2000).\n"
@@ -3145,7 +4014,7 @@ PyDoc_STRVAR(erfa_pr00_doc,
 "   dpsipr,depspr   precession corrections");
 
 static PyObject *
-erfa_prec76(PyObject *self, PyObject *args)
+_erfa_prec76(PyObject *self, PyObject *args)
 {
     double ep01, ep02, ep11, ep12, zeta, z, theta;
     if (!PyArg_ParseTuple(args, "dddd", &ep01, &ep02, &ep11, &ep12)) {
@@ -3155,7 +4024,7 @@ erfa_prec76(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", zeta, z, theta);
 }
 
-PyDoc_STRVAR(erfa_prec76_doc,
+PyDoc_STRVAR(_erfa_prec76_doc,
 "prec76(ep01, ep02, ep11, ep12) -> zeta, z, theta\n\n"
 "IAU 1976 precession model.\n"
 "Given:\n"
@@ -3167,7 +4036,7 @@ PyDoc_STRVAR(erfa_prec76_doc,
 "   theta       2nd rotation: radians ccw around y");
 
 static PyObject *
-erfa_pvstar(PyObject *self, PyObject *args)
+_erfa_pvstar(PyObject *self, PyObject *args)
 {
     double pv[2][3], ra, dec, pmr, pmd, px, rv;
     double pv00, pv01, pv02, pv10, pv11, pv12;
@@ -3184,18 +4053,18 @@ erfa_pvstar(PyObject *self, PyObject *args)
     pv[1][2] = pv12;
     status = eraPvstar(pv, &ra, &dec, &pmr, &pmd, &px, &rv);
     if (status == -1) {
-        PyErr_SetString(erfaError, "superluminal speed");
+        PyErr_SetString(_erfaError, "superluminal speed");
         return NULL;
     }
     else if (status == -2) {
-        PyErr_SetString(erfaError, "null position vector");
+        PyErr_SetString(_erfaError, "null position vector");
         return NULL;
     }
     else {
     return Py_BuildValue("dddddd", ra, dec, pmr, pmd, px, rv);
     }
 }
-PyDoc_STRVAR(erfa_pvstar_doc,
+PyDoc_STRVAR(_erfa_pvstar_doc,
 "pvstar(pv[2][3]) -> ra, dec, pmr, pmd, px, rv\n\n"
 "Convert star position+velocity vector to catalog coordinates.\n"
 "Given:\n"
@@ -3209,7 +4078,7 @@ PyDoc_STRVAR(erfa_pvstar_doc,
 "   rv          radial velocity (km/s, positive = receding)");
 
 static PyObject *
-erfa_s00(PyObject *self, PyObject *args)
+_erfa_s00(PyObject *self, PyObject *args)
 {
     double d1, d2, x, y, s;
     if (!PyArg_ParseTuple(args, "dddd", &d1, &d2, &x, &y)) {
@@ -3219,7 +4088,7 @@ erfa_s00(PyObject *self, PyObject *args)
     return Py_BuildValue("d", s);
 }
 
-PyDoc_STRVAR(erfa_s00_doc,
+PyDoc_STRVAR(_erfa_s00_doc,
 "s00(d1, d2, x, y) -> s\n\n"
 "The CIO locator s, positioning the Celestial Intermediate Origin on\n"
 "the equator of the Celestial Intermediate Pole, given the CIP's X,Y\n"
@@ -3231,7 +4100,7 @@ PyDoc_STRVAR(erfa_s00_doc,
 "   s       the CIO locator s in radians");
 
 static PyObject *
-erfa_s00a(PyObject *self, PyObject *args)
+_erfa_s00a(PyObject *self, PyObject *args)
 {
     double d1, d2,s;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3241,7 +4110,7 @@ erfa_s00a(PyObject *self, PyObject *args)
     return Py_BuildValue("d", s);
 }
 
-PyDoc_STRVAR(erfa_s00a_doc,
+PyDoc_STRVAR(_erfa_s00a_doc,
 "s00a(d1, d2) -> s\n\n"
 "The CIO locator s, positioning the Celestial Intermediate Origin on\n"
 "the equator of the Celestial Intermediate Pole, using the IAU 2000A\n"
@@ -3252,7 +4121,7 @@ PyDoc_STRVAR(erfa_s00a_doc,
 "   s       the CIO locator s in radians");
 
 static PyObject *
-erfa_s00b(PyObject *self, PyObject *args)
+_erfa_s00b(PyObject *self, PyObject *args)
 {
     double d1, d2,s;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3262,7 +4131,7 @@ erfa_s00b(PyObject *self, PyObject *args)
     return Py_BuildValue("d", s);
 }
 
-PyDoc_STRVAR(erfa_s00b_doc,
+PyDoc_STRVAR(_erfa_s00b_doc,
 "s00b(d1, d2) -> s\n\n"
 "The CIO locator s, positioning the Celestial Intermediate Origin on\n"
 "the equator of the Celestial Intermediate Pole, using the IAU 2000B\n"
@@ -3273,7 +4142,7 @@ PyDoc_STRVAR(erfa_s00b_doc,
 "   s       the CIO locator s in radians");
 
 static PyObject *
-erfa_s06(PyObject *self, PyObject *args)
+_erfa_s06(PyObject *self, PyObject *args)
 {
     double d1, d2, x, y, s;
     if (!PyArg_ParseTuple(args, "dddd", &d1, &d2, &x, &y)) {
@@ -3283,7 +4152,7 @@ erfa_s06(PyObject *self, PyObject *args)
     return Py_BuildValue("d", s);
 }
 
-PyDoc_STRVAR(erfa_s06_doc,
+PyDoc_STRVAR(_erfa_s06_doc,
 "s06(d1, d2, x, y) -> s\n\n"
 "The CIO locator s, positioning the Celestial Intermediate Origin on\n"
 "the equator of the Celestial Intermediate Pole, given the CIP's X,Y\n"
@@ -3295,7 +4164,7 @@ PyDoc_STRVAR(erfa_s06_doc,
 "   s       the CIO locator s in radians");
 
 static PyObject *
-erfa_s06a(PyObject *self, PyObject *args)
+_erfa_s06a(PyObject *self, PyObject *args)
 {
     double d1, d2,s;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3305,7 +4174,7 @@ erfa_s06a(PyObject *self, PyObject *args)
     return Py_BuildValue("d", s);
 }
 
-PyDoc_STRVAR(erfa_s06a_doc,
+PyDoc_STRVAR(_erfa_s06a_doc,
 "s06a(d1, d2) -> s\n\n"
 "The CIO locator s, positioning the Celestial Intermediate Origin on\n"
 "the equator of the Celestial Intermediate Pole, using the IAU 2006\n"
@@ -3316,7 +4185,7 @@ PyDoc_STRVAR(erfa_s06a_doc,
 "   s       the CIO locator s in radians");
 
 static PyObject *
-erfa_sp00(PyObject *self, PyObject *args)
+_erfa_sp00(PyObject *self, PyObject *args)
 {
     double d1, d2, s;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3326,7 +4195,7 @@ erfa_sp00(PyObject *self, PyObject *args)
     return Py_BuildValue("d", s);
 }
 
-PyDoc_STRVAR(erfa_sp00_doc,
+PyDoc_STRVAR(_erfa_sp00_doc,
 "sp00(d1, d2) -> s\n\n"
 "The TIO locator s', positioning the Terrestrial Intermediate Origin\n"
 "on the equator of the Celestial Intermediate Pole.\n"
@@ -3336,7 +4205,7 @@ PyDoc_STRVAR(erfa_sp00_doc,
 "   s       the TIO locator s' in radians");
 
 static PyObject *
-erfa_starpm(PyObject *self, PyObject *args)
+_erfa_starpm(PyObject *self, PyObject *args)
 {
    double ra1, dec1, pmr1, pmd1, px1, rv1;
    double ep1a, ep1b, ep2a, ep2b;
@@ -3352,23 +4221,23 @@ erfa_starpm(PyObject *self, PyObject *args)
                  &ra2, &dec2, &pmr2, &pmd2, &px2, &rv2);
     if (status) {
         if (status == -1) {
-            PyErr_SetString(erfaError, "system error, normally should NOT occur");
+            PyErr_SetString(_erfaError, "system error, normally should NOT occur");
             return NULL;
         }
         else if (status == 1) {
-            PyErr_SetString(erfaError, "distance overriden, extremely small (or zero or negative) parallax");
+            PyErr_SetString(_erfaError, "distance overriden, extremely small (or zero or negative) parallax");
             return NULL;
         }
         else if (status == 2) {
-            PyErr_SetString(erfaError, "excessive velocity");
+            PyErr_SetString(_erfaError, "excessive velocity");
             return NULL;
         }
         else if (status == 4) {
-            PyErr_SetString(erfaError, "solution didn't converge");
+            PyErr_SetString(_erfaError, "solution didn't converge");
             return NULL;
         }
         else {
-            PyErr_SetString(erfaError, "binary logical OR of other error above");
+            PyErr_SetString(_erfaError, "binary logical OR of other error above");
             return NULL;
         }
     }
@@ -3377,7 +4246,7 @@ erfa_starpm(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_starpm_doc,
+PyDoc_STRVAR(_erfa_starpm_doc,
 "starpm(ra1, dec1, pmr1, pmd1, px1, rv1, ep1a, ep1b, ep2a, ep2b) -> ra2, dec2, pmr2, pmd2, px2, rv2\n\n"
 "Star proper motion:  update star catalog data for space motion.\n"
 "Given:\n"
@@ -3400,7 +4269,7 @@ PyDoc_STRVAR(erfa_starpm_doc,
 "   rv2     radial velocity (km/s, +ve = receding), after");
 
 static PyObject *
-erfa_starpv(PyObject *self, PyObject *args)
+_erfa_starpv(PyObject *self, PyObject *args)
 {
    double ra, dec, pmr, pmd, px, rv;
    double pv[2][3];
@@ -3412,19 +4281,19 @@ erfa_starpv(PyObject *self, PyObject *args)
     status = eraStarpv(ra, dec, pmr, pmd, px, rv, pv);
     if (status) {
         if (status == 1) {
-            PyErr_SetString(erfaError, "distance overriden, extremely small (or zero or negative) parallax");
+            PyErr_SetString(_erfaError, "distance overriden, extremely small (or zero or negative) parallax");
             return NULL;
         }
         else if (status == 2) {
-            PyErr_SetString(erfaError, "excessive velocity");
+            PyErr_SetString(_erfaError, "excessive velocity");
             return NULL;
         }
         else if (status == 4) {
-            PyErr_SetString(erfaError, "solution didn't converge");
+            PyErr_SetString(_erfaError, "solution didn't converge");
             return NULL;
         }
         else {
-            PyErr_SetString(erfaError, "binary logical OR of other error above");
+            PyErr_SetString(_erfaError, "binary logical OR of other error above");
             return NULL;
         }
     }
@@ -3435,7 +4304,7 @@ erfa_starpv(PyObject *self, PyObject *args)
     }
 }
 
-PyDoc_STRVAR(erfa_starpv_doc,
+PyDoc_STRVAR(_erfa_starpv_doc,
 "starpv(ra1, dec1, pmr1, pmd1, px1, rv1) -> pv\n\n"
 "Convert star catalog coordinates to position+velocity vector.\n"
 "Given:\n"
@@ -3449,7 +4318,7 @@ PyDoc_STRVAR(erfa_starpv_doc,
 "   pv      pv-vector (AU, AU/day)");
 
 static PyObject *
-erfa_taitt(PyObject *self, PyObject *args)
+_erfa_taitt(PyObject *self, PyObject *args)
 {
     double tai1, tai2, tt1, tt2;
     int status;
@@ -3458,13 +4327,13 @@ erfa_taitt(PyObject *self, PyObject *args)
     }
     status = eraTaitt(tai1, tai2, &tt1, &tt2);
     if (status) {
-        PyErr_SetString(erfaError, "internal error...");
+        PyErr_SetString(_erfaError, "internal error...");
         return NULL;
     }
     return Py_BuildValue("dd", tt1, tt2);
 }
 
-PyDoc_STRVAR(erfa_taitt_doc,
+PyDoc_STRVAR(_erfa_taitt_doc,
 "taitt(tai1, tai2) -> tt1, tt2\n\n"
 "Time scale transformation:  International Atomic Time, TAI, to\n"
 "Terrestrial Time, TT.\n"
@@ -3474,7 +4343,7 @@ PyDoc_STRVAR(erfa_taitt_doc,
 "   tt1,tt2     TT as a 2-part Julian Date");
 
 static PyObject *
-erfa_taiut1(PyObject *self, PyObject *args)
+_erfa_taiut1(PyObject *self, PyObject *args)
 {
     double tai1, tai2, dta, ut11, ut12;
     int status;
@@ -3483,13 +4352,13 @@ erfa_taiut1(PyObject *self, PyObject *args)
     }
     status = eraTaiut1(tai1, tai2, dta, &ut11, &ut12);
     if (status) {
-        PyErr_SetString(erfaError, "internal error...");
+        PyErr_SetString(_erfaError, "internal error...");
         return NULL;
     }
     return Py_BuildValue("dd", ut11, ut12);
 }
 
-PyDoc_STRVAR(erfa_taiut1_doc,
+PyDoc_STRVAR(_erfa_taiut1_doc,
 "taiut1(tai1, tai2, dta) -> ut11, ut12\n\n"
 "Time scale transformation:  International Atomic Time, TAI, to\n"
 "Universal Time, UT1..\n"
@@ -3502,7 +4371,7 @@ PyDoc_STRVAR(erfa_taiut1_doc,
 "   ut11,ut12     TT as a 2-part Julian Date");
 
 static PyObject *
-erfa_taiutc(PyObject *self, PyObject *args)
+_erfa_taiutc(PyObject *self, PyObject *args)
 {
     double tai1, tai2, utc1, utc2;
     int status;
@@ -3512,18 +4381,18 @@ erfa_taiutc(PyObject *self, PyObject *args)
     status = eraTaiutc(tai1, tai2, &utc1, &utc2);
     if (status) {
         if (status == 1) {
-            PyErr_SetString(erfaError, "dubious year");
+            PyErr_SetString(_erfaError, "dubious year");
             return NULL;
         }
         else if (status == -1) {
-            PyErr_SetString(erfaError, "unacceptable date");
+            PyErr_SetString(_erfaError, "unacceptable date");
             return NULL;
         }
     }
     return Py_BuildValue("dd", utc1, utc2);
 }
 
-PyDoc_STRVAR(erfa_taiutc_doc,
+PyDoc_STRVAR(_erfa_taiutc_doc,
 "taiutc(tai1, tai2) -> utc1, utc2\n\n"
 "Time scale transformation:  International Atomic Time, TAI, to\n"
 "Coordinated Universal Time, UTC.\n"
@@ -3533,7 +4402,7 @@ PyDoc_STRVAR(erfa_taiutc_doc,
 "   utc1,utc2   TT as a 2-part Julian Date");
 
 static PyObject *
-erfa_tcbtdb(PyObject *self, PyObject *args)
+_erfa_tcbtdb(PyObject *self, PyObject *args)
 {
     double tcb1, tcb2, tdb1, tdb2;
     int status;
@@ -3542,13 +4411,13 @@ erfa_tcbtdb(PyObject *self, PyObject *args)
     }
     status = eraTcbtdb(tcb1, tcb2, &tdb1, &tdb2);
     if (status) {
-        PyErr_SetString(erfaError, "should NOT occur");
+        PyErr_SetString(_erfaError, "should NOT occur");
         return NULL;
     }
     return Py_BuildValue("dd", tdb1, tdb2);
 }
 
-PyDoc_STRVAR(erfa_tcbtdb_doc,
+PyDoc_STRVAR(_erfa_tcbtdb_doc,
 "tcbtdb(tcb1, tcb2) -> tdb1, tdb2\n\n"
 "Time scale transformation:  Barycentric Coordinate Time, TCB, to\n"
 "Barycentric Dynamical Time, TDB.\n"
@@ -3558,7 +4427,7 @@ PyDoc_STRVAR(erfa_tcbtdb_doc,
 "   tdb1,tdb2   TDB as a 2-part Julian Date");
 
 static PyObject *
-erfa_tcgtt(PyObject *self, PyObject *args)
+_erfa_tcgtt(PyObject *self, PyObject *args)
 {
     double tcg1, tcg2, tt1, tt2;
     int status;
@@ -3567,13 +4436,13 @@ erfa_tcgtt(PyObject *self, PyObject *args)
     }
     status = eraTcgtt(tcg1, tcg2, &tt1, &tt2);
     if (status) {
-        PyErr_SetString(erfaError, "should NOT occur");
+        PyErr_SetString(_erfaError, "should NOT occur");
         return NULL;
     }
     return Py_BuildValue("dd", tt1, tt2);
 }
 
-PyDoc_STRVAR(erfa_tcgtt_doc,
+PyDoc_STRVAR(_erfa_tcgtt_doc,
 "tcgtt(tcg1, tcg2) -> tt1, tt2\n\n"
 "Time scale transformation:  Geocentric Coordinate Time, TCG, to\n"
 "Terrestrial Time, TT.\n"
@@ -3583,7 +4452,7 @@ PyDoc_STRVAR(erfa_tcgtt_doc,
 "   tt1,tt2   TT as a 2-part Julian Date");
 
 static PyObject *
-erfa_tdbtcb(PyObject *self, PyObject *args)
+_erfa_tdbtcb(PyObject *self, PyObject *args)
 {
     double tdb1, tdb2, tcb1, tcb2;
     int status;
@@ -3592,13 +4461,13 @@ erfa_tdbtcb(PyObject *self, PyObject *args)
     }
     status = eraTdbtcb(tdb1, tdb2, &tcb1, &tcb2);
     if (status) {
-        PyErr_SetString(erfaError, "should NOT occur");
+        PyErr_SetString(_erfaError, "should NOT occur");
         return NULL;
     }
     return Py_BuildValue("dd", tcb1, tcb2);
 }
 
-PyDoc_STRVAR(erfa_tdbtcb_doc,
+PyDoc_STRVAR(_erfa_tdbtcb_doc,
 "tdbtcb(tdb1, tdb2) -> tcb1, tcb2\n\n"
 "Time scale transformation:  Barycentric Dynamical Time, TDB, to\n"
 "Barycentric Coordinate Time, TCB.\n"
@@ -3608,7 +4477,7 @@ PyDoc_STRVAR(erfa_tdbtcb_doc,
 "   tcb1,tcb2   TCB as a 2-part Julian Date");
 
 static PyObject *
-erfa_tdbtt(PyObject *self, PyObject *args)
+_erfa_tdbtt(PyObject *self, PyObject *args)
 {
     double tdb1, tdb2, dtr, tt1, tt2;
     int status;
@@ -3617,13 +4486,13 @@ erfa_tdbtt(PyObject *self, PyObject *args)
     }
     status = eraTdbtt(tdb1, tdb2, dtr, &tt1, &tt2);
     if (status) {
-        PyErr_SetString(erfaError, "should NOT occur");
+        PyErr_SetString(_erfaError, "should NOT occur");
         return NULL;
     }
     return Py_BuildValue("dd", tt1, tt2);
 }
 
-PyDoc_STRVAR(erfa_tdbtt_doc,
+PyDoc_STRVAR(_erfa_tdbtt_doc,
 "tdbtt(tdb1, tdb2, dtr) -> tt1, tt2\n\n"
 "Time scale transformation: Barycentric Dynamical Time, TDB, to\n"
 "Terrestrial Time, TT.\n"
@@ -3634,7 +4503,7 @@ PyDoc_STRVAR(erfa_tdbtt_doc,
 "   tt1,tt2   TT as a 2-part Julian Date");
 
 static PyObject *
-erfa_tttai(PyObject *self, PyObject *args)
+_erfa_tttai(PyObject *self, PyObject *args)
 {
     double tai1, tai2, tt1, tt2;
     int status;
@@ -3643,13 +4512,13 @@ erfa_tttai(PyObject *self, PyObject *args)
     }
     status = eraTttai(tt1, tt2, &tai1, &tai2);
     if (status) {
-        PyErr_SetString(erfaError, "should NOT occur");
+        PyErr_SetString(_erfaError, "should NOT occur");
         return NULL;
     }
     return Py_BuildValue("dd", tai1, tai2);
 }
 
-PyDoc_STRVAR(erfa_tttai_doc,
+PyDoc_STRVAR(_erfa_tttai_doc,
 "tttai(tt1, tt2) -> tai1, tai2\n\n"
 "Time scale transformation: Terrestrial Time, TT, to\n"
 "International Atomic Time, TAI.\n"
@@ -3659,7 +4528,7 @@ PyDoc_STRVAR(erfa_tttai_doc,
 "   tai1,tai2   TAI as a 2-part Julian Date");
 
 static PyObject *
-erfa_tttcg(PyObject *self, PyObject *args)
+_erfa_tttcg(PyObject *self, PyObject *args)
 {
     double tcg1, tcg2, tt1, tt2;
     int status;
@@ -3668,13 +4537,13 @@ erfa_tttcg(PyObject *self, PyObject *args)
     }
     status = eraTttcg(tt1, tt2, &tcg1, &tcg2);
     if (status) {
-        PyErr_SetString(erfaError, "should NOT occur");
+        PyErr_SetString(_erfaError, "should NOT occur");
         return NULL;
     }
     return Py_BuildValue("dd", tcg1, tcg2);
 }
 
-PyDoc_STRVAR(erfa_tttcg_doc,
+PyDoc_STRVAR(_erfa_tttcg_doc,
 "tttcg(tt1, tt2) -> tcg1, tcg2\n\n"
 "Time scale transformation: Terrestrial Time, TT, to Geocentric\n"
 "Coordinate Time, TCG.\n"
@@ -3684,7 +4553,7 @@ PyDoc_STRVAR(erfa_tttcg_doc,
 "   tcg1,tcg2   TCG as a 2-part Julian Date");
 
 static PyObject *
-erfa_tttdb(PyObject *self, PyObject *args)
+_erfa_tttdb(PyObject *self, PyObject *args)
 {
     double tdb1, tdb2, dtr, tt1, tt2;
     int status;
@@ -3693,13 +4562,13 @@ erfa_tttdb(PyObject *self, PyObject *args)
     }
     status = eraTttdb(tt1, tt2, dtr, &tdb1, &tdb2);
     if (status) {
-        PyErr_SetString(erfaError, "should NOT occur");
+        PyErr_SetString(_erfaError, "should NOT occur");
         return NULL;
     }
     return Py_BuildValue("dd", tdb1, tdb2);
 }
 
-PyDoc_STRVAR(erfa_tttdb_doc,
+PyDoc_STRVAR(_erfa_tttdb_doc,
 "tttdb(tt1, tt2, dtr) -> tdb1, tdb2\n\n"
 "Time scale transformation: Terrestrial Time, TT, to\n"
 "Barycentric Dynamical Time, TDB.\n"
@@ -3710,7 +4579,7 @@ PyDoc_STRVAR(erfa_tttdb_doc,
 "   tdb1,tdb2   TDB as a 2-part Julian Date");
 
 static PyObject *
-erfa_ttut1(PyObject *self, PyObject *args)
+_erfa_ttut1(PyObject *self, PyObject *args)
 {
     double ut11, ut12, dt, tt1, tt2;
     int status;
@@ -3719,13 +4588,13 @@ erfa_ttut1(PyObject *self, PyObject *args)
     }
     status = eraTtut1(tt1, tt2, dt, &ut11, &ut12);
     if (status) {
-        PyErr_SetString(erfaError, "should NOT occur");
+        PyErr_SetString(_erfaError, "should NOT occur");
         return NULL;
     }
     return Py_BuildValue("dd", ut11, ut12);
 }
 
-PyDoc_STRVAR(erfa_ttut1_doc,
+PyDoc_STRVAR(_erfa_ttut1_doc,
 "ttut1(tt1, tt2, dt) -> ut11, ut12\n\n"
 "Time scale transformation: Terrestrial Time, TT, to\n"
 "Universal Time UT1.\n"
@@ -3736,7 +4605,7 @@ PyDoc_STRVAR(erfa_ttut1_doc,
 "   ut11,ut12   UT1 as a 2-part Julian Date");
 
 static PyObject *
-erfa_ut1tai(PyObject *self, PyObject *args)
+_erfa_ut1tai(PyObject *self, PyObject *args)
 {
     double tai1, tai2, dta, ut11, ut12;
     int status;
@@ -3745,13 +4614,13 @@ erfa_ut1tai(PyObject *self, PyObject *args)
     }
     status = eraUt1tai(ut11, ut12, dta, &tai1, &tai2);
     if (status) {
-        PyErr_SetString(erfaError, "internal error...");
+        PyErr_SetString(_erfaError, "internal error...");
         return NULL;
     }
     return Py_BuildValue("dd", tai1, tai2);
 }
 
-PyDoc_STRVAR(erfa_ut1tai_doc,
+PyDoc_STRVAR(_erfa_ut1tai_doc,
 "ut1tai(ut11, ut12, dta) -> tai1, tai2\n\n"
 "Time scale transformation: Universal Time, UT1, to\n"
 "International Atomic Time, TAI.\n"
@@ -3764,7 +4633,7 @@ PyDoc_STRVAR(erfa_ut1tai_doc,
 "   tai1,tai2   TAI as a 2-part Julian Date");
 
 static PyObject *
-erfa_ut1tt(PyObject *self, PyObject *args)
+_erfa_ut1tt(PyObject *self, PyObject *args)
 {
     double tt1, tt2, dt, ut11, ut12;
     int status;
@@ -3773,13 +4642,13 @@ erfa_ut1tt(PyObject *self, PyObject *args)
     }
     status = eraUt1tt(ut11, ut12, dt, &tt1, &tt2);
     if (status) {
-        PyErr_SetString(erfaError, "internal error...");
+        PyErr_SetString(_erfaError, "internal error...");
         return NULL;
     }
     return Py_BuildValue("dd", tt1, tt2);
 }
 
-PyDoc_STRVAR(erfa_ut1tt_doc,
+PyDoc_STRVAR(_erfa_ut1tt_doc,
 "ut1tt(ut11, ut12, dt) -> tt1, tt2\n\n"
 "Time scale transformation: Universal Time, UT1, to\n"
 "Terrestrial Time, TT.\n"
@@ -3790,7 +4659,7 @@ PyDoc_STRVAR(erfa_ut1tt_doc,
 "   tt1,tt2     TT as a 2-part Julian Date");
 
 static PyObject *
-erfa_ut1utc(PyObject *self, PyObject *args)
+_erfa_ut1utc(PyObject *self, PyObject *args)
 {
     double utc1, utc2, dut1, ut11, ut12;
     int status;
@@ -3800,18 +4669,18 @@ erfa_ut1utc(PyObject *self, PyObject *args)
     status = eraUt1utc(ut11, ut12, dut1, &utc1, &utc2);
     if (status) {
         if (status == 1) {
-            PyErr_SetString(erfaError, "dubious year");
+            PyErr_SetString(_erfaError, "dubious year");
             return NULL;
         }
         else if (status == -1) {
-            PyErr_SetString(erfaError, "unacceptable date");
+            PyErr_SetString(_erfaError, "unacceptable date");
             return NULL;
         }
     }
     return Py_BuildValue("dd", utc1, utc2);
 }
 
-PyDoc_STRVAR(erfa_ut1utc_doc,
+PyDoc_STRVAR(_erfa_ut1utc_doc,
 "ut1utc(ut11, ut12, dut1) -> utc1, utc2\n\n"
 "Time scale transformation: Universal Time, UT1, to\n"
 "Coordinated Universal Time, UTC.\n"
@@ -3822,7 +4691,7 @@ PyDoc_STRVAR(erfa_ut1utc_doc,
 "   utc1,utc2   UTC as a 2-part Julian Date");
 
 static PyObject *
-erfa_utctai(PyObject *self, PyObject *args)
+_erfa_utctai(PyObject *self, PyObject *args)
 {
     double utc1, utc2, tai1, tai2;
     int status;
@@ -3832,18 +4701,18 @@ erfa_utctai(PyObject *self, PyObject *args)
     status = eraUtctai(utc1, utc2, &tai1, &tai2);
     if (status) {
         if (status == 1) {
-            PyErr_SetString(erfaError, "dubious year");
+            PyErr_SetString(_erfaError, "dubious year");
             return NULL;
         }
         else if (status == -1) {
-            PyErr_SetString(erfaError, "unacceptable date");
+            PyErr_SetString(_erfaError, "unacceptable date");
             return NULL;
         }
     }
     return Py_BuildValue("dd", tai1, tai2);
 }
 
-PyDoc_STRVAR(erfa_utctai_doc,
+PyDoc_STRVAR(_erfa_utctai_doc,
 "utctai(utc1, utc2) -> tai1, tai2\n\n"
 "Time scale transformation: Coordinated Universal Time, UTC, to\n"
 "International Atomic Time, TAI.\n"
@@ -3853,7 +4722,7 @@ PyDoc_STRVAR(erfa_utctai_doc,
 "   tai1,tai2   TAI as a 2-part Julian Date");
 
 static PyObject *
-erfa_utcut1(PyObject *self, PyObject *args)
+_erfa_utcut1(PyObject *self, PyObject *args)
 {
     double utc1, utc2, dut1, ut11, ut12;
     int status;
@@ -3863,18 +4732,18 @@ erfa_utcut1(PyObject *self, PyObject *args)
     status = eraUtcut1(utc1, utc2, dut1, &ut11, &ut12);
     if (status) {
         if (status == 1) {
-            PyErr_SetString(erfaError, "dubious year");
+            PyErr_SetString(_erfaError, "dubious year");
             return NULL;
         }
         else if (status == -1) {
-            PyErr_SetString(erfaError, "unacceptable date");
+            PyErr_SetString(_erfaError, "unacceptable date");
             return NULL;
         }
     }
     return Py_BuildValue("dd", ut11, ut12);
 }
 
-PyDoc_STRVAR(erfa_utcut1_doc,
+PyDoc_STRVAR(_erfa_utcut1_doc,
 "utcut1(utc1, utc2, dut1) -> ut11, ut12\n\n"
 "Time scale transformation: Coordinated Universal Time, UTC, to\n"
 "Universal Time, UT1.\n"
@@ -3885,7 +4754,7 @@ PyDoc_STRVAR(erfa_utcut1_doc,
 "   ut11,ut12   UT1 as a 2-part Julian Date");
 
 static PyObject *
-erfa_xy06(PyObject *self, PyObject *args)
+_erfa_xy06(PyObject *self, PyObject *args)
 {
     double d1, d2, x, y;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3895,7 +4764,7 @@ erfa_xy06(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", x, y);
 }
 
-PyDoc_STRVAR(erfa_xy06_doc,
+PyDoc_STRVAR(_erfa_xy06_doc,
 "xy06(d1, d2) -> x, y\n\n"
 "X,Y coordinates of celestial intermediate pole from series based\n"
 "on IAU 2006 precession and IAU 2000A nutation.\n"
@@ -3905,7 +4774,7 @@ PyDoc_STRVAR(erfa_xy06_doc,
 "   x,y     CIP X,Y coordinates");
 
 static PyObject *
-erfa_xys00a(PyObject *self, PyObject *args)
+_erfa_xys00a(PyObject *self, PyObject *args)
 {
     double d1, d2, x, y,  s;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3915,7 +4784,7 @@ erfa_xys00a(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", x, y, s);
 }
 
-PyDoc_STRVAR(erfa_xys00a_doc,
+PyDoc_STRVAR(_erfa_xys00a_doc,
 "xys00a(d1, d2) -> x, y, s\n\n"
 "For a given TT date, compute the X,Y coordinates of the Celestial\n"
 "Intermediate Pole and the CIO locator s, using the IAU 2000A\n"
@@ -3927,7 +4796,7 @@ PyDoc_STRVAR(erfa_xys00a_doc,
 "   s       the CIO locator s");
 
 static PyObject *
-erfa_xys00b(PyObject *self, PyObject *args)
+_erfa_xys00b(PyObject *self, PyObject *args)
 {
     double d1, d2, x, y,  s;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3937,7 +4806,7 @@ erfa_xys00b(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", x, y, s);
 }
 
-PyDoc_STRVAR(erfa_xys00b_doc,
+PyDoc_STRVAR(_erfa_xys00b_doc,
 "xys00b(d1, d2) -> x, y, s\n\n"
 "For a given TT date, compute the X,Y coordinates of the Celestial\n"
 "Intermediate Pole and the CIO locator s, using the IAU 2000B\n"
@@ -3949,7 +4818,7 @@ PyDoc_STRVAR(erfa_xys00b_doc,
 "   s       the CIO locator s");
 
 static PyObject *
-erfa_xys06a(PyObject *self, PyObject *args)
+_erfa_xys06a(PyObject *self, PyObject *args)
 {
     double d1, d2, x, y,  s;
     if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
@@ -3959,7 +4828,7 @@ erfa_xys06a(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", x, y, s);
 }
 
-PyDoc_STRVAR(erfa_xys06a_doc,
+PyDoc_STRVAR(_erfa_xys06a_doc,
 "xys06a(d1, d2) -> x, y, s\n\n"
 "For a given TT date, compute the X,Y coordinates of the Celestial\n"
 "Intermediate Pole and the CIO locator s, using the IAU 2006\n"
@@ -3971,7 +4840,7 @@ PyDoc_STRVAR(erfa_xys06a_doc,
 "   s       the CIO locator s");
 
 static PyObject *
-erfa_a2af(PyObject *self, PyObject *args)
+_erfa_a2af(PyObject *self, PyObject *args)
 {
     int ndp, idmsf[4];
     char sign;
@@ -3987,7 +4856,7 @@ erfa_a2af(PyObject *self, PyObject *args)
 #endif
 }
 
-PyDoc_STRVAR(erfa_a2af_doc,
+PyDoc_STRVAR(_erfa_a2af_doc,
 "a2af(n, a) -> +/-, d, m, s, f\n\n"
 "Decompose radians into degrees, arcminutes, arcseconds, fraction.\n"
 "Given:\n"
@@ -4001,7 +4870,7 @@ PyDoc_STRVAR(erfa_a2af_doc,
 "   f           fraction");
 
 static PyObject *
-erfa_a2tf(PyObject *self, PyObject *args)
+_erfa_a2tf(PyObject *self, PyObject *args)
 {
     int ndp, ihmsf[4];
     char sign;
@@ -4017,7 +4886,7 @@ erfa_a2tf(PyObject *self, PyObject *args)
 #endif
 }
 
-PyDoc_STRVAR(erfa_a2tf_doc,
+PyDoc_STRVAR(_erfa_a2tf_doc,
 "a2tf(n, a) -> +/-, h, m, s, f\n\n"
 "Decompose radians into hours, minutes, seconds, fraction.\n"
 "Given:\n"
@@ -4031,7 +4900,7 @@ PyDoc_STRVAR(erfa_a2tf_doc,
 "   f           fraction");
 
 static PyObject *
-erfa_af2a(PyObject *self, PyObject *args)
+_erfa_af2a(PyObject *self, PyObject *args)
 {
     int ideg, iamin;
     double asec, rad;
@@ -4046,7 +4915,7 @@ erfa_af2a(PyObject *self, PyObject *args)
     return Py_BuildValue("d", rad);
 }
 
-PyDoc_STRVAR(erfa_af2a_doc,
+PyDoc_STRVAR(_erfa_af2a_doc,
 "af2a(d, m, s) -> r\n"
 "Convert degrees, arcminutes, arcseconds to radians.\n"
 "Given:\n"
@@ -4058,17 +4927,17 @@ PyDoc_STRVAR(erfa_af2a_doc,
 "    r          angle in radians");
 
 static PyObject *
-erfa_anp(PyObject *self, PyObject *arg)
+_erfa_anp(PyObject *self, PyObject *arg)
 {
     double a = PyFloat_AsDouble(arg);
     if ((a == -1.0) && PyErr_Occurred()) {
-        PyErr_SetString(erfaError, "cannot convert angle to float!");
+        PyErr_SetString(_erfaError, "cannot convert angle to float!");
         return NULL;
     }
     return Py_BuildValue("d", eraAnp(a));
 }
 
-PyDoc_STRVAR(erfa_anp_doc,
+PyDoc_STRVAR(_erfa_anp_doc,
 "anp(a) -> 0 <= a < 2pi\n\n"
 "Normalize angle into the range 0 <= a < 2pi.\n"
 "Given:\n"
@@ -4077,17 +4946,17 @@ PyDoc_STRVAR(erfa_anp_doc,
 "    a          angle in range 0-2pi");
 
 static PyObject *
-erfa_anpm(PyObject *self, PyObject *arg)
+_erfa_anpm(PyObject *self, PyObject *arg)
 {
     double a = PyFloat_AsDouble(arg);
     if ((a == -1.0) && PyErr_Occurred()) {
-        PyErr_SetString(erfaError, "cannot convert angle to float!");
+        PyErr_SetString(_erfaError, "cannot convert angle to float!");
         return NULL;
     }
     return Py_BuildValue("d", eraAnpm(a));
 }
 
-PyDoc_STRVAR(erfa_anpm_doc,
+PyDoc_STRVAR(_erfa_anpm_doc,
 "anpm(a) -> -pi <= a < +pi\n\n"
 "Normalize angle into the range -pi <= a < +pi.\n"
 "Given:\n"
@@ -4096,7 +4965,7 @@ PyDoc_STRVAR(erfa_anpm_doc,
 "    a          angle in range 0-2pi");
 
 static PyObject *
-erfa_c2s(PyObject *self, PyObject *args)
+_erfa_c2s(PyObject *self, PyObject *args)
 {
     double p0, p1, p2, theta, phi, p[3];
     int ok;
@@ -4110,7 +4979,7 @@ erfa_c2s(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", theta, phi);
 }
 
-PyDoc_STRVAR(erfa_c2s_doc,
+PyDoc_STRVAR(_erfa_c2s_doc,
 "c2s(p) -> theta, phi\n\n"
 "P-vector to spherical coordinates.\n"
 "Given:\n"
@@ -4120,7 +4989,7 @@ PyDoc_STRVAR(erfa_c2s_doc,
 "    phi        latitude angle (radians)");
 
 static PyObject *
-erfa_cp(PyObject *self, PyObject *args)
+_erfa_cp(PyObject *self, PyObject *args)
 {
     double p[3], c[3];
     double p0,p1,p2;
@@ -4134,7 +5003,7 @@ erfa_cp(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd",c[0],c[1],c[2]);
 }
 
-PyDoc_STRVAR(erfa_cp_doc,
+PyDoc_STRVAR(_erfa_cp_doc,
 "cp(p) -> c\n\n"
 "Copy a p-vector.\n"
 "Given:\n"
@@ -4143,7 +5012,7 @@ PyDoc_STRVAR(erfa_cp_doc,
 "   c           copy");
 
 static PyObject *
-erfa_cpv(PyObject *self, PyObject *args)
+_erfa_cpv(PyObject *self, PyObject *args)
 {
     double pv[2][3], c[2][3];
     double p00,p01,p02,p10,p11,p12;
@@ -4162,7 +5031,7 @@ erfa_cpv(PyObject *self, PyObject *args)
                            c[0][0],c[0][1],c[0][2],c[1][0],c[1][1],c[1][2]);    
 }
 
-PyDoc_STRVAR(erfa_cpv_doc,
+PyDoc_STRVAR(_erfa_cpv_doc,
 "cp(pv) -> c\n\n"
 "Copy a position/velocity vector.\n"
 "Given:\n"
@@ -4171,7 +5040,7 @@ PyDoc_STRVAR(erfa_cpv_doc,
 "   c           copy");
 
 static PyObject *
-erfa_cr(PyObject *self, PyObject *args)
+_erfa_cr(PyObject *self, PyObject *args)
 {
     double r[3][3], c[3][3];
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
@@ -4195,7 +5064,7 @@ erfa_cr(PyObject *self, PyObject *args)
     c[2][0],c[2][1],c[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_cr_doc,
+PyDoc_STRVAR(_erfa_cr_doc,
 "cr(r) -> c\n\n"
 "Copy an r-matrix.\n"
 "Given:\n"
@@ -4204,7 +5073,7 @@ PyDoc_STRVAR(erfa_cr_doc,
 "   c           copy");
 
 static PyObject *
-erfa_d2tf(PyObject *self, PyObject *args)
+_erfa_d2tf(PyObject *self, PyObject *args)
 {
     double d;
     char sign = '+';
@@ -4220,7 +5089,7 @@ erfa_d2tf(PyObject *self, PyObject *args)
 #endif
 }
 
-PyDoc_STRVAR(erfa_d2tf_doc,
+PyDoc_STRVAR(_erfa_d2tf_doc,
 "d2tf(n, d) -> +/-,h, m, s, f\n\n"
 "Decompose days to hours, minutes, seconds, fraction.\n"
 "Given:\n"
@@ -4234,7 +5103,7 @@ PyDoc_STRVAR(erfa_d2tf_doc,
 "    f          fraction");
 
 static PyObject *
-erfa_p2pv(PyObject *self, PyObject *args)
+_erfa_p2pv(PyObject *self, PyObject *args)
 {
     double p[3], pv[2][3];
     double p0,p1,p2;
@@ -4250,7 +5119,7 @@ erfa_p2pv(PyObject *self, PyObject *args)
     pv[0][0],pv[0][1],pv[0][2],pv[1][0],pv[1][1],pv[1][2]);
 }
 
-PyDoc_STRVAR(erfa_p2pv_doc,
+PyDoc_STRVAR(_erfa_p2pv_doc,
 "p2pv(p) -> pv\n\n"
 "Extend a p-vector to a pv-vector by appending a zero velocity.\n"
 "Given:\n"
@@ -4259,7 +5128,7 @@ PyDoc_STRVAR(erfa_p2pv_doc,
 "    pv         pv-vector");
 
 static PyObject *
-erfa_p2s(PyObject *self, PyObject *args)
+_erfa_p2s(PyObject *self, PyObject *args)
 {
     double p[3], p0, p1, p2, theta, phi, r;
     if (!PyArg_ParseTuple(args, "(ddd)",&p0, &p1, &p2)) {
@@ -4272,7 +5141,7 @@ erfa_p2s(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", theta, phi, r);
 }
 
-PyDoc_STRVAR(erfa_p2s_doc,
+PyDoc_STRVAR(_erfa_p2s_doc,
 "p2s(p) -> theta, phi, r\n\n"
 "P-vector to spherical polar coordinates.\n"
 "Given:\n"
@@ -4283,7 +5152,7 @@ PyDoc_STRVAR(erfa_p2s_doc,
 "    r          radial distance");
 
 static PyObject *
-erfa_pap(PyObject *self, PyObject *args)
+_erfa_pap(PyObject *self, PyObject *args)
 {
     double a[3], b[3], theta;
     double a0,a1,a2,b0,b1,b2;
@@ -4300,7 +5169,7 @@ erfa_pap(PyObject *self, PyObject *args)
     return Py_BuildValue("d", theta);
 }
 
-PyDoc_STRVAR(erfa_pap_doc,
+PyDoc_STRVAR(_erfa_pap_doc,
 "pap(a, b) -> theta\n\n"
 "Position-angle from two p-vectors.\n"
 "Given:\n"
@@ -4310,7 +5179,7 @@ PyDoc_STRVAR(erfa_pap_doc,
 "   theta   position angle of b with respect to a (radians)");
 
 static PyObject *
-erfa_pas(PyObject *self, PyObject *args)
+_erfa_pas(PyObject *self, PyObject *args)
 {
     double al, ap, bl, bp, p;
     if (!PyArg_ParseTuple(args, "dddd",&al, &ap, &bl, &bp)) {
@@ -4320,7 +5189,7 @@ erfa_pas(PyObject *self, PyObject *args)
     return Py_BuildValue("d", p);
 }
 
-PyDoc_STRVAR(erfa_pas_doc,
+PyDoc_STRVAR(_erfa_pas_doc,
 "pas(al, ap, bl, bp) -> p\n\n"
 "Position-angle from spherical coordinates.\n"
 "Given:\n"
@@ -4332,7 +5201,7 @@ PyDoc_STRVAR(erfa_pas_doc,
 "   p   position angle of B with respect to A");
 
 static PyObject *
-erfa_pdp(PyObject *self, PyObject *args)
+_erfa_pdp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], ab;
     double a0,a1,a2, b0,b1,b2;
@@ -4349,7 +5218,7 @@ erfa_pdp(PyObject *self, PyObject *args)
     return Py_BuildValue("d", ab);
 }
 
-PyDoc_STRVAR(erfa_pdp_doc,
+PyDoc_STRVAR(_erfa_pdp_doc,
 "pdp(a, b -> a.b\n\n"
 "p-vector inner (=scalar=dot) product.\n"
 "Given:\n"
@@ -4359,7 +5228,7 @@ PyDoc_STRVAR(erfa_pdp_doc,
 "   ab      a . b");
 
 static PyObject *
-erfa_pm(PyObject *self, PyObject *args)
+_erfa_pm(PyObject *self, PyObject *args)
 {
     double p[3], p0, p1, p2, m;
     if (!PyArg_ParseTuple(args, "(ddd)",&p0, &p1, &p2)) {
@@ -4372,7 +5241,7 @@ erfa_pm(PyObject *self, PyObject *args)
     return Py_BuildValue("d", m);
 }
 
-PyDoc_STRVAR(erfa_pm_doc,
+PyDoc_STRVAR(_erfa_pm_doc,
 "pm(p) -> modulus\n\n"
 "Modulus of p-vector.\n"
 "Given:\n"
@@ -4381,7 +5250,7 @@ PyDoc_STRVAR(erfa_pm_doc,
 "   m       modulus");
 
 static PyObject *
-erfa_pmp(PyObject *self, PyObject *args)
+_erfa_pmp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], amb[3];
     double a0,a1,a2,b0,b1,b2;
@@ -4399,7 +5268,7 @@ erfa_pmp(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", amb[0], amb[1], amb[2]);
 }
 
-PyDoc_STRVAR(erfa_pmp_doc,
+PyDoc_STRVAR(_erfa_pmp_doc,
 "pmp(a, b) -> amb = a-b\n\n"
 "P-vector subtraction.\n"
 "Given:\n"
@@ -4409,7 +5278,7 @@ PyDoc_STRVAR(erfa_pmp_doc,
 "   amb         a - b");
 
 static PyObject *
-erfa_pn(PyObject *self, PyObject *args)
+_erfa_pn(PyObject *self, PyObject *args)
 {
     double p[3], p0, p1, p2, r, u[3];
     if (!PyArg_ParseTuple(args, "(ddd)",&p0, &p1, &p2)) {
@@ -4422,7 +5291,7 @@ erfa_pn(PyObject *self, PyObject *args)
     return Py_BuildValue("d(ddd)", r, u[0], u[1], u[2]);    
 }
 
-PyDoc_STRVAR(erfa_pn_doc,
+PyDoc_STRVAR(_erfa_pn_doc,
 "pn(p) -> r,u\n\n"
 "Convert a p-vector into modulus and unit vector.\n"
 "Given:\n"
@@ -4432,7 +5301,7 @@ PyDoc_STRVAR(erfa_pn_doc,
 "   u           unit vector");
 
 static PyObject *
-erfa_ppp(PyObject *self, PyObject *args)
+_erfa_ppp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], apb[3];
     double a0,a1,a2,b0,b1,b2;
@@ -4450,7 +5319,7 @@ erfa_ppp(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", apb[0], apb[1], apb[2]);
 }
 
-PyDoc_STRVAR(erfa_ppp_doc,
+PyDoc_STRVAR(_erfa_ppp_doc,
 "ppp(a, b) -> apb = a+b\n\n"
 "P-vector addition.\n"
 "Given:\n"
@@ -4460,7 +5329,7 @@ PyDoc_STRVAR(erfa_ppp_doc,
 "   apb         a + b");
 
 static PyObject *
-erfa_ppsp(PyObject *self, PyObject *args)
+_erfa_ppsp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], apsb[3];
     double a0,a1,a2,s,b0,b1,b2;
@@ -4478,7 +5347,7 @@ erfa_ppsp(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", apsb[0], apsb[1], apsb[2]);
 }
 
-PyDoc_STRVAR(erfa_ppsp_doc,
+PyDoc_STRVAR(_erfa_ppsp_doc,
 "ppsp(a, s, b) -> apsb = a + s*b\n\n"
 "P-vector plus scaled p-vector.\n"
 "Given:\n"
@@ -4489,7 +5358,7 @@ PyDoc_STRVAR(erfa_ppsp_doc,
 "   apsb        a + s*b");
 
 static PyObject *
-erfa_pv2p(PyObject *self, PyObject *args)
+_erfa_pv2p(PyObject *self, PyObject *args)
 {
     double pv[2][3], p[3];
     double p00,p01,p02,p10,p11,p12;
@@ -4507,7 +5376,7 @@ erfa_pv2p(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", p[0],p[1],p[2]);    
 }
 
-PyDoc_STRVAR(erfa_pv2p_doc,
+PyDoc_STRVAR(_erfa_pv2p_doc,
 "pv2p(pv) -> p\n\n"
 "Discard velocity component of a pv-vector.\n"
 "Given:\n"
@@ -4516,7 +5385,7 @@ PyDoc_STRVAR(erfa_pv2p_doc,
 "   p           p-vector");
 
 static PyObject *
-erfa_pv2s(PyObject *self, PyObject *args)
+_erfa_pv2s(PyObject *self, PyObject *args)
 {
     double pv[2][3], theta, phi, r, td, pd, rd;
     double pv00, pv01, pv02, pv10, pv11, pv12;
@@ -4534,7 +5403,7 @@ erfa_pv2s(PyObject *self, PyObject *args)
     return Py_BuildValue("dddddd", theta, phi, r, td, pd, rd);
 }
 
-PyDoc_STRVAR(erfa_pv2s_doc,
+PyDoc_STRVAR(_erfa_pv2s_doc,
 "pv2s(pv) -> theta, phi, r, td, pd, rd\n\n"
 "Convert position/velocity from Cartesian to spherical coordinates.\n"
 "Given:\n"
@@ -4548,7 +5417,7 @@ PyDoc_STRVAR(erfa_pv2s_doc,
 "   rd          rate of change of r");
 
 static PyObject *
-erfa_pvdpv(PyObject *self, PyObject *args)
+_erfa_pvdpv(PyObject *self, PyObject *args)
 {
     double pva[2][3], pvb[2][3], adb[2];
     double pva00, pva01, pva02, pva10, pva11, pva12;
@@ -4574,7 +5443,7 @@ erfa_pvdpv(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", adb[0], adb[1]);
 }
 
-PyDoc_STRVAR(erfa_pvdpv_doc,
+PyDoc_STRVAR(_erfa_pvdpv_doc,
 "pvdpv(a, b) -> adb = a.b\n\n"
 "Inner (=scalar=dot) product of two pv-vectors.\n"
 "Given:\n"
@@ -4584,7 +5453,7 @@ PyDoc_STRVAR(erfa_pvdpv_doc,
 "   adb         a . b");
 
 static PyObject *
-erfa_pvm(PyObject *self, PyObject *args)
+_erfa_pvm(PyObject *self, PyObject *args)
 {
     double pv[2][3], r, s;
     double pv00, pv01, pv02, pv10, pv11, pv12;
@@ -4602,7 +5471,7 @@ erfa_pvm(PyObject *self, PyObject *args)
     return Py_BuildValue("dd", r, s);
 }
 
-PyDoc_STRVAR(erfa_pvm_doc,
+PyDoc_STRVAR(_erfa_pvm_doc,
 "pvm(pv) -> r,s\n\n"
 "Modulus of pv-vector.\n"
 "Given:\n"
@@ -4612,7 +5481,7 @@ PyDoc_STRVAR(erfa_pvm_doc,
 "   s           modulus of velocity component");
 
 static PyObject *
-erfa_pvmpv(PyObject *self, PyObject *args)
+_erfa_pvmpv(PyObject *self, PyObject *args)
 {
     double pva[2][3], pvb[2][3], amb[2][3];
     double pva00, pva01, pva02, pva10, pva11, pva12;
@@ -4640,7 +5509,7 @@ erfa_pvmpv(PyObject *self, PyObject *args)
                            amb[1][0], amb[1][1], amb[1][2]);
 }
 
-PyDoc_STRVAR(erfa_pvmpv_doc,
+PyDoc_STRVAR(_erfa_pvmpv_doc,
 "pvmpv(a, b) -> amb = a-b\n\n"
 "Subtract one pv-vector from another.\n"
 "Given:\n"
@@ -4650,7 +5519,7 @@ PyDoc_STRVAR(erfa_pvmpv_doc,
 "   amb         a - b");
 
 static PyObject *
-erfa_pvppv(PyObject *self, PyObject *args)
+_erfa_pvppv(PyObject *self, PyObject *args)
 {
     double pva[2][3], pvb[2][3], apb[2][3];
     double pva00, pva01, pva02, pva10, pva11, pva12;
@@ -4678,7 +5547,7 @@ erfa_pvppv(PyObject *self, PyObject *args)
                            apb[1][0], apb[1][1], apb[1][2]);
 }
 
-PyDoc_STRVAR(erfa_pvppv_doc,
+PyDoc_STRVAR(_erfa_pvppv_doc,
 "pvppv(a, b) -> apb = a+b\n\n"
 "Add one pv-vector to another.\n"
 "Given:\n"
@@ -4688,7 +5557,7 @@ PyDoc_STRVAR(erfa_pvppv_doc,
 "   apb         a + b");
 
 static PyObject *
-erfa_pvu(PyObject *self, PyObject *args)
+_erfa_pvu(PyObject *self, PyObject *args)
 {
     double pv[2][3], dt, upv[2][3];
     double pv00, pv01, pv02, pv10, pv11, pv12;
@@ -4708,7 +5577,7 @@ erfa_pvu(PyObject *self, PyObject *args)
                            upv[1][0], upv[1][1], upv[1][2]);
 }
 
-PyDoc_STRVAR(erfa_pvu_doc,
+PyDoc_STRVAR(_erfa_pvu_doc,
 "pvu(dt, pv) -> upv\n\n"
 "Update a pv-vector.\n"
 "Given:\n"
@@ -4718,7 +5587,7 @@ PyDoc_STRVAR(erfa_pvu_doc,
 "   upv         p updated, v unchanged");
 
 static PyObject *
-erfa_pvup(PyObject *self, PyObject *args)
+_erfa_pvup(PyObject *self, PyObject *args)
 {
     double pv[2][3], dt, p[3];
     double pv00, pv01, pv02, pv10, pv11, pv12;
@@ -4736,7 +5605,7 @@ erfa_pvup(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", p[0], p[1], p[2]);
 }
 
-PyDoc_STRVAR(erfa_pvup_doc,
+PyDoc_STRVAR(_erfa_pvup_doc,
 "pvup(dt, pv) -> p\n\n"
 "Update a pv-vector, discarding the velocity component.\n"
 "Given:\n"
@@ -4746,7 +5615,7 @@ PyDoc_STRVAR(erfa_pvup_doc,
 "   p           p-vector");
 
 static PyObject *
-erfa_pvxpv(PyObject *self, PyObject *args)
+_erfa_pvxpv(PyObject *self, PyObject *args)
 {
     double pva[2][3], pvb[2][3], axb[2][3];
     double pva00, pva01, pva02, pva10, pva11, pva12;
@@ -4774,7 +5643,7 @@ erfa_pvxpv(PyObject *self, PyObject *args)
                            axb[1][0], axb[1][1], axb[1][2]);
 }
 
-PyDoc_STRVAR(erfa_pvxpv_doc,
+PyDoc_STRVAR(_erfa_pvxpv_doc,
 "pvxpv(a, b) -> axb = a x b\n\n"
 "Outer (=vector=cross) product of two pv-vectors.\n"
 "Given:\n"
@@ -4784,7 +5653,7 @@ PyDoc_STRVAR(erfa_pvxpv_doc,
 "   axb         a x b");
 
 static PyObject *
-erfa_pxp(PyObject *self, PyObject *args)
+_erfa_pxp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], axb[3];
     double a0,a1,a2,b0,b1,b2;
@@ -4802,7 +5671,7 @@ erfa_pxp(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", axb[0], axb[1], axb[2]);
 }
 
-PyDoc_STRVAR(erfa_pxp_doc,
+PyDoc_STRVAR(_erfa_pxp_doc,
 "pxp(a, b) -> axb = a x b\n\n"
 "p-vector outer (=vector=cross) product.\n"
 "Given:\n"
@@ -4812,7 +5681,7 @@ PyDoc_STRVAR(erfa_pxp_doc,
 "   axb         a x b");
 
 static PyObject *
-erfa_rm2v(PyObject *self, PyObject *args)
+_erfa_rm2v(PyObject *self, PyObject *args)
 {
     double r[3][3], w[3];
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
@@ -4833,7 +5702,7 @@ erfa_rm2v(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", w[0], w[1], w[2]);    
 }
 
-PyDoc_STRVAR(erfa_rm2v_doc,
+PyDoc_STRVAR(_erfa_rm2v_doc,
 "rm2v(r) -> w\n\n"
 "Express an r-matrix as an r-vector.\n"
 "Given:\n"
@@ -4842,7 +5711,7 @@ PyDoc_STRVAR(erfa_rm2v_doc,
 "   w          rotation vector");
 
 static PyObject *
-erfa_rv2m(PyObject *self, PyObject *args)
+_erfa_rv2m(PyObject *self, PyObject *args)
 {    
     double r[3][3], w[3];
     double w0, w1, w2;
@@ -4859,7 +5728,7 @@ erfa_rv2m(PyObject *self, PyObject *args)
                             r[2][0],r[2][1],r[2][2]);        
 }
 
-PyDoc_STRVAR(erfa_rv2m_doc,
+PyDoc_STRVAR(_erfa_rv2m_doc,
 "rv2m(w) -> r\n\n"
 "Form the r-matrix corresponding to a given r-vector.\n"
 "Given:\n"
@@ -4868,7 +5737,7 @@ PyDoc_STRVAR(erfa_rv2m_doc,
 "   r           rotation matrix");
 
 static PyObject *
-erfa_rx(PyObject *self, PyObject *args)
+_erfa_rx(PyObject *self, PyObject *args)
 {
     double r[3][3], phi;
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
@@ -4892,7 +5761,7 @@ erfa_rx(PyObject *self, PyObject *args)
                             r[2][0],r[2][1],r[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_rx_doc,
+PyDoc_STRVAR(_erfa_rx_doc,
 "rx(phi, r) -> r\n\n"
 "Rotate an r-matrix about the x-axis.\n"
 "Given:\n"
@@ -4901,7 +5770,7 @@ PyDoc_STRVAR(erfa_rx_doc,
 "   r           r-matrix, rotated");
 
 static PyObject *
-erfa_rxp(PyObject *self, PyObject *args)
+_erfa_rxp(PyObject *self, PyObject *args)
 {
     double r[3][3], p[3], rp[3];
     double r00,r01,r02,r10,r11,r12,r20,r21,r22, p0, p1, p2;
@@ -4928,7 +5797,7 @@ erfa_rxp(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", rp[0], rp[1], rp[2]);
 }
 
-PyDoc_STRVAR(erfa_rxp_doc,
+PyDoc_STRVAR(_erfa_rxp_doc,
 "rxp(r, p) -> rp\n\n"
 "Multiply a p-vector by an r-matrix.\n"
 "Given:\n"
@@ -4938,7 +5807,7 @@ PyDoc_STRVAR(erfa_rxp_doc,
 "   rp          r * p");
 
 static PyObject *
-erfa_rxpv(PyObject *self, PyObject *args)
+_erfa_rxpv(PyObject *self, PyObject *args)
 {
     double r[3][3], pv[2][3], rpv[2][3];
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
@@ -4971,7 +5840,7 @@ erfa_rxpv(PyObject *self, PyObject *args)
                           rpv[1][0], rpv[1][1], rpv[1][2]);
 }
 
-PyDoc_STRVAR(erfa_rxpv_doc,
+PyDoc_STRVAR(_erfa_rxpv_doc,
 "rxpv(r, pv) -> rpv\n\n"
 "Multiply a pv-vector by an r-matrix.\n"
 "Given:\n"
@@ -4981,7 +5850,7 @@ PyDoc_STRVAR(erfa_rxpv_doc,
 "   rpv         r * pv");
 
 static PyObject *
-erfa_rxr(PyObject *self, PyObject *args)
+_erfa_rxr(PyObject *self, PyObject *args)
 {
     double a[3][3], b[3][3], atb[3][3];
     double a00,a01,a02,a10,a11,a12,a20,a21,a22;
@@ -5017,7 +5886,7 @@ erfa_rxr(PyObject *self, PyObject *args)
                            atb[2][0],atb[2][1],atb[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_rxr_doc,
+PyDoc_STRVAR(_erfa_rxr_doc,
 "rxr(a, b -> atb\n\n"
 "Multiply two r-matrices.\n"
 "Given:\n"
@@ -5027,7 +5896,7 @@ PyDoc_STRVAR(erfa_rxr_doc,
 "   atb         a * b");
 
 static PyObject *
-erfa_ry(PyObject *self, PyObject *args)
+_erfa_ry(PyObject *self, PyObject *args)
 {
     double r[3][3], theta;
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
@@ -5051,7 +5920,7 @@ erfa_ry(PyObject *self, PyObject *args)
                             r[2][0],r[2][1],r[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_ry_doc,
+PyDoc_STRVAR(_erfa_ry_doc,
 "ry(theta, r) -> r\n\n"
 "Rotate an r-matrix about the y-axis.\n"
 "Given:\n"
@@ -5060,7 +5929,7 @@ PyDoc_STRVAR(erfa_ry_doc,
 "   r           r-matrix, rotated");
 
 static PyObject *
-erfa_rz(PyObject *self, PyObject *args)
+_erfa_rz(PyObject *self, PyObject *args)
 {
     double r[3][3], psi;
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
@@ -5084,7 +5953,7 @@ erfa_rz(PyObject *self, PyObject *args)
                             r[2][0],r[2][1],r[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_rz_doc,
+PyDoc_STRVAR(_erfa_rz_doc,
 "rz(psi, r) -> r\n\n"
 "Rotate an r-matrix about the z-axis.\n"
 "Given:\n"
@@ -5093,7 +5962,7 @@ PyDoc_STRVAR(erfa_rz_doc,
 "   r           r-matrix, rotated");
 
 static PyObject *
-erfa_s2c(PyObject *self, PyObject *args)
+_erfa_s2c(PyObject *self, PyObject *args)
 {
     double theta, phi, c[3];
     if (!PyArg_ParseTuple(args, "dd", &theta, &phi)) {
@@ -5103,7 +5972,7 @@ erfa_s2c(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", c[0], c[1], c[2]);
 }
 
-PyDoc_STRVAR(erfa_s2c_doc,
+PyDoc_STRVAR(_erfa_s2c_doc,
 "s2c(theta, phi) -> c\n\n"
 "Convert spherical coordinates to Cartesian.\n"
 "Given:\n"
@@ -5113,7 +5982,7 @@ PyDoc_STRVAR(erfa_s2c_doc,
 "    c       direction cosines");
 
 static PyObject *
-erfa_s2p(PyObject *self, PyObject *args)
+_erfa_s2p(PyObject *self, PyObject *args)
 {
     double theta, phi, r, p[3];
     if (!PyArg_ParseTuple(args, "ddd", &theta, &phi, &r)) {
@@ -5123,7 +5992,7 @@ erfa_s2p(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", p[0], p[1], p[2]);
 }
 
-PyDoc_STRVAR(erfa_s2p_doc,
+PyDoc_STRVAR(_erfa_s2p_doc,
 "s2p(theta, phi, r) -> p\n\n"
 "Convert spherical polar coordinates to p-vector.\n"
 "Given:\n"
@@ -5134,7 +6003,7 @@ PyDoc_STRVAR(erfa_s2p_doc,
 "   p       direction cosines");
 
 static PyObject *
-erfa_s2pv(PyObject *self, PyObject *args)
+_erfa_s2pv(PyObject *self, PyObject *args)
 {
     double theta, phi, r, td, pd, rd, pv[2][3];
     if (!PyArg_ParseTuple(args, "dddddd",
@@ -5147,7 +6016,7 @@ erfa_s2pv(PyObject *self, PyObject *args)
                         pv[1][0], pv[1][1], pv[1][2]);
 }
 
-PyDoc_STRVAR(erfa_s2pv_doc,
+PyDoc_STRVAR(_erfa_s2pv_doc,
 "s2pv(theta, phi, r, td, pd, rd) -> pv\n\n"
 "Convert position/velocity from spherical to Cartesian coordinates.\n"
 "Given:\n"
@@ -5161,7 +6030,7 @@ PyDoc_STRVAR(erfa_s2pv_doc,
 "   pv      pv-vector");
 
 static PyObject *
-erfa_s2xpv(PyObject *self, PyObject *args)
+_erfa_s2xpv(PyObject *self, PyObject *args)
 {
     double s1, s2, pv[2][3], spv[2][3];
     double pv00, pv01, pv02, pv10, pv11, pv12;
@@ -5181,7 +6050,7 @@ erfa_s2xpv(PyObject *self, PyObject *args)
                         spv[1][0], spv[1][1], spv[1][2]);
 }
 
-PyDoc_STRVAR(erfa_s2xpv_doc,
+PyDoc_STRVAR(_erfa_s2xpv_doc,
 "s2xpv(s1, s2, pv) -> spv\n\n"
 "Multiply a pv-vector by two scalars.\n"
 "Given:\n"
@@ -5192,7 +6061,7 @@ PyDoc_STRVAR(erfa_s2xpv_doc,
 "   spv         pv-vector: p scaled by s1, v scaled by s2");
 
 static PyObject *
-erfa_sepp(PyObject *self, PyObject *args)
+_erfa_sepp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], s;
     double a0, a1, a2, b0, b1, b2;
@@ -5210,7 +6079,7 @@ erfa_sepp(PyObject *self, PyObject *args)
     return Py_BuildValue("d", s);
 }
 
-PyDoc_STRVAR(erfa_sepp_doc,
+PyDoc_STRVAR(_erfa_sepp_doc,
 "sepp(a, b) -> s\n\n"
 "Angular separation between two p-vectors.\n"
 "Given:\n"
@@ -5220,7 +6089,7 @@ PyDoc_STRVAR(erfa_sepp_doc,
 "   s       angular separation (radians, always positive)");
 
 static PyObject *
-erfa_seps(PyObject *self, PyObject *args)
+_erfa_seps(PyObject *self, PyObject *args)
 {
     double al, ap, bl, bp, s;
     if (!PyArg_ParseTuple(args, "dddd",
@@ -5231,7 +6100,7 @@ erfa_seps(PyObject *self, PyObject *args)
     return Py_BuildValue("d", s);
 }
 
-PyDoc_STRVAR(erfa_seps_doc,
+PyDoc_STRVAR(_erfa_seps_doc,
 "seps(al, ap, bl, bp) -> s\n\n"
 "Angular separation between two sets of spherical coordinates.\n"
 "Given:\n"
@@ -5243,7 +6112,7 @@ PyDoc_STRVAR(erfa_seps_doc,
 "   s   angular separation (radians)");
 
 static PyObject *
-erfa_sxp(PyObject *self, PyObject *args)
+_erfa_sxp(PyObject *self, PyObject *args)
 {
     double s, p[3], sp[3], p0, p1, p2;
     if (!PyArg_ParseTuple(args, "d(ddd)", &s,
@@ -5257,7 +6126,7 @@ erfa_sxp(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", sp[0], sp[1], sp[2]);
 }
 
-PyDoc_STRVAR(erfa_sxp_doc,
+PyDoc_STRVAR(_erfa_sxp_doc,
 "sxp(s, p) -> sp\n\n"
 "Multiply a p-vector by a scalar.\n"
 "Given:\n"
@@ -5267,7 +6136,7 @@ PyDoc_STRVAR(erfa_sxp_doc,
 "   sp          s * p");
 
 static PyObject *
-erfa_sxpv(PyObject *self, PyObject *args)
+_erfa_sxpv(PyObject *self, PyObject *args)
 {
     double s, pv[2][3], spv[2][3];
     double pv00, pv01, pv02, pv10, pv11, pv12;
@@ -5287,7 +6156,7 @@ erfa_sxpv(PyObject *self, PyObject *args)
                         spv[1][0], spv[1][1], spv[1][2]);
 }
 
-PyDoc_STRVAR(erfa_sxpv_doc,
+PyDoc_STRVAR(_erfa_sxpv_doc,
 "sxpv(s, pv) -> spv\n\n"
 "Multiply a pv-vector by a scalar.\n"
 "Given:\n"
@@ -5297,7 +6166,7 @@ PyDoc_STRVAR(erfa_sxpv_doc,
 "   spv         s * pv");
 
 static PyObject *
-erfa_tf2a(PyObject *self, PyObject *args)
+_erfa_tf2a(PyObject *self, PyObject *args)
 {
     int ihour, imin, status;
     double sec, rad;
@@ -5319,7 +6188,7 @@ erfa_tf2a(PyObject *self, PyObject *args)
     return Py_BuildValue("d", rad);
 }
 
-PyDoc_STRVAR(erfa_tf2a_doc,
+PyDoc_STRVAR(_erfa_tf2a_doc,
 "tf2a(hour, min, sec) -> rad\n\n"
 "Convert hours, minutes, seconds to radians.\n"
 "Given:\n"
@@ -5330,7 +6199,7 @@ PyDoc_STRVAR(erfa_tf2a_doc,
 "   rad     angle in radians");
 
 static PyObject *
-erfa_tf2d(PyObject *self, PyObject *args)
+_erfa_tf2d(PyObject *self, PyObject *args)
 {
     int ihour, imin, status;
     double sec, days;
@@ -5352,7 +6221,7 @@ erfa_tf2d(PyObject *self, PyObject *args)
     return Py_BuildValue("d", days);
 }
 
-PyDoc_STRVAR(erfa_tf2d_doc,
+PyDoc_STRVAR(_erfa_tf2d_doc,
 "tf2d(hour, min, sec) -> days\n\n"
 "Convert hours, minutes, seconds to days.\n"
 "Given:\n"
@@ -5363,7 +6232,7 @@ PyDoc_STRVAR(erfa_tf2d_doc,
 "   days    interval in days");
 
 static PyObject *
-erfa_tr(PyObject *self, PyObject *args)
+_erfa_tr(PyObject *self, PyObject *args)
 {
     double r[3][3], rt[3][3];
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
@@ -5387,7 +6256,7 @@ erfa_tr(PyObject *self, PyObject *args)
                             rt[2][0],rt[2][1],rt[2][2]);    
 }
 
-PyDoc_STRVAR(erfa_tr_doc,
+PyDoc_STRVAR(_erfa_tr_doc,
 "tr(r) -> rt\n\n"
 "Transpose an r-matrix.\n"
 "Given:\n"
@@ -5396,7 +6265,7 @@ PyDoc_STRVAR(erfa_tr_doc,
 "   rt          transpose");
 
 static PyObject *
-erfa_trxp(PyObject *self, PyObject *args)
+_erfa_trxp(PyObject *self, PyObject *args)
 {
     double r[3][3], p[3], trp[3];
     double r00,r01,r02,r10,r11,r12,r20,r21,r22,p0,p1,p2;
@@ -5421,7 +6290,7 @@ erfa_trxp(PyObject *self, PyObject *args)
     return Py_BuildValue("ddd", trp[0], trp[1], trp[2]);    
 }
 
-PyDoc_STRVAR(erfa_trxp_doc,
+PyDoc_STRVAR(_erfa_trxp_doc,
 "trxp(r, p) -> trp\n\n"
 "Multiply a p-vector by the transpose of an r-matrix.\n"
 "Given:\n"
@@ -5431,7 +6300,7 @@ PyDoc_STRVAR(erfa_trxp_doc,
 "   trp         r * p");
 
 static PyObject *
-erfa_trxpv(PyObject *self, PyObject *args)
+_erfa_trxpv(PyObject *self, PyObject *args)
 {
     double r[3][3], pv[2][3], trpv[2][3];
     double r00,r01,r02,r10,r11,r12,r20,r21,r22;
@@ -5462,7 +6331,7 @@ erfa_trxpv(PyObject *self, PyObject *args)
                         trpv[1][0], trpv[1][1], trpv[1][2]);
 }
 
-PyDoc_STRVAR(erfa_trxpv_doc,
+PyDoc_STRVAR(_erfa_trxpv_doc,
 "trxpv(r, pv) -> trpv\n\n"
 "Multiply a pv-vector by the transpose of an r-matrix.\n"
 "Given:\n"
@@ -5472,198 +6341,217 @@ PyDoc_STRVAR(erfa_trxpv_doc,
 "   trpv        r * pv");
 
 
-static PyMethodDef erfa_methods[] = {
-    {"ab", erfa_ab, METH_VARARGS, erfa_ab_doc},
-    {"apcg", erfa_apcg, METH_VARARGS, erfa_apcg_doc},
-    {"apcg13", erfa_apcg13, METH_VARARGS, erfa_apcg13_doc},
-    {"apci", erfa_apci, METH_VARARGS, erfa_apci_doc},
-    {"apci13", erfa_apci13, METH_VARARGS, erfa_apci13_doc},
-    {"apco", erfa_apco, METH_VARARGS, erfa_apco_doc},
-    {"apco13", erfa_apco13, METH_VARARGS, erfa_apco13_doc},
-    {"apcs", erfa_apcs, METH_VARARGS, erfa_apcs_doc},
-    {"apcs13", erfa_apcs13, METH_VARARGS, erfa_apcs13_doc},
-    {"bi00", (PyCFunction)erfa_bi00, METH_NOARGS, erfa_bi00_doc},
-    {"bp00", erfa_bp00, METH_VARARGS, erfa_bp00_doc},
-    {"bp06", erfa_bp06, METH_VARARGS, erfa_bp06_doc},
-    {"bpn2xy", erfa_bpn2xy, METH_VARARGS, erfa_bpn2xy_doc},
-    {"c2i00a", erfa_c2i00a, METH_VARARGS, erfa_c2i00a_doc},
-    {"c2i00b", erfa_c2i00b, METH_VARARGS, erfa_c2i00b_doc},
-    {"c2i06a", erfa_c2i06a, METH_VARARGS, erfa_c2i06a_doc},
-    {"c2ibpn", erfa_c2ibpn, METH_VARARGS, erfa_c2ibpn_doc},
-    {"c2ixy", erfa_c2ixy, METH_VARARGS, erfa_c2ixy_doc},
-    {"c2ixys", erfa_c2ixys, METH_VARARGS, erfa_c2ixys_doc},
-    {"c2t00a", erfa_c2t00a, METH_VARARGS, erfa_c2t00a_doc},
-    {"c2t00b", erfa_c2t00b, METH_VARARGS, erfa_c2t00b_doc},
-    {"c2t06a", erfa_c2t06a, METH_VARARGS, erfa_c2t06a_doc},
-    {"c2tcio", erfa_c2tcio, METH_VARARGS, erfa_c2tcio_doc},
-    {"c2teqx", erfa_c2teqx, METH_VARARGS, erfa_c2teqx_doc},
-    {"c2tpe", erfa_c2tpe, METH_VARARGS, erfa_c2tpe_doc},
-    {"c2txy", erfa_c2txy, METH_VARARGS, erfa_c2txy_doc},
-    {"cal2jd", erfa_cal2jd, METH_VARARGS, erfa_cal2jd_doc},
-    {"d2dtf", erfa_d2dtf, METH_VARARGS, erfa_d2dtf_doc},
-    {"dat", erfa_dat, METH_VARARGS, erfa_dat_doc},
-    {"dtdb", erfa_dtdb, METH_VARARGS, erfa_dtdb_doc},
-    {"dtf2d", erfa_dtf2d, METH_VARARGS, erfa_dtf2d_doc},
-    {"ee00", erfa_ee00, METH_VARARGS, erfa_ee00_doc},
-    {"ee00a", erfa_ee00a, METH_VARARGS, erfa_ee00a_doc},
-    {"ee00b", erfa_ee00b, METH_VARARGS, erfa_ee00b_doc},
-    {"ee06a", erfa_ee06a, METH_VARARGS, erfa_ee06a_doc},
-    {"eect00", erfa_eect00, METH_VARARGS, erfa_eect00_doc},
-    {"eform", erfa_eform, METH_VARARGS, erfa_eform_doc},
-    {"eo06a", erfa_eo06a, METH_VARARGS, erfa_eo06a_doc},
-    {"eors", erfa_eors, METH_VARARGS, erfa_eors_doc},
-    {"epb", erfa_epb, METH_VARARGS, erfa_epb_doc},
-    {"epb2jd", erfa_epb2jd, METH_VARARGS, erfa_epb2jd_doc},
-    {"epj", erfa_epj, METH_VARARGS, erfa_epj_doc},
-    {"epj2jd", erfa_epj2jd, METH_VARARGS, erfa_epj2jd_doc},
-    {"epv00", (PyCFunction)erfa_epv00, METH_VARARGS|METH_KEYWORDS, erfa_epv00_doc},
-    {"eqeq94", erfa_eqeq94, METH_VARARGS, erfa_eqeq94_doc},
-    {"era00", erfa_era00, METH_VARARGS, erfa_era00_doc},
-    {"fad03", erfa_fad03, METH_VARARGS, erfa_fad03_doc},
-    {"fae03", erfa_fae03, METH_VARARGS, erfa_fae03_doc},
-    {"faf03", erfa_faf03, METH_VARARGS, erfa_faf03_doc},
-    {"faju03", erfa_faju03, METH_VARARGS, erfa_faju03_doc},
-    {"fal03", erfa_fal03, METH_VARARGS, erfa_fal03_doc},
-    {"falp03", erfa_falp03, METH_VARARGS, erfa_falp03_doc},
-    {"fama03", erfa_fama03, METH_VARARGS, erfa_fama03_doc},
-    {"fame03", erfa_fame03, METH_VARARGS, erfa_fame03_doc},
-    {"fane03", erfa_fane03, METH_VARARGS, erfa_fane03_doc},
-    {"faom03", erfa_faom03, METH_VARARGS, erfa_faom03_doc},
-    {"fapa03", erfa_fapa03, METH_VARARGS, erfa_fapa03_doc},
-    {"fasa03", erfa_fasa03, METH_VARARGS, erfa_fasa03_doc},
-    {"faur03", erfa_faur03, METH_VARARGS, erfa_faur03_doc},
-    {"fave03", erfa_fave03, METH_VARARGS, erfa_fave03_doc},
-    {"fk52h", erfa_fk52h, METH_VARARGS, erfa_fk52h_doc},
-    {"fk5hip", (PyCFunction)erfa_fk5hip, METH_NOARGS, erfa_fk5hip_doc},
-    {"fk5hz", erfa_fk5hz, METH_VARARGS, erfa_fk5hz_doc},
-    {"fw2m", erfa_fw2m, METH_VARARGS, erfa_fw2m_doc},
-    {"fw2xy", erfa_fw2xy, METH_VARARGS, erfa_fw2xy_doc},
-    {"gc2gd", erfa_gc2gd, METH_VARARGS, erfa_gc2gd_doc},
-    {"gc2gde", erfa_gc2gde, METH_VARARGS, erfa_gc2gde_doc},
-    {"gd2gc", erfa_gd2gc, METH_VARARGS, erfa_gd2gc_doc},
-    {"gd2gce", erfa_gd2gce, METH_VARARGS, erfa_gd2gce_doc},
-    {"gmst00", erfa_gmst00, METH_VARARGS, erfa_gmst00_doc},
-    {"gmst06", erfa_gmst06, METH_VARARGS, erfa_gmst06_doc},
-    {"gmst82", erfa_gmst82, METH_VARARGS, erfa_gmst82_doc},
-    {"gst00a", erfa_gst00a, METH_VARARGS, erfa_gst00a_doc},
-    {"gst00b", erfa_gst00b, METH_VARARGS, erfa_gst00b_doc},
-    {"gst06", erfa_gst06, METH_VARARGS, erfa_gst06_doc},
-    {"gst06a", erfa_gst06a, METH_VARARGS, erfa_gst06a_doc},
-    {"gst94", erfa_gst94, METH_VARARGS, erfa_gst94_doc},
-    {"h2fk5", erfa_h2fk5, METH_VARARGS, erfa_h2fk5_doc},
-    {"hfk5z", erfa_hfk5z, METH_VARARGS, erfa_hfk5z_doc},
-    {"jd2cal", erfa_jd2cal, METH_VARARGS, erfa_jd2cal_doc},
-    {"jdcalf", erfa_jdcalf, METH_VARARGS, erfa_jdcalf_doc},
-    {"num00a", erfa_num00a, METH_VARARGS, erfa_num00a_doc},
-    {"num00b", erfa_num00b, METH_VARARGS, erfa_num00b_doc},
-    {"num06a", erfa_num06a, METH_VARARGS, erfa_num06a_doc},
-    {"numat", erfa_numat, METH_VARARGS, erfa_numat_doc},
-    {"nut00a", erfa_nut00a, METH_VARARGS, erfa_nut00a_doc},
-    {"nut00b", erfa_nut00b, METH_VARARGS, erfa_nut00b_doc},
-    {"nut06a", erfa_nut06a, METH_VARARGS, erfa_nut06a_doc},
-    {"nut80", erfa_nut80, METH_VARARGS, erfa_nut80_doc},
-    {"nutm80", erfa_nutm80, METH_VARARGS, erfa_nutm80_doc},
-    {"obl06", erfa_obl06, METH_VARARGS, erfa_obl06_doc},
-    {"obl80", erfa_obl80, METH_VARARGS, erfa_obl80_doc},
-    {"p06e", erfa_p06e, METH_VARARGS, erfa_p06e_doc},
-    {"pb06", erfa_pb06, METH_VARARGS, erfa_pb06_doc},
-    {"pfw06", erfa_pfw06, METH_VARARGS, erfa_pfw06_doc},
-    {"plan94", erfa_plan94, METH_VARARGS, erfa_plan94_doc},
-    {"pmat00", erfa_pmat00, METH_VARARGS, erfa_pmat00_doc},
-    {"pmat06", erfa_pmat06, METH_VARARGS, erfa_pmat06_doc},
-    {"pmat76", erfa_pmat76, METH_VARARGS, erfa_pmat76_doc},
-    {"pn00", erfa_pn00, METH_VARARGS, erfa_pn00_doc},
-    {"pn00a", erfa_pn00a, METH_VARARGS, erfa_pn00a_doc},
-    {"pn00b", erfa_pn00b, METH_VARARGS, erfa_pn00b_doc},
-    {"pn06", erfa_pn06, METH_VARARGS, erfa_pn06_doc},
-    {"pn06a", erfa_pn06a, METH_VARARGS, erfa_pn06a_doc},
-    {"pnm00a", erfa_pnm00a, METH_VARARGS, erfa_pnm00a_doc},
-    {"pnm00b", erfa_pnm00b, METH_VARARGS, erfa_pnm00b_doc},
-    {"pnm06a", erfa_pnm06a, METH_VARARGS, erfa_pnm06a_doc},
-    {"pnm80", erfa_pnm80, METH_VARARGS, erfa_pnm80_doc},
-    {"pom00", erfa_pom00, METH_VARARGS, erfa_pom00_doc},
-    {"pr00", erfa_pr00, METH_VARARGS, erfa_pr00_doc},
-    {"prec76", erfa_prec76, METH_VARARGS, erfa_prec76_doc},
-    {"pvstar", erfa_pvstar, METH_VARARGS, erfa_pvstar_doc},
-    {"s00", erfa_s00, METH_VARARGS, erfa_s00_doc},
-    {"s00a", erfa_s00a, METH_VARARGS, erfa_s00a_doc},
-    {"s00b", erfa_s00b, METH_VARARGS, erfa_s00b_doc},
-    {"s06", erfa_s06, METH_VARARGS, erfa_s06_doc},
-    {"s06a", erfa_s06a, METH_VARARGS, erfa_s06a_doc},
-    {"sp00", erfa_sp00, METH_VARARGS, erfa_sp00_doc},
-    {"starpm", erfa_starpm, METH_VARARGS, erfa_starpm_doc},
-    {"starpv", erfa_starpv, METH_VARARGS, erfa_starpv_doc},
-    {"taitt", erfa_taitt, METH_VARARGS, erfa_taitt_doc},
-    {"taiut1", erfa_taiut1, METH_VARARGS, erfa_taiut1_doc},
-    {"taiutc", erfa_taiutc, METH_VARARGS, erfa_taiutc_doc},
-    {"tcbtdb", erfa_tcbtdb, METH_VARARGS, erfa_tcbtdb_doc},
-    {"tcgtt", erfa_tcgtt, METH_VARARGS, erfa_tcgtt_doc},
-    {"tdbtcb", erfa_tdbtcb, METH_VARARGS, erfa_tdbtcb_doc},
-    {"tdbtt", erfa_tdbtt, METH_VARARGS, erfa_tdbtt_doc},
-    {"tttai", erfa_tttai, METH_VARARGS, erfa_tttai_doc},
-    {"tttcg", erfa_tttcg, METH_VARARGS, erfa_tttcg_doc},
-    {"tttdb", erfa_tttdb, METH_VARARGS, erfa_tttdb_doc},
-    {"ttut1", erfa_ttut1, METH_VARARGS, erfa_ttut1_doc},
-    {"ut1tai", erfa_ut1tai, METH_VARARGS, erfa_ut1tai_doc},
-    {"ut1tt", erfa_ut1tt, METH_VARARGS, erfa_ut1tt_doc},
-    {"ut1utc", erfa_ut1utc, METH_VARARGS, erfa_ut1utc_doc},
-    {"utctai", erfa_utctai, METH_VARARGS, erfa_utctai_doc},
-    {"utcut1", erfa_utcut1, METH_VARARGS, erfa_utcut1_doc},
-    {"xy06", erfa_xy06, METH_VARARGS, erfa_xy06_doc},
-    {"xys00a", erfa_xys00a, METH_VARARGS, erfa_xys00a_doc},
-    {"xys00b", erfa_xys00b, METH_VARARGS, erfa_xys00b_doc},
-    {"xys06a", erfa_xys06a, METH_VARARGS, erfa_xys06a_doc},
-    {"a2af", erfa_a2af, METH_VARARGS, erfa_a2af_doc},
-    {"a2tf", erfa_a2tf, METH_VARARGS, erfa_a2tf_doc},
-    {"af2a", erfa_af2a, METH_VARARGS, erfa_af2a_doc},
-    {"anp", erfa_anp, METH_O, erfa_anp_doc},
-    {"anpm", erfa_anpm, METH_O, erfa_anpm_doc},
-    {"c2s", erfa_c2s, METH_VARARGS, erfa_c2s_doc},
-    {"cp", erfa_cp, METH_VARARGS, erfa_cp_doc},
-    {"cpv", erfa_cpv, METH_VARARGS, erfa_cpv_doc},
-    {"cr", erfa_cr, METH_VARARGS, erfa_cr_doc},
-    {"d2tf", erfa_d2tf, METH_VARARGS, erfa_d2tf_doc},
-    {"p2pv", erfa_p2pv, METH_VARARGS, erfa_p2pv_doc},
-    {"p2s", erfa_p2s, METH_VARARGS, erfa_p2s_doc},
-    {"pap", erfa_pap, METH_VARARGS, erfa_pap_doc},
-    {"pas", erfa_pas, METH_VARARGS, erfa_pas_doc},
-    {"pdp", erfa_pdp, METH_VARARGS, erfa_pdp_doc},
-    {"pm", erfa_pm, METH_VARARGS, erfa_pm_doc},
-    {"pmp", erfa_pmp, METH_VARARGS, erfa_pmp_doc},
-    {"pn", erfa_pn, METH_VARARGS, erfa_pn_doc},
-    {"ppp", erfa_ppp, METH_VARARGS, erfa_ppp_doc},
-    {"ppsp", erfa_ppsp, METH_VARARGS, erfa_ppsp_doc},
-    {"pv2p", erfa_pv2p, METH_VARARGS, erfa_pv2p_doc},
-    {"pv2s", erfa_pv2s, METH_VARARGS, erfa_pv2s_doc},
-    {"pvdpv", erfa_pvdpv, METH_VARARGS, erfa_pvdpv_doc},
-    {"pvm", erfa_pvm, METH_VARARGS, erfa_pvm_doc},
-    {"pvmpv", erfa_pvmpv, METH_VARARGS, erfa_pvmpv_doc},
-    {"pvppv", erfa_pvppv, METH_VARARGS, erfa_pvppv_doc},
-    {"pvu", erfa_pvu, METH_VARARGS, erfa_pvu_doc},
-    {"pvup", erfa_pvup, METH_VARARGS, erfa_pvup_doc},
-    {"pvxpv", erfa_pvxpv, METH_VARARGS, erfa_pvxpv_doc},
-    {"pxp", erfa_pxp, METH_VARARGS, erfa_pxp_doc},
-    {"rm2v", erfa_rm2v, METH_VARARGS, erfa_rm2v_doc},
-    {"rv2m", erfa_rv2m, METH_VARARGS, erfa_rv2m_doc},
-    {"rx", erfa_rx, METH_VARARGS, erfa_rx_doc},
-    {"rxp", erfa_rxp, METH_VARARGS, erfa_rxp_doc},
-    {"rxpv", erfa_rxpv, METH_VARARGS, erfa_rxpv_doc},
-    {"rxr", erfa_rxr, METH_VARARGS, erfa_rxr_doc},
-    {"ry", erfa_ry, METH_VARARGS, erfa_ry_doc},
-    {"rz", erfa_rz, METH_VARARGS, erfa_rz_doc},
-    {"s2c", erfa_s2c, METH_VARARGS, erfa_s2c_doc},
-    {"s2p", erfa_s2p, METH_VARARGS, erfa_s2p_doc},
-    {"s2pv", erfa_s2pv, METH_VARARGS, erfa_s2pv_doc},
-    {"s2xpv", erfa_s2xpv, METH_VARARGS, erfa_s2xpv_doc},
-    {"sepp", erfa_sepp, METH_VARARGS, erfa_sepp_doc},
-    {"seps", erfa_seps, METH_VARARGS, erfa_seps_doc},
-    {"sxp", erfa_sxp, METH_VARARGS, erfa_sxp_doc},
-    {"sxpv", erfa_sxpv, METH_VARARGS, erfa_sxpv_doc},
-    {"tf2a", erfa_tf2a, METH_VARARGS, erfa_tf2a_doc},
-    {"tf2d", erfa_tf2d, METH_VARARGS, erfa_tf2d_doc},
-    {"tr", erfa_tr, METH_VARARGS, erfa_tr_doc},
-    {"trxp", erfa_trxp, METH_VARARGS, erfa_trxp_doc},
-    {"trxpv", erfa_trxpv, METH_VARARGS, erfa_trxpv_doc},
+static PyMethodDef _erfa_methods[] = {
+    {"ab", _erfa_ab, METH_VARARGS, _erfa_ab_doc},
+    {"apcg", _erfa_apcg, METH_VARARGS, _erfa_apcg_doc},
+    {"apcg13", _erfa_apcg13, METH_VARARGS, _erfa_apcg13_doc},
+    {"apci", _erfa_apci, METH_VARARGS, _erfa_apci_doc},
+    {"apci13", _erfa_apci13, METH_VARARGS, _erfa_apci13_doc},
+    {"apco", _erfa_apco, METH_VARARGS, _erfa_apco_doc},
+    {"apco13", _erfa_apco13, METH_VARARGS, _erfa_apco13_doc},
+    {"apcs", _erfa_apcs, METH_VARARGS, _erfa_apcs_doc},
+    {"apcs13", _erfa_apcs13, METH_VARARGS, _erfa_apcs13_doc},
+    {"apio", _erfa_apio, METH_VARARGS, _erfa_apio_doc},
+    {"apio13", _erfa_apio13, METH_VARARGS, _erfa_apio13_doc},
+    {"atci13", _erfa_atci13, METH_VARARGS, _erfa_atci13_doc},
+    {"atciq", _erfa_atciq, METH_VARARGS, _erfa_atciq_doc},
+    {"atciqz", _erfa_atciqz, METH_VARARGS, _erfa_atciqz_doc},
+    {"atco13", _erfa_atco13, METH_VARARGS, _erfa_atco13_doc},
+    {"atic13", _erfa_atic13, METH_VARARGS, _erfa_atic13_doc},
+    {"aticq", _erfa_aticq, METH_VARARGS, _erfa_aticq_doc},
+    {"atio13", _erfa_atio13, METH_VARARGS, _erfa_atio13_doc},
+    {"atioq", _erfa_atioq, METH_VARARGS, _erfa_atioq_doc},
+    {"atoc13", _erfa_atoc13, METH_VARARGS, _erfa_atoc13_doc},
+    {"atoi13", _erfa_atoi13, METH_VARARGS, _erfa_atoi13_doc},
+    {"atoiq", _erfa_atoiq, METH_VARARGS, _erfa_atoiq_doc},
+    {"ld", _erfa_ld, METH_VARARGS, _erfa_ld_doc},
+    {"ldsun", _erfa_ldsun, METH_VARARGS, _erfa_ldsun_doc},
+    {"pmpx", _erfa_pmpx, METH_VARARGS, _erfa_pmpx_doc},
+    {"pmsafe", _erfa_pmsafe, METH_VARARGS, _erfa_pmsafe_doc},
+    {"pvtob", _erfa_pvtob, METH_VARARGS, _erfa_pvtob_doc},
+    {"refco", _erfa_refco, METH_VARARGS, _erfa_refco_doc},
+    {"bi00", (PyCFunction)_erfa_bi00, METH_NOARGS, _erfa_bi00_doc},
+    {"bp00", _erfa_bp00, METH_VARARGS, _erfa_bp00_doc},
+    {"bp06", _erfa_bp06, METH_VARARGS, _erfa_bp06_doc},
+    {"bpn2xy", _erfa_bpn2xy, METH_VARARGS, _erfa_bpn2xy_doc},
+    {"c2i00a", _erfa_c2i00a, METH_VARARGS, _erfa_c2i00a_doc},
+    {"c2i00b", _erfa_c2i00b, METH_VARARGS, _erfa_c2i00b_doc},
+    {"c2i06a", _erfa_c2i06a, METH_VARARGS, _erfa_c2i06a_doc},
+    {"c2ibpn", _erfa_c2ibpn, METH_VARARGS, _erfa_c2ibpn_doc},
+    {"c2ixy", _erfa_c2ixy, METH_VARARGS, _erfa_c2ixy_doc},
+    {"c2ixys", _erfa_c2ixys, METH_VARARGS, _erfa_c2ixys_doc},
+    {"c2t00a", _erfa_c2t00a, METH_VARARGS, _erfa_c2t00a_doc},
+    {"c2t00b", _erfa_c2t00b, METH_VARARGS, _erfa_c2t00b_doc},
+    {"c2t06a", _erfa_c2t06a, METH_VARARGS, _erfa_c2t06a_doc},
+    {"c2tcio", _erfa_c2tcio, METH_VARARGS, _erfa_c2tcio_doc},
+    {"c2teqx", _erfa_c2teqx, METH_VARARGS, _erfa_c2teqx_doc},
+    {"c2tpe", _erfa_c2tpe, METH_VARARGS, _erfa_c2tpe_doc},
+    {"c2txy", _erfa_c2txy, METH_VARARGS, _erfa_c2txy_doc},
+    {"cal2jd", _erfa_cal2jd, METH_VARARGS, _erfa_cal2jd_doc},
+    {"d2dtf", _erfa_d2dtf, METH_VARARGS, _erfa_d2dtf_doc},
+    {"dat", _erfa_dat, METH_VARARGS, _erfa_dat_doc},
+    {"dtdb", _erfa_dtdb, METH_VARARGS, _erfa_dtdb_doc},
+    {"dtf2d", _erfa_dtf2d, METH_VARARGS, _erfa_dtf2d_doc},
+    {"ee00", _erfa_ee00, METH_VARARGS, _erfa_ee00_doc},
+    {"ee00a", _erfa_ee00a, METH_VARARGS, _erfa_ee00a_doc},
+    {"ee00b", _erfa_ee00b, METH_VARARGS, _erfa_ee00b_doc},
+    {"ee06a", _erfa_ee06a, METH_VARARGS, _erfa_ee06a_doc},
+    {"eect00", _erfa_eect00, METH_VARARGS, _erfa_eect00_doc},
+    {"eform", _erfa_eform, METH_VARARGS, _erfa_eform_doc},
+    {"eo06a", _erfa_eo06a, METH_VARARGS, _erfa_eo06a_doc},
+    {"eors", _erfa_eors, METH_VARARGS, _erfa_eors_doc},
+    {"epb", _erfa_epb, METH_VARARGS, _erfa_epb_doc},
+    {"epb2jd", _erfa_epb2jd, METH_VARARGS, _erfa_epb2jd_doc},
+    {"epj", _erfa_epj, METH_VARARGS, _erfa_epj_doc},
+    {"epj2jd", _erfa_epj2jd, METH_VARARGS, _erfa_epj2jd_doc},
+    {"epv00", (PyCFunction)_erfa_epv00, METH_VARARGS|METH_KEYWORDS, _erfa_epv00_doc},
+    {"eqeq94", _erfa_eqeq94, METH_VARARGS, _erfa_eqeq94_doc},
+    {"era00", _erfa_era00, METH_VARARGS, _erfa_era00_doc},
+    {"fad03", _erfa_fad03, METH_VARARGS, _erfa_fad03_doc},
+    {"fae03", _erfa_fae03, METH_VARARGS, _erfa_fae03_doc},
+    {"faf03", _erfa_faf03, METH_VARARGS, _erfa_faf03_doc},
+    {"faju03", _erfa_faju03, METH_VARARGS, _erfa_faju03_doc},
+    {"fal03", _erfa_fal03, METH_VARARGS, _erfa_fal03_doc},
+    {"falp03", _erfa_falp03, METH_VARARGS, _erfa_falp03_doc},
+    {"fama03", _erfa_fama03, METH_VARARGS, _erfa_fama03_doc},
+    {"fame03", _erfa_fame03, METH_VARARGS, _erfa_fame03_doc},
+    {"fane03", _erfa_fane03, METH_VARARGS, _erfa_fane03_doc},
+    {"faom03", _erfa_faom03, METH_VARARGS, _erfa_faom03_doc},
+    {"fapa03", _erfa_fapa03, METH_VARARGS, _erfa_fapa03_doc},
+    {"fasa03", _erfa_fasa03, METH_VARARGS, _erfa_fasa03_doc},
+    {"faur03", _erfa_faur03, METH_VARARGS, _erfa_faur03_doc},
+    {"fave03", _erfa_fave03, METH_VARARGS, _erfa_fave03_doc},
+    {"fk52h", _erfa_fk52h, METH_VARARGS, _erfa_fk52h_doc},
+    {"fk5hip", (PyCFunction)_erfa_fk5hip, METH_NOARGS, _erfa_fk5hip_doc},
+    {"fk5hz", _erfa_fk5hz, METH_VARARGS, _erfa_fk5hz_doc},
+    {"fw2m", _erfa_fw2m, METH_VARARGS, _erfa_fw2m_doc},
+    {"fw2xy", _erfa_fw2xy, METH_VARARGS, _erfa_fw2xy_doc},
+    {"gc2gd", _erfa_gc2gd, METH_VARARGS, _erfa_gc2gd_doc},
+    {"gc2gde", _erfa_gc2gde, METH_VARARGS, _erfa_gc2gde_doc},
+    {"gd2gc", _erfa_gd2gc, METH_VARARGS, _erfa_gd2gc_doc},
+    {"gd2gce", _erfa_gd2gce, METH_VARARGS, _erfa_gd2gce_doc},
+    {"gmst00", _erfa_gmst00, METH_VARARGS, _erfa_gmst00_doc},
+    {"gmst06", _erfa_gmst06, METH_VARARGS, _erfa_gmst06_doc},
+    {"gmst82", _erfa_gmst82, METH_VARARGS, _erfa_gmst82_doc},
+    {"gst00a", _erfa_gst00a, METH_VARARGS, _erfa_gst00a_doc},
+    {"gst00b", _erfa_gst00b, METH_VARARGS, _erfa_gst00b_doc},
+    {"gst06", _erfa_gst06, METH_VARARGS, _erfa_gst06_doc},
+    {"gst06a", _erfa_gst06a, METH_VARARGS, _erfa_gst06a_doc},
+    {"gst94", _erfa_gst94, METH_VARARGS, _erfa_gst94_doc},
+    {"h2fk5", _erfa_h2fk5, METH_VARARGS, _erfa_h2fk5_doc},
+    {"hfk5z", _erfa_hfk5z, METH_VARARGS, _erfa_hfk5z_doc},
+    {"jd2cal", _erfa_jd2cal, METH_VARARGS, _erfa_jd2cal_doc},
+    {"jdcalf", _erfa_jdcalf, METH_VARARGS, _erfa_jdcalf_doc},
+    {"num00a", _erfa_num00a, METH_VARARGS, _erfa_num00a_doc},
+    {"num00b", _erfa_num00b, METH_VARARGS, _erfa_num00b_doc},
+    {"num06a", _erfa_num06a, METH_VARARGS, _erfa_num06a_doc},
+    {"numat", _erfa_numat, METH_VARARGS, _erfa_numat_doc},
+    {"nut00a", _erfa_nut00a, METH_VARARGS, _erfa_nut00a_doc},
+    {"nut00b", _erfa_nut00b, METH_VARARGS, _erfa_nut00b_doc},
+    {"nut06a", _erfa_nut06a, METH_VARARGS, _erfa_nut06a_doc},
+    {"nut80", _erfa_nut80, METH_VARARGS, _erfa_nut80_doc},
+    {"nutm80", _erfa_nutm80, METH_VARARGS, _erfa_nutm80_doc},
+    {"obl06", _erfa_obl06, METH_VARARGS, _erfa_obl06_doc},
+    {"obl80", _erfa_obl80, METH_VARARGS, _erfa_obl80_doc},
+    {"p06e", _erfa_p06e, METH_VARARGS, _erfa_p06e_doc},
+    {"pb06", _erfa_pb06, METH_VARARGS, _erfa_pb06_doc},
+    {"pfw06", _erfa_pfw06, METH_VARARGS, _erfa_pfw06_doc},
+    {"plan94", _erfa_plan94, METH_VARARGS, _erfa_plan94_doc},
+    {"pmat00", _erfa_pmat00, METH_VARARGS, _erfa_pmat00_doc},
+    {"pmat06", _erfa_pmat06, METH_VARARGS, _erfa_pmat06_doc},
+    {"pmat76", _erfa_pmat76, METH_VARARGS, _erfa_pmat76_doc},
+    {"pn00", _erfa_pn00, METH_VARARGS, _erfa_pn00_doc},
+    {"pn00a", _erfa_pn00a, METH_VARARGS, _erfa_pn00a_doc},
+    {"pn00b", _erfa_pn00b, METH_VARARGS, _erfa_pn00b_doc},
+    {"pn06", _erfa_pn06, METH_VARARGS, _erfa_pn06_doc},
+    {"pn06a", _erfa_pn06a, METH_VARARGS, _erfa_pn06a_doc},
+    {"pnm00a", _erfa_pnm00a, METH_VARARGS, _erfa_pnm00a_doc},
+    {"pnm00b", _erfa_pnm00b, METH_VARARGS, _erfa_pnm00b_doc},
+    {"pnm06a", _erfa_pnm06a, METH_VARARGS, _erfa_pnm06a_doc},
+    {"pnm80", _erfa_pnm80, METH_VARARGS, _erfa_pnm80_doc},
+    {"pom00", _erfa_pom00, METH_VARARGS, _erfa_pom00_doc},
+    {"pr00", _erfa_pr00, METH_VARARGS, _erfa_pr00_doc},
+    {"prec76", _erfa_prec76, METH_VARARGS, _erfa_prec76_doc},
+    {"pvstar", _erfa_pvstar, METH_VARARGS, _erfa_pvstar_doc},
+    {"s00", _erfa_s00, METH_VARARGS, _erfa_s00_doc},
+    {"s00a", _erfa_s00a, METH_VARARGS, _erfa_s00a_doc},
+    {"s00b", _erfa_s00b, METH_VARARGS, _erfa_s00b_doc},
+    {"s06", _erfa_s06, METH_VARARGS, _erfa_s06_doc},
+    {"s06a", _erfa_s06a, METH_VARARGS, _erfa_s06a_doc},
+    {"sp00", _erfa_sp00, METH_VARARGS, _erfa_sp00_doc},
+    {"starpm", _erfa_starpm, METH_VARARGS, _erfa_starpm_doc},
+    {"starpv", _erfa_starpv, METH_VARARGS, _erfa_starpv_doc},
+    {"taitt", _erfa_taitt, METH_VARARGS, _erfa_taitt_doc},
+    {"taiut1", _erfa_taiut1, METH_VARARGS, _erfa_taiut1_doc},
+    {"taiutc", _erfa_taiutc, METH_VARARGS, _erfa_taiutc_doc},
+    {"tcbtdb", _erfa_tcbtdb, METH_VARARGS, _erfa_tcbtdb_doc},
+    {"tcgtt", _erfa_tcgtt, METH_VARARGS, _erfa_tcgtt_doc},
+    {"tdbtcb", _erfa_tdbtcb, METH_VARARGS, _erfa_tdbtcb_doc},
+    {"tdbtt", _erfa_tdbtt, METH_VARARGS, _erfa_tdbtt_doc},
+    {"tttai", _erfa_tttai, METH_VARARGS, _erfa_tttai_doc},
+    {"tttcg", _erfa_tttcg, METH_VARARGS, _erfa_tttcg_doc},
+    {"tttdb", _erfa_tttdb, METH_VARARGS, _erfa_tttdb_doc},
+    {"ttut1", _erfa_ttut1, METH_VARARGS, _erfa_ttut1_doc},
+    {"ut1tai", _erfa_ut1tai, METH_VARARGS, _erfa_ut1tai_doc},
+    {"ut1tt", _erfa_ut1tt, METH_VARARGS, _erfa_ut1tt_doc},
+    {"ut1utc", _erfa_ut1utc, METH_VARARGS, _erfa_ut1utc_doc},
+    {"utctai", _erfa_utctai, METH_VARARGS, _erfa_utctai_doc},
+    {"utcut1", _erfa_utcut1, METH_VARARGS, _erfa_utcut1_doc},
+    {"xy06", _erfa_xy06, METH_VARARGS, _erfa_xy06_doc},
+    {"xys00a", _erfa_xys00a, METH_VARARGS, _erfa_xys00a_doc},
+    {"xys00b", _erfa_xys00b, METH_VARARGS, _erfa_xys00b_doc},
+    {"xys06a", _erfa_xys06a, METH_VARARGS, _erfa_xys06a_doc},
+    {"a2af", _erfa_a2af, METH_VARARGS, _erfa_a2af_doc},
+    {"a2tf", _erfa_a2tf, METH_VARARGS, _erfa_a2tf_doc},
+    {"af2a", _erfa_af2a, METH_VARARGS, _erfa_af2a_doc},
+    {"anp", _erfa_anp, METH_O, _erfa_anp_doc},
+    {"anpm", _erfa_anpm, METH_O, _erfa_anpm_doc},
+    {"c2s", _erfa_c2s, METH_VARARGS, _erfa_c2s_doc},
+    {"cp", _erfa_cp, METH_VARARGS, _erfa_cp_doc},
+    {"cpv", _erfa_cpv, METH_VARARGS, _erfa_cpv_doc},
+    {"cr", _erfa_cr, METH_VARARGS, _erfa_cr_doc},
+    {"d2tf", _erfa_d2tf, METH_VARARGS, _erfa_d2tf_doc},
+    {"p2pv", _erfa_p2pv, METH_VARARGS, _erfa_p2pv_doc},
+    {"p2s", _erfa_p2s, METH_VARARGS, _erfa_p2s_doc},
+    {"pap", _erfa_pap, METH_VARARGS, _erfa_pap_doc},
+    {"pas", _erfa_pas, METH_VARARGS, _erfa_pas_doc},
+    {"pdp", _erfa_pdp, METH_VARARGS, _erfa_pdp_doc},
+    {"pm", _erfa_pm, METH_VARARGS, _erfa_pm_doc},
+    {"pmp", _erfa_pmp, METH_VARARGS, _erfa_pmp_doc},
+    {"pn", _erfa_pn, METH_VARARGS, _erfa_pn_doc},
+    {"ppp", _erfa_ppp, METH_VARARGS, _erfa_ppp_doc},
+    {"ppsp", _erfa_ppsp, METH_VARARGS, _erfa_ppsp_doc},
+    {"pv2p", _erfa_pv2p, METH_VARARGS, _erfa_pv2p_doc},
+    {"pv2s", _erfa_pv2s, METH_VARARGS, _erfa_pv2s_doc},
+    {"pvdpv", _erfa_pvdpv, METH_VARARGS, _erfa_pvdpv_doc},
+    {"pvm", _erfa_pvm, METH_VARARGS, _erfa_pvm_doc},
+    {"pvmpv", _erfa_pvmpv, METH_VARARGS, _erfa_pvmpv_doc},
+    {"pvppv", _erfa_pvppv, METH_VARARGS, _erfa_pvppv_doc},
+    {"pvu", _erfa_pvu, METH_VARARGS, _erfa_pvu_doc},
+    {"pvup", _erfa_pvup, METH_VARARGS, _erfa_pvup_doc},
+    {"pvxpv", _erfa_pvxpv, METH_VARARGS, _erfa_pvxpv_doc},
+    {"pxp", _erfa_pxp, METH_VARARGS, _erfa_pxp_doc},
+    {"rm2v", _erfa_rm2v, METH_VARARGS, _erfa_rm2v_doc},
+    {"rv2m", _erfa_rv2m, METH_VARARGS, _erfa_rv2m_doc},
+    {"rx", _erfa_rx, METH_VARARGS, _erfa_rx_doc},
+    {"rxp", _erfa_rxp, METH_VARARGS, _erfa_rxp_doc},
+    {"rxpv", _erfa_rxpv, METH_VARARGS, _erfa_rxpv_doc},
+    {"rxr", _erfa_rxr, METH_VARARGS, _erfa_rxr_doc},
+    {"ry", _erfa_ry, METH_VARARGS, _erfa_ry_doc},
+    {"rz", _erfa_rz, METH_VARARGS, _erfa_rz_doc},
+    {"s2c", _erfa_s2c, METH_VARARGS, _erfa_s2c_doc},
+    {"s2p", _erfa_s2p, METH_VARARGS, _erfa_s2p_doc},
+    {"s2pv", _erfa_s2pv, METH_VARARGS, _erfa_s2pv_doc},
+    {"s2xpv", _erfa_s2xpv, METH_VARARGS, _erfa_s2xpv_doc},
+    {"sepp", _erfa_sepp, METH_VARARGS, _erfa_sepp_doc},
+    {"seps", _erfa_seps, METH_VARARGS, _erfa_seps_doc},
+    {"sxp", _erfa_sxp, METH_VARARGS, _erfa_sxp_doc},
+    {"sxpv", _erfa_sxpv, METH_VARARGS, _erfa_sxpv_doc},
+    {"tf2a", _erfa_tf2a, METH_VARARGS, _erfa_tf2a_doc},
+    {"tf2d", _erfa_tf2d, METH_VARARGS, _erfa_tf2d_doc},
+    {"tr", _erfa_tr, METH_VARARGS, _erfa_tr_doc},
+    {"trxp", _erfa_trxp, METH_VARARGS, _erfa_trxp_doc},
+    {"trxpv", _erfa_trxpv, METH_VARARGS, _erfa_trxpv_doc},
     {NULL,		NULL}		/* sentinel */
 };
 
@@ -5673,12 +6561,13 @@ the Essential Routine for Fundamental Astronomy,\n\
 interface to Python\n\
 ");
 
-static struct PyModuleDef erfamodule = {
+#if PY_VERSION_HEX >= 0x03000000
+static struct PyModuleDef _erfamodule = {
 	PyModuleDef_HEAD_INIT,
-	"erfa",
+	"_erfa",
 	module_doc,
 	-1,
-	erfa_methods,
+	_erfa_methods,
 	NULL,
 	NULL,
 	NULL,
@@ -5687,15 +6576,15 @@ static struct PyModuleDef erfamodule = {
 
 
 PyMODINIT_FUNC
-PyInit_erfa(void)
+PyInit__erfa(void)
 {
 	PyObject *m;
-	m = PyModule_Create(&erfamodule);
+	m = PyModule_Create(&_erfamodule);
 	if (m == NULL)
             return NULL;
-        erfaError = PyErr_NewException("erfa.error", NULL, NULL);
-        Py_INCREF(erfaError);
-        PyModule_AddObject(m, "error", erfaError);
+        _erfaError = PyErr_NewException("_erfa.error", NULL, NULL);
+        Py_INCREF(_erfaError);
+        PyModule_AddObject(m, "error", _erfaError);
         PyModule_AddObject(m, "DPI", PyFloat_FromDouble(ERFA_DPI));
         PyModule_AddObject(m, "D2PI", PyFloat_FromDouble(ERFA_D2PI));
         PyModule_AddObject(m, "DR2D", PyFloat_FromDouble(ERFA_DR2D));
@@ -5740,3 +6629,62 @@ PyInit_erfa(void)
         initialized = 1;
         return m;
 }
+#else
+PyMODINIT_FUNC
+init_erfa(void)
+{
+	PyObject *m;
+	m = Py_InitModule3("_erfa", _erfa_methods, module_doc);
+	if (m == NULL)
+            goto finally;
+        _erfaError = PyErr_NewException("_erfa.error", NULL, NULL);
+        Py_INCREF(_erfaError);
+        PyModule_AddObject(m, "error", _erfaError);
+        PyModule_AddObject(m, "DPI", PyFloat_FromDouble(ERFA_DPI));
+        PyModule_AddObject(m, "D2PI", PyFloat_FromDouble(ERFA_D2PI));
+        PyModule_AddObject(m, "DR2D", PyFloat_FromDouble(ERFA_DR2D));
+        PyModule_AddObject(m, "DD2R", PyFloat_FromDouble(ERFA_DD2R));
+        PyModule_AddObject(m, "DR2AS", PyFloat_FromDouble(ERFA_DR2AS));
+        PyModule_AddObject(m, "DAS2R", PyFloat_FromDouble(ERFA_DAS2R));
+        PyModule_AddObject(m, "DS2R", PyFloat_FromDouble(ERFA_DS2R));
+        PyModule_AddObject(m, "TURNAS", PyFloat_FromDouble(ERFA_TURNAS));
+        PyModule_AddObject(m, "DMAS2R", PyFloat_FromDouble(ERFA_DMAS2R));
+        PyModule_AddObject(m, "DTY", PyFloat_FromDouble(ERFA_DTY));
+        PyModule_AddObject(m, "DAYSEC", PyFloat_FromDouble(ERFA_DAYSEC));
+        PyModule_AddObject(m, "DJY", PyFloat_FromDouble(ERFA_DJY));
+        PyModule_AddObject(m, "DJC", PyFloat_FromDouble(ERFA_DJC));
+        PyModule_AddObject(m, "DJM", PyFloat_FromDouble(ERFA_DJM));
+        PyModule_AddObject(m, "DJ00", PyFloat_FromDouble(ERFA_DJ00));
+        PyModule_AddObject(m, "DJM0", PyFloat_FromDouble(ERFA_DJM0));
+        PyModule_AddObject(m, "DJM00", PyFloat_FromDouble(ERFA_DJM00));
+        PyModule_AddObject(m, "DJM77", PyFloat_FromDouble(ERFA_DJM77));
+        PyModule_AddObject(m, "TTMTAI", PyFloat_FromDouble(ERFA_TTMTAI));
+        PyModule_AddObject(m, "DAU", PyFloat_FromDouble(ERFA_DAU));
+        PyModule_AddObject(m, "CMPS", PyFloat_FromDouble(ERFA_CMPS));
+        PyModule_AddObject(m, "AULT", PyFloat_FromDouble(ERFA_AULT));
+        PyModule_AddObject(m, "DC", PyFloat_FromDouble(ERFA_DC));
+        PyModule_AddObject(m, "ELG", PyFloat_FromDouble(ERFA_ELG));
+        PyModule_AddObject(m, "ELB", PyFloat_FromDouble(ERFA_ELB));
+        PyModule_AddObject(m, "TDB0", PyFloat_FromDouble(ERFA_TDB0));
+        PyModule_AddObject(m, "SRS", PyFloat_FromDouble(ERFA_SRS));
+        PyModule_AddObject(m, "WGS84", PyLong_FromLong(ERFA_WGS84));
+        PyModule_AddObject(m, "GRS80", PyLong_FromLong(ERFA_GRS80));
+        PyModule_AddObject(m, "WGS72", PyLong_FromLong(ERFA_WGS72));
+
+        if (!initialized) {
+            PyStructSequence_InitType(&AstromType, &ASTROM_type_desc);
+            PyStructSequence_InitType(&LdbodyType, &LDBODY_type_desc);
+
+        }
+        Py_INCREF(&AstromType);
+        PyModule_AddObject(m, "ASTROM", (PyObject*) &AstromType);
+        Py_INCREF(&LdbodyType);
+        PyModule_AddObject(m, "LDBODY", (PyObject*) &LdbodyType);
+
+        initialized = 1;
+
+        finally:
+        return;
+ 
+}
+#endif

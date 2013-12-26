@@ -8,18 +8,19 @@ LIB_DIR = ['$HOME/lib',
            '/usr/lib',
            '/usr/local/lib',]
 
-moduleerfa = Extension('erfa',
+moduleerfa = Extension('_erfa',
                     include_dirs = INC_DIR,
                     libraries = ['erfa', 'm'],
                     library_dirs = LIB_DIR,
-                    sources = ['src/erfamodule.c'])
+                    sources = ['src/_erfamodule.c'])
 
 setup (name = 'erfa_python',
-       version = '2013.12.03',
+       version = '2013.12.26',
        description = 'Python wrapper for ERFA library',
        url = 'https://github.com/nirinA/erfa_python',
        author = 'nirinA raseliarison',
        author_email = 'nirina.raseliarison@gmail.com',
+       py_modules=['erfa'],
        ext_modules = [moduleerfa, ],
        classifiers = [
            'Development Status :: alpha',

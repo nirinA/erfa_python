@@ -295,6 +295,464 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(astrom.bpn[1][2], 0, 10)
         self.assertAlmostEqual(astrom.bpn[2][2], 1, 10)
 
+    def test_aper(self):
+        theta = 5.678
+        pmt = 0
+        eb = (0,0,0)
+        eh = (0,0,0)
+        em = 0
+        v = (0,0,0)
+        bm1 = 0
+        bpn = ((0,0,0),(0,0,0),(0,0,0))
+        along = 1.234
+        phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb = 0, 0, 0, 0, 0, 0, 0, 0, 0
+        astrom = erfa.ASTROM((pmt, eb, eh, em, v, bm1, bpn, along,
+                              phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb))
+        astrom = erfa.aper(theta, astrom)
+        self.assertAlmostEqual(astrom.eral, 6.912000000000000000, places=12)
+
+    def test_aper13(self):
+        ut11 = 2456165.5
+        ut12 = 0.401182685
+        pmt = 0
+        eb = (0,0,0)
+        eh = (0,0,0)
+        em = 0
+        v = (0,0,0)
+        bm1 = 0
+        bpn = ((0,0,0),(0,0,0),(0,0,0))
+        along = 1.234
+        phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb = 0, 0, 0, 0, 0, 0, 0, 0, 0
+        astrom = erfa.ASTROM((pmt, eb, eh, em, v, bm1, bpn, along,
+                              phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb))
+        astrom = erfa.aper13(ut11, ut12, astrom)
+        self.assertAlmostEqual(astrom.eral, 3.316236661789694933, places=12)
+
+
+    def test_apio(self):
+        sp = -3.01974337e-11
+        theta = 3.14540971
+        elong = -0.527800806
+        phi = -1.2345856
+        hm = 2738.0
+        xp = 2.47230737e-7
+        yp = 1.82640464e-6
+        refa = 0.000201418779
+        refb = -2.36140831e-7
+        astrom = erfa.apio(sp, theta, elong, phi, hm, xp, yp, refa, refb)
+        self.assertAlmostEqual(astrom.along, -0.5278008060301974337, places=12)
+        self.assertAlmostEqual(astrom.xpl, 0.1133427418174939329e-5, places=17)
+        self.assertAlmostEqual(astrom.ypl, 0.1453347595745898629e-5, places=17)
+        self.assertAlmostEqual(astrom.sphi, -0.9440115679003211329, places=12)
+        self.assertAlmostEqual(astrom.cphi, 0.3299123514971474711, places=12)
+        self.assertAlmostEqual(astrom.diurab, 0.5135843661699913529e-6, places=12)
+        self.assertAlmostEqual(astrom.eral, 2.617608903969802566, places=12)
+        self.assertAlmostEqual(astrom.refa, 0.2014187790000000000e-3, places=15)
+        self.assertAlmostEqual(astrom.refb, -0.2361408310000000000e-6, places=18)
+
+    def test_apio13(self):
+        utc1 = 2456384.5
+        utc2 = 0.969254051
+        dut1 = 0.1550675
+        elong = -0.527800806
+        phi = -1.2345856
+        hm = 2738.0
+        xp = 2.47230737e-7
+        yp = 1.82640464e-6
+        phpa = 731.0
+        tc = 12.8
+        rh = 0.59
+        wl = 0.55
+        astrom = erfa.apio13(utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl)
+        self.assertAlmostEqual(astrom.along, -0.5278008060301974337, places=12)
+        self.assertAlmostEqual(astrom.xpl, 0.1133427418174939329e-5, places=17)
+        self.assertAlmostEqual(astrom.ypl, 0.1453347595745898629e-5, places=17)
+        self.assertAlmostEqual(astrom.sphi, -0.9440115679003211329, places=12)
+        self.assertAlmostEqual(astrom.cphi, 0.3299123514971474711, places=12)
+        self.assertAlmostEqual(astrom.diurab, 0.5135843661699913529e-6, places=12)
+        self.assertAlmostEqual(astrom.eral, 2.617608909189066140, places=12)
+        self.assertAlmostEqual(astrom.refa, 0.2014187785940396921e-3, places=15)
+        self.assertAlmostEqual(astrom.refb, -0.2361408314943696227e-6, places=18)
+
+    def test_atci13(self):
+        rc = 2.71
+        dc = 0.174
+        pr = 1e-5
+        pd = 5e-6
+        px = 0.1
+        rv = 55.0
+        date1 = 2456165.5
+        date2 = 0.401182685
+        ri, di, eo = erfa.atci13(rc, dc, pr, pd, px, rv, date1, date2)
+        self.assertAlmostEqual(ri, 2.710121572969038991, places=12)
+        self.assertAlmostEqual(di, 0.1729371367218230438, places=12)
+        self.assertAlmostEqual(eo, -0.002900618712657375647, places=14)
+
+    def test_aticq(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        astrom, eo = erfa.apci13(date1, date2)
+        rc = 2.71
+        dc = 0.174
+        pr = 1e-5
+        pd = 5e-6
+        px = 0.1
+        rv = 55.0
+        ri, di = erfa.atciq(rc, dc, pr, pd, px, rv, *astrom)
+        self.assertAlmostEqual(ri, 2.710121572969038991, places=12)
+        self.assertAlmostEqual(di, 0.1729371367218230438, places=12)
+
+    def test_atciqn(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        astrom, eo = erfa.apci13(date1, date2)
+        rc = 2.71
+        dc = 0.174
+        pr = 1e-5
+        pd = 5e-6
+        px = 0.1
+        rv = 55.0
+        b0 = erfa.LDBODY((0.00028574,
+                          3e-10,
+                          ((-7.81014427,-5.60956681,-1.98079819),
+                           (0.0030723249,-0.00406995477,-0.00181335842))))
+        b1 = erfa.LDBODY((0.00095435,
+                          3e-9,
+                          ((0.738098796, 4.63658692,1.9693136),
+                           (-0.00755816922, 0.00126913722, 0.000727999001))))
+        b2 = erfa.LDBODY((1.0,
+                          6e-6,
+                          ((-0.000712174377, -0.00230478303, -0.00105865966),
+                           (6.29235213e-6, -3.30888387e-7, -2.96486623e-7))))
+        b = [b0, b1, b2]
+        ri, di = erfa.atciqn(rc, dc, pr, pd, px, rv, astrom, b)
+        self.assertAlmostEqual(ri, 2.710122008105325582, places=12)
+        self.assertAlmostEqual(di, 0.1729371916491459122, places=12)
+
+    def test_aticqz(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        astrom, eo = erfa.apci13(date1, date2)
+        rc = 2.71
+        dc = 0.174
+        ri, di = erfa.atciqz(rc, dc, *astrom)
+        self.assertAlmostEqual(ri, 2.709994899247599271, places=12)
+        self.assertAlmostEqual(di, 0.1728740720983623469, places=12)
+
+    def test_atco13(self):
+        rc = 2.71
+        dc = 0.174
+        pr = 1e-5
+        pd = 5e-6
+        px = 0.1
+        rv = 55.0
+        utc1 = 2456384.5
+        utc2 = 0.969254051
+        dut1 = 0.1550675
+        elong = -0.527800806
+        phi = -1.2345856
+        hm = 2738.0
+        xp = 2.47230737e-7
+        yp = 1.82640464e-6
+        phpa = 731.0
+        tc = 12.8
+        rh = 0.59
+        wl = 0.55
+        aob, zob, hob, dob, rob, eo = erfa.atco13(rc, dc, pr, pd, px, rv,
+                                                  utc1, utc2, dut1, elong, phi, hm, xp, yp,
+                                                  phpa, tc, rh, wl)
+        self.assertAlmostEqual(aob, 0.09251774485358230653, places=12)
+        self.assertAlmostEqual(zob, 1.407661405256767021, places=12)
+        self.assertAlmostEqual(hob, -0.09265154431403157925, places=12)
+        self.assertAlmostEqual(dob, 0.1716626560075591655, places=12)
+        self.assertAlmostEqual(rob, 2.710260453503097719, places=12)
+        self.assertAlmostEqual(eo, -0.003020548354802412839, places=14)
+
+    def test_atic13(self):
+        ri = 2.710121572969038991
+        di = 0.1729371367218230438
+        date1 = 2456165.5
+        date2 = 0.401182685
+        rc, dc, eo = erfa.atic13(ri, di, date1, date2)
+        self.assertAlmostEqual(rc, 2.710126504531374930, places=12)
+        self.assertAlmostEqual(dc, 0.1740632537628342320, places=12)
+        self.assertAlmostEqual(eo, -0.002900618712657375647, places=14)
+
+    def test_aticq(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        astrom, eo = erfa.apci13(date1, date2)
+        ri = 2.710121572969038991
+        di = 0.1729371367218230438
+        rc, dc = erfa.aticq(ri, di, *astrom)
+        self.assertAlmostEqual(rc, 2.710126504531374930, places=12)
+        self.assertAlmostEqual(dc, 0.1740632537628342320, places=12)
+
+    def test_aticqn(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        astrom, eo = erfa.apci13(date1, date2)
+        ri = 2.709994899247599271
+        di = 0.1728740720983623469
+        b0 = erfa.LDBODY((0.00028574,
+                          3e-10,
+                          ((-7.81014427,-5.60956681,-1.98079819),
+                           (0.0030723249,-0.00406995477,-0.00181335842))))
+        b1 = erfa.LDBODY((0.00095435,
+                          3e-9,
+                          ((0.738098796, 4.63658692,1.9693136),
+                           (-0.00755816922, 0.00126913722, 0.000727999001))))
+        b2 = erfa.LDBODY((1.0,
+                          6e-6,
+                          ((-0.000712174377, -0.00230478303, -0.00105865966),
+                           (6.29235213e-6, -3.30888387e-7, -2.96486623e-7))))
+        l = [b0, b1, b2]
+        rc, dc = erfa.aticqn(ri, di, astrom, l)
+        self.assertAlmostEqual(rc, 2.709999575032685412, places=12)
+        self.assertAlmostEqual(dc, 0.1739999656317778034, places=12)
+
+    def test_atio13(self):
+        ri = 2.710121572969038991
+        di = 0.1729371367218230438
+        utc1 = 2456384.5
+        utc2 = 0.969254051
+        dut1 = 0.1550675
+        elong = -0.527800806
+        phi = -1.2345856
+        hm = 2738.0
+        xp = 2.47230737e-7
+        yp = 1.82640464e-6
+        phpa = 731.0
+        tc = 12.8
+        rh = 0.59
+        wl = 0.55
+        aob, zob, hob, dob, rob = erfa.atio13(ri, di, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl)
+        self.assertAlmostEqual(aob, 0.09233952224794989993, places=12)
+        self.assertAlmostEqual(zob, 1.407758704513722461, places=12)
+        self.assertAlmostEqual(hob, -0.09247619879782006106, places=12)
+        self.assertAlmostEqual(dob, 0.1717653435758265198, places=12)
+        self.assertAlmostEqual(rob, 2.710085107986886201, places=12)
+
+    def test_atioq(self):
+        utc1 = 2456384.5
+        utc2 = 0.969254051
+        dut1 = 0.1550675
+        elong = -0.527800806
+        phi = -1.2345856
+        hm = 2738.0
+        xp = 2.47230737e-7
+        yp = 1.82640464e-6
+        phpa = 731.0
+        tc = 12.8
+        rh = 0.59
+        wl = 0.55
+        astrom = erfa.apio13(utc1, utc2, dut1, elong, phi, hm, xp, yp,
+                             phpa, tc, rh, wl)
+        ri = 2.710121572969038991
+        di = 0.1729371367218230438
+        aob, zob, hob, dob, rob = erfa.atioq(ri, di, *astrom)
+        self.assertAlmostEqual(aob, 0.09233952224794989993, places=12)
+        self.assertAlmostEqual(zob, 1.407758704513722461, places=12)
+        self.assertAlmostEqual(hob, -0.09247619879782006106, places=12)
+        self.assertAlmostEqual(dob, 0.1717653435758265198, places=12)
+        self.assertAlmostEqual(rob, 2.710085107986886201, places=12)
+
+    def test_atoc13(self):
+        utc1 = 2456384.5
+        utc2 = 0.969254051
+        dut1 = 0.1550675
+        elong = -0.527800806
+        phi = -1.2345856
+        hm = 2738.0
+        xp = 2.47230737e-7
+        yp = 1.82640464e-6
+        phpa = 731.0
+        tc = 12.8
+        rh = 0.59
+        wl = 0.55
+        ob1 = 2.710085107986886201
+        ob2 = 0.1717653435758265198
+        rc, dc = erfa.atoc13("R", ob1, ob2, utc1, utc2, dut1,
+                             elong, phi, hm, xp, yp, phpa, tc, rh, wl)
+        self.assertAlmostEqual(rc, 2.709956744661000609, places=12)
+        self.assertAlmostEqual(dc, 0.1741696500895398562, places=12)
+        ob1 = -0.09247619879782006106
+        ob2 = 0.1717653435758265198
+        rc, dc = erfa.atoc13("H", ob1, ob2, utc1, utc2, dut1,
+                             elong, phi, hm, xp, yp, phpa, tc, rh, wl)
+        self.assertAlmostEqual(rc, 2.709956744661000609, places=12)
+        self.assertAlmostEqual(dc, 0.1741696500895398562, places=12)
+        ob1 = 0.09233952224794989993
+        ob2 = 1.407758704513722461
+        rc, dc = erfa.atoc13("A", ob1, ob2, utc1, utc2, dut1,
+                             elong, phi, hm, xp, yp, phpa, tc, rh, wl)
+        self.assertAlmostEqual(rc, 2.709956744661000609, places=12)
+        self.assertAlmostEqual(dc, 0.1741696500895398562, places=12)
+
+    def test_atoi13(self):
+        utc1 = 2456384.5
+        utc2 = 0.969254051
+        dut1 = 0.1550675
+        elong = -0.527800806
+        phi = -1.2345856
+        hm = 2738.0
+        xp = 2.47230737e-7
+        yp = 1.82640464e-6
+        phpa = 731.0
+        tc = 12.8
+        rh = 0.59
+        wl = 0.55
+        ob1 = 2.710085107986886201
+        ob2 = 0.1717653435758265198
+        ri, di = erfa.atoi13("R", ob1, ob2, utc1, utc2, dut1,
+                             elong, phi, hm, xp, yp, phpa, tc, rh, wl)       
+        self.assertAlmostEqual(ri, 2.710121574449135955, places=12)
+        self.assertAlmostEqual(di, 0.1729371839114567725, places=12)
+        ob1 = -0.09247619879782006106
+        ob2 = 0.1717653435758265198
+        ri, di = erfa.atoi13("H", ob1, ob2, utc1, utc2, dut1,
+                             elong, phi, hm, xp, yp, phpa, tc, rh, wl)       
+        self.assertAlmostEqual(ri, 2.710121574449135955, places=12)
+        self.assertAlmostEqual(di, 0.1729371839114567725, places=12)
+        ob1 = 0.09233952224794989993
+        ob2 = 1.407758704513722461
+        ri, di = erfa.atoi13("A", ob1, ob2, utc1, utc2, dut1,
+                             elong, phi, hm, xp, yp, phpa, tc, rh, wl)       
+        self.assertAlmostEqual(ri, 2.710121574449135955, places=12)
+        self.assertAlmostEqual(di, 0.1729371839114567728, places=12)
+
+    def test_atoiq(self):
+        utc1 = 2456384.5
+        utc2 = 0.969254051
+        dut1 = 0.1550675
+        elong = -0.527800806
+        phi = -1.2345856
+        hm = 2738.0
+        xp = 2.47230737e-7
+        yp = 1.82640464e-6
+        phpa = 731.0
+        tc = 12.8
+        rh = 0.59
+        wl = 0.55
+        astrom = erfa.apio13(utc1, utc2, dut1,
+                             elong, phi, hm, xp, yp, phpa, tc, rh, wl)
+        ob1 = 2.710085107986886201
+        ob2 = 0.1717653435758265198
+        ri, di = erfa.atoiq("R", ob1, ob2, *astrom)
+        self.assertAlmostEqual(ri, 2.710121574449135955, places=12)
+        self.assertAlmostEqual(di, 0.1729371839114567725, places=12)
+        ob1 = -0.09247619879782006106
+        ob2 = 0.1717653435758265198
+        ri, di = erfa.atoiq("H", ob1, ob2, *astrom)
+        self.assertAlmostEqual(ri, 2.710121574449135955, places=12)
+        self.assertAlmostEqual(di, 0.1729371839114567725, places=12)
+        ob1 = 0.09233952224794989993
+        ob2 = 1.407758704513722461
+        ri, di = erfa.atoiq("A", ob1, ob2, *astrom)
+        self.assertAlmostEqual(ri, 2.710121574449135955, places=12)
+        self.assertAlmostEqual(di, 0.1729371839114567728, places=12)
+
+    def test_ld(self):
+        bm = 0.00028574
+        p = (-0.763276255, -0.608633767, -0.216735543)
+        q = (-0.763276255, -0.608633767, -0.216735543)
+        e = (0.76700421, 0.605629598, 0.211937094)
+        em = 8.91276983
+        dlim = 3e-10
+        p1 = erfa.ld(bm, p, q, e, em, dlim)
+        self.assertAlmostEqual(p1[0], -0.7632762548968159627, places=12)
+        self.assertAlmostEqual(p1[1], -0.6086337670823762701, places=12)
+        self.assertAlmostEqual(p1[2], -0.2167355431320546947, places=12)
+
+    def test_ldn(self):
+        ob = (-0.974170437, -0.2115201, -0.0917583114)
+        sc = (-0.763276255, -0.608633767, -0.216735543)
+        b0 = erfa.LDBODY((0.00028574,
+                          3e-10,
+                          ((-7.81014427,-5.60956681,-1.98079819),
+                           (0.0030723249,-0.00406995477,-0.00181335842))))
+        b1 = erfa.LDBODY((0.00095435,
+                          3e-9,
+                          ((0.738098796, 4.63658692,1.9693136),
+                           (-0.00755816922, 0.00126913722, 0.000727999001))))
+        b2 = erfa.LDBODY((1.0,
+                          6e-6,
+                          ((-0.000712174377, -0.00230478303, -0.00105865966),
+                           (6.29235213e-6, -3.30888387e-7, -2.96486623e-7))))
+        l = [b0, b1, b2]
+        sn = erfa.ldn(l, ob, sc)
+        self.assertAlmostEqual(sn[0], -0.7632762579693333866, places=12)
+        self.assertAlmostEqual(sn[1], -0.6086337636093002660, places=12)
+        self.assertAlmostEqual(sn[2], -0.2167355420646328159, places=12)
+
+    def test_ldsun(self):
+        p = (-0.763276255, -0.608633767, -0.216735543)
+        e = (-0.973644023, -0.20925523, -0.0907169552)
+        em = 0.999809214
+        p1 = erfa.ldsun(p, e, em)
+        self.assertAlmostEqual(p1[0], -0.7632762580731413169, places=12)
+        self.assertAlmostEqual(p1[1], -0.6086337635262647900, places=12)
+        self.assertAlmostEqual(p1[2], -0.2167355419322321302, places=12)
+
+    def test_pmpx(self):
+        rc = 1.234
+        dc = 0.789
+        pr = 1e-5
+        pd = -2e-5
+        px = 1e-2
+        rv = 10.0
+        pmt = 8.75
+        pob = (0.9, 0.4, 0.1)
+        pco = erfa.pmpx(rc, dc, pr, pd, px, rv, pmt, pob)
+        self.assertAlmostEqual(pco[0], 0.2328137623960308440, places=12)
+        self.assertAlmostEqual(pco[1], 0.6651097085397855317, places=12)
+        self.assertAlmostEqual(pco[2], 0.7095257765896359847, places=12)
+
+    def test_pmsafe(self):
+        ra1 = 1.234
+        dec1 = 0.789
+        pmr1 = 1e-5
+        pmd1 = -2e-5
+        px1 = 1e-2
+        rv1 = 10.0
+        ep1a = 2400000.5
+        ep1b = 48348.5625
+        ep2a = 2400000.5
+        ep2b = 51544.5
+        ra2, dec2, pmr2, pmd2, px2, rv2 = erfa.pmsafe(ra1, dec1, pmr1, pmd1, px1,
+                                                      rv1, ep1a, ep1b, ep2a, ep2b)
+        self.assertAlmostEqual(ra2, 1.234087484501017061, places=12)
+        self.assertAlmostEqual(dec2, 0.7888249982450468574, places=12)
+        self.assertAlmostEqual(pmr2, 0.9996457663586073988e-5, places=12)
+        self.assertAlmostEqual(pmd2, -0.2000040085106737816e-4, places=16)
+        self.assertAlmostEqual(px2, 0.9999997295356765185e-2, places=12)
+        self.assertAlmostEqual(rv2, 10.38468380113917014, places=10)
+
+    def test_pvtob(self):
+        elong = 2.0
+        phi = 0.5
+        hm = 3000.0
+        xp = 1e-6
+        yp = -0.5e-6
+        sp = 1e-8
+        theta = 5.0
+        pv = erfa.pvtob(elong, phi, hm, xp, yp, sp, theta)
+        self.assertAlmostEqual(pv[0][0], 4225081.367071159207, places=5)
+        self.assertAlmostEqual(pv[0][1], 3681943.215856198144, places=5)
+        self.assertAlmostEqual(pv[0][2], 3041149.399241260785, places=5)
+        self.assertAlmostEqual(pv[1][0], -268.4915389365998787, places=9)
+        self.assertAlmostEqual(pv[1][1], 308.0977983288903123, places=9)
+        self.assertAlmostEqual(pv[1][2], 0, 0)
+
+    def test_refco(self):
+        phpa = 800.0
+        tc = 10.0
+        rh = 0.9
+        wl = 0.4
+        refa, refb = erfa.refco(phpa, tc, rh, wl)
+        self.assertAlmostEqual(refa, 0.2264949956241415009e-3, places=15)
+        self.assertAlmostEqual(refb, -0.2598658261729343970e-6, places=18)
+
 ## astronomy library
     def test_bi00(self):
         dp, de, dr = erfa.bi00()
