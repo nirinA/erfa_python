@@ -56,6 +56,9 @@ to build and (may need root privilege):
 
 to install.
 
+Note: if previous version is already installed in ``site-packages``,
+be sure to remove all related files before installing the new version
+
 -------
 testing
 -------

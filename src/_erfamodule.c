@@ -1373,7 +1373,7 @@ _erfa_bp06(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_bp06_doc,
-"bp06(d1, d2) -> rb, rp, rbp\n\n"
+"\nbp06(d1, d2) -> rb, rp, rbp\n\n"
 "Frame bias and precession, IAU 2006.\n"
 "Given:\n"
 "    d1, d2     TT as 2-part Julian Date\n"
@@ -1401,7 +1401,7 @@ _erfa_bpn2xy(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_bpn2xy_doc,
-"bpn2xy(rbpn) -> x, y\n\n"
+"\nbpn2xy(rbpn) -> x, y\n\n"
 "Extract from the bias-precession-nutation matrix\n"
 "the X,Y coordinates of the Celestial Intermediate Pole.\n"
 "Given:\n"
@@ -1430,7 +1430,7 @@ _erfa_c2i00a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2i00a_doc,
-"c2i00a(d1, d2) -> rc2i\n\n"
+"\nc2i00a(d1, d2) -> rc2i\n\n"
 "Form the celestial-to-intermediate matrix\n"
 "for a given date using the IAU 2000A precession-nutation model.\n"
 "Given:\n"
@@ -1457,7 +1457,7 @@ _erfa_c2i00b(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2i00b_doc,
-"c2i00b(d1, d2) -> rc2i\n\n"
+"\nc2i00b(d1, d2) -> rc2i\n\n"
 "Form the celestial-to-intermediate matrix for a given\n"
 "date using the IAU 2000B precession-nutation model.\n"
 "Given:\n"
@@ -1484,7 +1484,7 @@ _erfa_c2i06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2i06a_doc,
-"c2i06a(d1, d2) -> rc2i\n\n"
+"\nc2i06a(d1, d2) -> rc2i\n\n"
 "Form the celestial-to-intermediate matrix for a given date \n"
 "using the IAU 2006 precession and IAU 200A nutation model.\n"
 "Given:\n"
@@ -1523,7 +1523,7 @@ _erfa_c2ibpn(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2ibpn_doc,
-"c2ibpn(d1, d2, rbpn) -> rc2i\n\n"
+"\nc2ibpn(d1, d2, rbpn) -> rc2i\n\n"
 "Form the celestial-to-intermediate matrix for a given date\n"
 "and given the bias-precession-nutation matrix. IAU 2000.\n"
 "Given:\n"
@@ -1552,7 +1552,7 @@ _erfa_c2ixy(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2ixy_doc,
-"c2ixy(d1, d2, x, y) -> rc2i\n\n"
+"\nc2ixy(d1, d2, x, y) -> rc2i\n\n"
 "Form the celestial to intermediate-frame-of-date matrix for a given\n"
 "date when the CIP X,Y coordinates are known. IAU 2000.\n"
 "Given:\n"
@@ -1582,7 +1582,7 @@ _erfa_c2ixys(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2ixys_doc,
-"c2ixys(x, y, s) -> rc2i\n\n"
+"\nc2ixys(x, y, s) -> rc2i\n\n"
 "Form the celestial to intermediate-frame-of-date matrix\n"
 " given the CIP X,Y and the CIO locator s.\n"
 "Given:\n"
@@ -1612,7 +1612,7 @@ _erfa_c2t00a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2t00a_doc,
-"c2t00a(tta,ttb,uta,utb,xp,yp) -> rc2t\n\n"
+"\nc2t00a(tta,ttb,uta,utb,xp,yp) -> rc2t\n\n"
 "Form the celestial to terrestrial matrix given the date, the UT1 and\n"
 "the polar motion, using the IAU 2000A nutation model.\n"
 "Given:\n"
@@ -1643,7 +1643,7 @@ _erfa_c2t00b(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2t00b_doc,
-"c2t00b(tta,ttb,uta,utb,xp,yp) -> rc2t\n\n"
+"\nc2t00b(tta,ttb,uta,utb,xp,yp) -> rc2t\n\n"
 "Form the celestial to terrestrial matrix given the date, the UT1 and\n"
 "the polar motion, using the IAU 2000B nutation model.\n"
 "Given:\n"
@@ -1674,7 +1674,7 @@ _erfa_c2t06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2t06a_doc,
-"c2t06a(tta,ttb,uta,utb,xp,yp) -> rc2t\n\n"
+"\nc2t06a(tta,ttb,uta,utb,xp,yp) -> rc2t\n\n"
 "Form the celestial to terrestrial matrix given the date, the UT1 and\n"
 "the polar motion, using the IAU 2006 precession and IAU 2000A nutation models.\n"
 "Given:\n"
@@ -1729,7 +1729,7 @@ _erfa_c2tcio(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2tcio_doc,
-"c2tcio(rc2i, era, rpom) -> rc2t\n\n"
+"\nc2tcio(rc2i, era, rpom) -> rc2t\n\n"
 "Assemble the celestial to terrestrial matrix from CIO-based components\n"
 "(the celestial-to-intermediate matrix, the Earth Rotation Angle and the polar motion matrix)\n"
 "Given:\n"
@@ -1783,7 +1783,7 @@ _erfa_c2teqx(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2teqx_doc,
-"c2teqx(rbpn, gst, rpom -> rc2t\n\n"
+"\nc2teqx(rbpn, gst, rpom -> rc2t\n\n"
 "Assemble the celestial to terrestrial matrix from equinox-based\n"
 "components (the celestial-to-true matrix, the Greenwich Apparent\n"
 "Sidereal Time and the polar motion matrix).\n"
@@ -1815,7 +1815,7 @@ _erfa_c2tpe(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2tpe_doc,
-"c2tpe(tta,ttb,uta,utb,dpsi,deps,xp,yp) -> rc2t\n\n"
+"\nc2tpe(tta,ttb,uta,utb,dpsi,deps,xp,yp) -> rc2t\n\n"
 "Form the celestial to terrestrial matrix given the date, the UT1,\n"
 "the nutation and the polar motion.  IAU 2000.\n"
 "Given:\n"
@@ -1847,7 +1847,7 @@ _erfa_c2txy(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2txy_doc,
-"c2txy(tta,ttb,uta,utb,x,y,xp,yp) -> rc2t\n\n"
+"\nc2txy(tta,ttb,uta,utb,x,y,xp,yp) -> rc2t\n\n"
 "Form the celestial to terrestrial matrix given the date, the UT1,\n"
 "the CIP coordinates and the polar motion.  IAU 2000."
 "Given:\n"
@@ -1889,7 +1889,7 @@ _erfa_cal2jd(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_cal2jd_doc,
-"cal2jd(year, month, day) -> 2400000.5,djm\n\n"
+"\ncal2jd(year, month, day) -> 2400000.5,djm\n\n"
 "Gregorian Calendar to Julian Date.\n"
 "Given:\n"
 "    year, month      day in Gregorian calendar\n"
@@ -1922,7 +1922,7 @@ _erfa_d2dtf(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_d2dtf_doc,
-"d2dtf(n, d1, d2 | scale) -> year, month, day, hours, minutes, seconds, fraction\n\n"
+"\nd2dtf(n, d1, d2 | scale) -> year, month, day, hours, minutes, seconds, fraction\n\n"
 "Format for output a 2-part Julian Date (or in the case of UTC a\n"
 "quasi-JD form that includes special provision for leap seconds).\n"
 "Given:\n"
@@ -1969,7 +1969,7 @@ _erfa_dat(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_dat_doc,
-"dat(y,m,d,fd) -> delta t\n\n"
+"\ndat(y,m,d,fd) -> delta t\n\n"
 "For a given UTC date, calculate delta(AT) = TAI-UTC.\n"
 "Given:\n"
 "    y          year\n"
@@ -1990,7 +1990,7 @@ _erfa_dtdb(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_dtdb_doc,
-"dtdb(d1, d2, ut, elon, u, v) -> TDB-TT\n\n"
+"\ndtdb(d1, d2, ut, elon, u, v) -> TDB-TT\n\n"
 "An approximation to TDB-TT, the difference between barycentric\n"
 "dynamical time and terrestrial time, for an observer on the Earth.\n"
 "Given:\n"
@@ -2055,7 +2055,7 @@ _erfa_dtf2d(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_dtf2d_doc,
-"dtf2d(y,m,d,hr,mn,sec |scale) -> d1,d2\n\n"
+"\ndtf2d(y,m,d,hr,mn,sec |scale) -> d1,d2\n\n"
 "Encode date and time fields into 2-part Julian Date (or in the case\n"
 "of UTC a quasi-JD form that includes special provision for leap seconds).\n"
 "Given:\n"
@@ -2082,7 +2082,7 @@ _erfa_ee00(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ee00_doc,
-"ee00(d1,d2,epsa,dpsi) -> ee\n\n"
+"\nee00(d1,d2,epsa,dpsi) -> ee\n\n"
 "The equation of the equinoxes compatible with IAU 2000 resolutions,\n"
 "given the nutation in longitude and the mean obliquity.\n"
 "Given:\n"
@@ -2108,7 +2108,7 @@ _erfa_ee00a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ee00a_doc,
-"ee00a(d1,d2) -> ee\n\n"
+"\nee00a(d1,d2) -> ee\n\n"
 "equation of the equinoxes, compatible with IAU 2000 resolutions.\n"
 "Given:\n"
 "    d1,d2      TT as 2-part Julian Date\n"
@@ -2131,7 +2131,7 @@ _erfa_ee00b(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ee00b_doc,
-"ee00b(d1,d2) -> ee\n\n"
+"\nee00b(d1,d2) -> ee\n\n"
 "Equation of the equinoxes, compatible with IAU 2000 resolutions\n"
 "but using the truncated nutation model IAU 2000B.\n"
 "Given:\n"
@@ -2155,7 +2155,7 @@ _erfa_ee06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ee06a_doc,
-"ee06a(d1,d2) -> ee\n\n"
+"\nee06a(d1,d2) -> ee\n\n"
 "Equation of the equinoxes, compatible with IAU 2000 resolutions and \n"
 "IAU 2006/2000A precession-nutation.\n"
 "Given:\n"
@@ -2179,7 +2179,7 @@ _erfa_eect00(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_eect00_doc,
-"eect00(d1,d2) -> ct\n\n"
+"\neect00(d1,d2) -> ct\n\n"
 "Equation of the equinoxes complementary terms, consistent with IAU 2000 resolutions.\n"
 "Given:\n"
 "    d1,d2      TT as 2-part Julian Date\n"
@@ -2206,7 +2206,7 @@ _erfa_eform(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_eform_doc,
-"eform(n) -> a, f\n\n"
+"\neform(n) -> a, f\n\n"
 "Earth reference ellipsoids.\n"
 "Given:\n"
 "    n          ellipsoid identifier\n\n"
@@ -2233,7 +2233,7 @@ _erfa_eo06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_eo06a_doc,
-"eo06a(d1, d2) -> eo\n"
+"\neo06a(d1, d2) -> eo\n"
 "equation of the origins, IAU 2006 precession and IAU 2000A nutation.\n"
 "Given:\n"
 "    d1,d2      TT as 2-part Julian Date\n"
@@ -2267,7 +2267,7 @@ _erfa_eors(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_eors_doc,
-"eors(rnpb, s) -> eo\n\n"
+"\neors(rnpb, s) -> eo\n\n"
 "Equation of the origins, given the classical NPB matrix and the quantity s\n"
 "Given:\n"
 "    rnpb       classical nutation x precession x bias matrix\n"
@@ -2291,7 +2291,7 @@ _erfa_epb(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_epb_doc,
-"epb(d1, d2) -> b\n\n"
+"\nepb(d1, d2) -> b\n\n"
 "Julian Date to Besselian Epoch\n"
 "Given:\n"
 "    d1,d2      2-part Julian Date\n"
@@ -2310,7 +2310,7 @@ _erfa_epb2jd(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_epb2jd_doc,
-"epb2jd(epb) -> 2400000.5 djm\n\n"
+"\nepb2jd(epb) -> 2400000.5 djm\n\n"
 "Given:\n"
 "    epb        Besselian Epoch,\n"
 "Returned:\n"
@@ -2332,7 +2332,7 @@ _erfa_epj(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_epj_doc,
-"epj(d1, d2) -> b\n\n"
+"\nepj(d1, d2) -> b\n\n"
 "Julian Date to Julian Epoch.\n"
 "Given:\n"
 "    d1,d2      2-part Julian Date\n"
@@ -2351,7 +2351,7 @@ _erfa_epj2jd(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_epj2jd_doc,
-"epj2jd(epj) -> 2400000.5 djm\n\n"
+"\nepj2jd(epj) -> 2400000.5 djm\n\n"
 "Julian Epoch to Julian Date\n"
 "Given:\n"
 "    epj        Julian Epoch\n"
@@ -2388,7 +2388,7 @@ _erfa_epv00(PyObject *self, PyObject *args, PyObject *kwds)
 }
 
 PyDoc_STRVAR(_erfa_epv00_doc,
-"epv00(d1,d2 |prec=0) -> pvh, pvb\n\n"
+"\nepv00(d1,d2 |prec=0) -> pvh, pvb\n\n"
 "Earth position and velocity, heliocentric and barycentric,\n"
 "with respect to the Barycentric Celestial Reference System.\n"
 "Given:\n"
@@ -2414,7 +2414,7 @@ _erfa_eqeq94(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_eqeq94_doc,
-"eqeq94(d1,d2) -> ee\n\n"
+"\neqeq94(d1,d2) -> ee\n\n"
 "Equation of the equinoxes, IAU 1994 model.\n"
 "Given:\n"
 "    d1,d2      TDB as 2-part Julian Date\n"
@@ -2437,7 +2437,7 @@ _erfa_era00(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_era00_doc,
-"era00(d1,d2) -> era\n\n"
+"\nera00(d1,d2) -> era\n\n"
 "Earth rotation angle (IAU 2000 model).\n"
 "Given:\n"
 "    d1,d2      UT1 as 2-part Julian Date (d1,d2)\n"
@@ -2456,7 +2456,7 @@ _erfa_fad03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fad03_doc,
-"fad03(t) -> d\n\n"
+"\nfad03(t) -> d\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean elongation of the Moon from the Sun.\n"
 "Given:\n"
@@ -2476,7 +2476,7 @@ _erfa_fae03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fae03_doc,
-"fae03(t) -> e\n\n"
+"\nfae03(t) -> e\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Earth.\n"
 "Given:\n"
@@ -2496,7 +2496,7 @@ _erfa_faf03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_faf03_doc,
-"faf03(t) -> f\n\n"
+"\nfaf03(t) -> f\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of the Moon minus mean longitude of the ascending node.\n"
 "Given:\n"
@@ -2516,7 +2516,7 @@ _erfa_faju03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_faju03_doc,
-"faju03(t) -> l\n\n"
+"\nfaju03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Jupiter.\n"
 "Given:\n"
@@ -2536,7 +2536,7 @@ _erfa_fal03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fal03_doc,
-"fal03(t) -> l\n\n"
+"\nfal03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean anomaly of the Moon.\n"
 "Given:\n"
@@ -2556,7 +2556,7 @@ _erfa_falp03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_falp03_doc,
-"fal03(t) -> lp\n"
+"\nfal03(t) -> lp\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean anomaly of the Sun.\n"
 "Given:\n"
@@ -2576,7 +2576,7 @@ _erfa_fama03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fama03_doc,
-"fama03(t) -> l\n\n"
+"\nfama03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Mars.\n"
 "Given:\n"
@@ -2596,7 +2596,7 @@ _erfa_fame03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fame03_doc,
-"fame03(t) -> l\n\n"
+"\nfame03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Mercury.\n"
 "Given:\n"
@@ -2616,7 +2616,7 @@ _erfa_fane03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fane03_doc,
-"fane03(t) -> l\n\n"
+"\nfane03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Neptune.\n"
 "Given:\n"
@@ -2636,7 +2636,7 @@ _erfa_faom03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_faom03_doc,
-"faom03(t) -> l\n\n"
+"\nfaom03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Moon's ascending node.\n"
 "Given:\n"
@@ -2656,7 +2656,7 @@ _erfa_fapa03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fapa03_doc,
-"fapa03(t) -> l\n\n"
+"\nfapa03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "general accumulated precession in longitude.\n"
 "Given:\n"
@@ -2676,7 +2676,7 @@ _erfa_fasa03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fasa03_doc,
-"fasa03(t) -> l\n"
+"\nfasa03(t) -> l\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Saturn.\n"
 "Given:\n"
@@ -2696,7 +2696,7 @@ _erfa_faur03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_faur03_doc,
-"faur03(t) -> l\n\n"
+"\nfaur03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003):\n"
 "mean longitude of Uranus.\n"
 "Given:\n"
@@ -2716,7 +2716,7 @@ _erfa_fave03(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fave03_doc,
-"faver03(t) -> l\n\n"
+"\nfaver03(t) -> l\n\n"
 "Fundamental argument, IERS Conventions (2003)\n"
 "mean longitude of Venus."
 "Given:\n"
@@ -2738,7 +2738,7 @@ _erfa_fk52h(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fk52h_doc,
-"fk52h(r5, d5, dr5, dd5, px5,rv5) -> rh, dh, drh, ddh, pxh, rvh)\n\n"
+"\nfk52h(r5, d5, dr5, dd5, px5,rv5) -> rh, dh, drh, ddh, pxh, rvh)\n\n"
 "Transform FK5 (J2000.0) star data into the Hipparcos system.\n"
 "Given (all FK5, equinox J2000.0, epoch J2000.0):\n"
 "    r5         RA (radians)\n"
@@ -2768,7 +2768,7 @@ _erfa_fk5hip(PyObject *self)
 }
 
 PyDoc_STRVAR(_erfa_fk5hip_doc,
-"fk5hip() -> r5h, s5h\n\n"
+"\nfk5hip() -> r5h, s5h\n\n"
 "FK5 to Hipparcos rotation and spin.\n"
 "Returned:\n"
 "    r5h        r-matrix: FK5 rotation wrt Hipparcos \n"
@@ -2786,7 +2786,7 @@ _erfa_fk5hz(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fk5hz_doc,
-"fk5hz(r5, d5, d1, d2) -> rh, dh\n\n"
+"\nfk5hz(r5, d5, d1, d2) -> rh, dh\n\n"
 "Transform an FK5 (J2000.0) star position into the system of the\n"
 "Hipparcos catalogue, assuming zero Hipparcos proper motion.\n"
 "Given:\n"
@@ -2812,7 +2812,7 @@ _erfa_fw2m(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fw2m_doc,
-"fw2m(gamb, phib, psi, eps) -> r\n\n"
+"\nfw2m(gamb, phib, psi, eps) -> r\n\n"
 "Form rotation matrix given the Fukushima-Williams angles.\n"
 "Given:\n"
 "    gamb       F-W angle gamma_bar (radians)\n"
@@ -2834,7 +2834,7 @@ _erfa_fw2xy(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_fw2xy_doc,
-"fw2xy(gamb, phib, psi, eps) -> x, y\n\n"
+"\nfw2xy(gamb, phib, psi, eps) -> x, y\n\n"
 "Form CIP X,Y given Fukushima-Williams bias-precession-nutation angles.\n"
 "Given:\n"
 "    gamb       F-W angle gamma_bar (radians)\n"
@@ -2874,7 +2874,7 @@ _erfa_gc2gd(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gc2gd_doc,
-"gc2gd(n, xyz[3]) -> elong, phi, height\n\n"
+"\ngc2gd(n, xyz[3]) -> elong, phi, height\n\n"
 "Transform geocentric coordinates to geodetic\n"
 "using the specified reference ellipsoid.\n"
 "Given:\n"
@@ -2915,7 +2915,7 @@ _erfa_gc2gde(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gc2gde_doc,
-"gc2gde(a, f, xyz) -> elong, phi, height\n\n"
+"\ngc2gde(a, f, xyz) -> elong, phi, height\n\n"
 "Transform geocentric coordinates to geodetic\n"
 " for a reference ellipsoid of specified form.\n"
 "Given:\n"
@@ -2953,7 +2953,7 @@ _erfa_gd2gc(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gd2gc_doc,
-"gd2gc(n, elong, phi, height) -> xyz\n\n"
+"\ngd2gc(n, elong, phi, height) -> xyz\n\n"
 "Transform geodetic coordinates to geocentric\n"
 " using the specified reference ellipsoid.\n"
 "Given:\n"
@@ -2986,7 +2986,7 @@ _erfa_gd2gce(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gd2gce_doc,
-"gd2gce(a, f, elong, phi, height) -> xyz\n\n"
+"\ngd2gce(a, f, elong, phi, height) -> xyz\n\n"
 "Transform geodetic coordinates to geocentric for a reference\n"
 " for a reference ellipsoid of specified form\n"
 "Given:\n"
@@ -3010,7 +3010,7 @@ _erfa_gmst00(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gmst00_doc,
-"gmst00(uta, utb, tta, ttb) -> gmst\n\n"
+"\ngmst00(uta, utb, tta, ttb) -> gmst\n\n"
 "Greenwich mean sidereal time\n"
 "(model consistent with IAU 2000 resolutions).\n"
 "Given:\n"
@@ -3031,7 +3031,7 @@ _erfa_gmst06(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gmst06_doc,
-"gmst06(uta, utb, tta, ttb) -> gmst\n\n"
+"\ngmst06(uta, utb, tta, ttb) -> gmst\n\n"
 "Greenwich mean sidereal time\n"
 "(model consistent with IAU 2006resolutions).\n"
 "Given:\n"
@@ -3052,7 +3052,7 @@ _erfa_gmst82(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gmst82_doc,
-"gmst82(d1, d2) -> gmst\n\n"
+"\ngmst82(d1, d2) -> gmst\n\n"
 "Universal Time to Greenwich mean sidereal time (IAU 1982 model)\n"
 "Given:\n"
 "    d1,d2      UT1 as a 2-part Julian Date\n"
@@ -3071,7 +3071,7 @@ _erfa_gst00a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gst00a_doc,
-"gst00a(uta, utb, tta, ttb) -> gast\n\n"
+"\ngst00a(uta, utb, tta, ttb) -> gast\n\n"
 "Greenwich apparent sidereal time\n"
 "(model consistent with IAU 2000resolutions).\n"
 "Given:\n"
@@ -3092,7 +3092,7 @@ _erfa_gst00b(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gst00b_doc,
-"gst00b(uta, utb) -> gast\n\n"
+"\ngst00b(uta, utb) -> gast\n\n"
 "Greenwich apparent sidereal time (model consistent with IAU 2000\n"
 "resolutions but using the truncated nutation model IAU 2000B).\n"
 "Given:\n"
@@ -3128,7 +3128,7 @@ _erfa_gst06(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gst06_doc,
-"gst06(uta, utb, tta, ttb, rnpb[3][3]) -> gast\n\n"
+"\ngst06(uta, utb, tta, ttb, rnpb[3][3]) -> gast\n\n"
 "Greenwich apparent sidereal time, IAU 2006, given the NPB matrix.\n"
 "Given:\n"
 "    uta,utb    UT1 as a 2-part Julian Date\n"
@@ -3149,7 +3149,7 @@ _erfa_gst06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gst06a_doc,
-"gst06a(uta, utb, tta, ttb) -> gast\n\n"
+"\ngst06a(uta, utb, tta, ttb) -> gast\n\n"
 "Greenwich apparent sidereal time\n"
 "(model consistent with IAU 2000and 2006 resolutions).\n"
 "Given:\n"
@@ -3170,7 +3170,7 @@ _erfa_gst94(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gst94_doc,
-"gst94(uta, utb) -> gast\n\n"
+"\ngst94(uta, utb) -> gast\n\n"
 "Greenwich apparent sidereal time\n"
 "(consistent with IAU 1982/94 resolutions)\n"
 "Given:\n"
@@ -3191,7 +3191,7 @@ _erfa_h2fk5(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_h2fk5_doc,
-"h2fk5(rh, dh, drh, ddh, pxh, rvh) -> r5, d5, dr5, dd5, px5, rv5\n\n"
+"\nh2fk5(rh, dh, drh, ddh, pxh, rvh) -> r5, d5, dr5, dd5, px5, rv5\n\n"
 "Transform Hipparcos star data into the FK5 (J2000.0) system.\n"
 "Given (all Hipparcos, epoch J2000.0):\n"
 "     rh    RA (radians)\n"
@@ -3221,7 +3221,7 @@ _erfa_hfk5z(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_hfk5z_doc,
-"hf5kz(rh, dh, d1, d2) -> r5, d5, dr5, dd5\n\n"
+"\nhf5kz(rh, dh, d1, d2) -> r5, d5, dr5, dd5\n\n"
 "Transform a Hipparcos star position into FK5 J2000.0, assuming\n"
 "zero Hipparcos proper motion.\n"
 "Given:\n"
@@ -3251,7 +3251,7 @@ _erfa_jd2cal(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_jd2cal_doc,
-"jd2cal(dj1, dj2) -> year, month, day, fraction of day\n\n"
+"\njd2cal(dj1, dj2) -> year, month, day, fraction of day\n\n"
 "Julian Date to Gregorian year, month, day, and fraction of a day.\n"
 "Given:\n"
 "     dj1,dj2   2-part Julian Date\n"
@@ -3284,7 +3284,7 @@ _erfa_jdcalf(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_jdcalf_doc,
-"jdcalf(n, d1, d2) -> y, m, d, fd\n\n"
+"\njdcalf(n, d1, d2) -> y, m, d, fd\n\n"
 "Julian Date to Gregorian Calendar, expressed in a form convenient\n"
 "for formatting messages:  rounded to a specified precision.\n"
 "Given:\n"
@@ -3311,7 +3311,7 @@ _erfa_num00a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_num00a_doc,
-"num00a(d1, d2) -> rmatn\n\n"
+"\nnum00a(d1, d2) -> rmatn\n\n"
 "Form the matrix of nutation for a given date, IAU 2000A model.\n"
 "Given:\n"
 "     d1,d2     TT as a 2-part Julian Date\n"
@@ -3333,7 +3333,7 @@ _erfa_num00b(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_num00b_doc,
-"num00b(d1, d2) -> rmatn\n\n"
+"\nnum00b(d1, d2) -> rmatn\n\n"
 "Form the matrix of nutation for a given date, IAU 2000B model.\n"
 "Given:\n"
 "     d1,d2     TT as a 2-part Julian Date\n"
@@ -3355,7 +3355,7 @@ _erfa_num06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_num06a_doc,
-"num06a(d1, d2) -> rmatn\n\n"
+"\nnum06a(d1, d2) -> rmatn\n\n"
 "Form the matrix of nutation for a given date, IAU 2006/2000A model.\n"
 "Given:\n"
 "     d1,d2     TT as a 2-part Julian Date\n"
@@ -3377,7 +3377,7 @@ _erfa_numat(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_numat_doc,
-"numat(epsa, dpsi, deps) -> rmatn\n\n"
+"\nnumat(epsa, dpsi, deps) -> rmatn\n\n"
 "Form the matrix of nutation.\n"
 "Given:\n"
 "     epsa          mean obliquity of date\n"
@@ -3397,7 +3397,7 @@ _erfa_nut00a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_nut00a_doc,
-"nut00a(d1, d2) -> dpsi, deps\n\n"
+"\nnut00a(d1, d2) -> dpsi, deps\n\n"
 "Nutation, IAU 2000A model (MHB2000 luni-solar and planetary nutation\n"
 "with free core nutation omitted).\n"
 "Given:\n"
@@ -3417,7 +3417,7 @@ _erfa_nut00b(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_nut00b_doc,
-"nut00b(d1, d2) -> dpsi, deps\n\n"
+"\nnut00b(d1, d2) -> dpsi, deps\n\n"
 "Nutation, IAU 2000B.\n"
 "Given:\n"
 "    d1,d2       TT as a 2-part Julian Date\n"
@@ -3436,7 +3436,7 @@ _erfa_nut06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_nut06a_doc,
-"nut06a(d1, d2) -> dpsi, deps\n\n"
+"\nnut06a(d1, d2) -> dpsi, deps\n\n"
 "IAU 2000A nutation with adjustments to match the IAU 2006 precession.\n"
 "Given:\n"
 "    d1,d2      TT as a 2-part Julian Date\n"
@@ -3455,7 +3455,7 @@ _erfa_nut80(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_nut80_doc,
-"nut80(d1, d2) -> dpsi, deps\n\n"
+"\nnut80(d1, d2) -> dpsi, deps\n\n"
 "Nutation, IAU 1980 model.\n"
 "Given:\n"
 "    d1,d2      TT as a 2-part Julian Date\n"
@@ -3478,7 +3478,7 @@ _erfa_nutm80(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_nutm80_doc,
-"nutm80(d1, d2) -> rmatn\n\n"
+"\nnutm80(d1, d2) -> rmatn\n\n"
 "Form the matrix of nutation for a given date, IAU 1980 model.\n"
 "Given:\n"
 "    d1,d2      TDB as a 2-part Julian Date\n"
@@ -3497,7 +3497,7 @@ _erfa_obl06(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_obl06_doc,
-"obl06(d1, d2) -> obl\n\n"
+"\nobl06(d1, d2) -> obl\n\n"
 "Mean obliquity of the ecliptic, IAU 2006 precession model.\n"
 "Given:\n"
 "    d1,d2      TT as a 2-part Julian Date\n"
@@ -3516,7 +3516,7 @@ _erfa_obl80(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_obl80_doc,
-"obl80(d1, d2) -> obl\n\n"
+"\nobl80(d1, d2) -> obl\n\n"
 "Mean obliquity of the ecliptic, IAU 1980 model.\n"
 "Given:\n"
 "    d1,d2      TT as a 2-part Julian Date\n"
@@ -3538,7 +3538,7 @@ _erfa_p06e(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_p06e_doc,
-"p06e(d1, d2) -> eps0,psia,oma,bpa,bqa,pia,bpia,epsa,chia,za,zetaa,thetaa,pa,gam,phi,psi\n\n"
+"\np06e(d1, d2) -> eps0,psia,oma,bpa,bqa,pia,bpia,epsa,chia,za,zetaa,thetaa,pa,gam,phi,psi\n\n"
 "Precession angles, IAU 2006, equinox based.\n"
 "Given:\n"
 "   d1,d2   TT as a 2-part Julian Date\n"
@@ -3572,7 +3572,7 @@ _erfa_pb06(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pb06_doc,
-"pb06(d1, d2) -> bzeta, bz, btheta\n\n"
+"\npb06(d1, d2) -> bzeta, bz, btheta\n\n"
 "Forms three Euler angles which implement general\n"
 "precession from epoch J2000.0, using the IAU 2006 model.\n"
 "Framebias (the offset between ICRS and mean J2000.0) is included.\n"
@@ -3595,7 +3595,7 @@ _erfa_pfw06(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pfw06_doc,
-"pfw06(d1, d2) -> gamb, phib, psib, epsa\n\n"
+"\npfw06(d1, d2) -> gamb, phib, psib, epsa\n\n"
 "Precession angles, IAU 2006 (Fukushima-Williams 4-angle formulation).\n"
 "Given:\n"
 "   d1,d2   TT as a 2-part Julian Date\n"
@@ -3634,7 +3634,7 @@ _erfa_plan94(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_plan94_doc,
-"plan94(d1, d2, np) -> pv\n\n"
+"\nplan94(d1, d2, np) -> pv\n\n"
 "Approximate heliocentric position and velocity of a nominated major\n"
 "planet:  Mercury, Venus, EMB, Mars, Jupiter, Saturn, Uranus or\n"
 "Neptune (but not the Earth itself).\n"
@@ -3661,7 +3661,7 @@ _erfa_pmat00(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pmat00_doc,
-"pmat00(d1, d2) -> rbp\n\n"
+"\npmat00(d1, d2) -> rbp\n\n"
 "Precession matrix (including frame bias) from GCRS to a specified\n"
 "date, IAU 2000 model.\n"
 "Given:\n"
@@ -3684,7 +3684,7 @@ _erfa_pmat06(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pmat06_doc,
-"pmat06(d1, d2) -> rbp\n\n"
+"\npmat06(d1, d2) -> rbp\n\n"
 "Precession matrix (including frame bias) from GCRS to a specified\n"
 "date, IAU 2006 model.\n"
 "Given:\n"
@@ -3707,7 +3707,7 @@ _erfa_pmat76(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pmat76_doc,
-"pmat76(d1, d2) -> rmatp\n\n"
+"\npmat76(d1, d2) -> rmatp\n\n"
 "Precession matrix from J2000.0 to a specified date, IAU 1976 model.\n"
 "Given:\n"
 "   d1,d2       TT ending date as a 2-part Julian Date\n"
@@ -3733,7 +3733,7 @@ _erfa_pn00(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pn00_doc,
-"pn00(d1,d2,dpsi,deps) -> epsa,rb,rp,rbp,rn,rbpn\n\n"
+"\npn00(d1,d2,dpsi,deps) -> epsa,rb,rp,rbp,rn,rbpn\n\n"
 "Precession-nutation, IAU 2000 model:  a multi-purpose function,\n"
 "supporting classical (equinox-based) use directly and CIO-based\n"
 "use indirectly.\n"
@@ -3767,7 +3767,7 @@ _erfa_pn00a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pn00a_doc,
-"pn00a(d1,d2) -> dpsi,deps,epsa,rb,rp,rbp,rn,rbpn\n\n"
+"\npn00a(d1,d2) -> dpsi,deps,epsa,rb,rp,rbp,rn,rbpn\n\n"
 "Precession-nutation, IAU 2000A model:  a multi-purpose function,\n"
 "supporting classical (equinox-based) use directly and CIO-based\n"
 "use indirectly.\n"
@@ -3801,7 +3801,7 @@ _erfa_pn00b(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pn00b_doc,
-"pn00b(d1,d2) -> dpsi,deps,epsa,rb,rp,rbp,rn,rbpn\n\n"
+"\npn00b(d1,d2) -> dpsi,deps,epsa,rb,rp,rbp,rn,rbpn\n\n"
 "Precession-nutation, IAU 2000B model:  a multi-purpose function,\n"
 "supporting classical (equinox-based) use directly and CIO-based\n"
 "use indirectly.\n"
@@ -3835,7 +3835,7 @@ _erfa_pn06(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pn06_doc,
-"pn06(d1,d2,dpsi,deps) -> epsa,rb,rp,rbp,rn,rbpn\n\n"
+"\npn06(d1,d2,dpsi,deps) -> epsa,rb,rp,rbp,rn,rbpn\n\n"
 "Precession-nutation, IAU 2006 model:  a multi-purpose function,\n"
 "supporting classical (equinox-based) use directly and CIO-based\n"
 "use indirectly.\n"
@@ -3869,7 +3869,7 @@ _erfa_pn06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pn06a_doc,
-"pn06a(d1,d2) -> dpsi,deps,epsa,rb,rp,rbp,rn,rbpn\n\n"
+"\npn06a(d1,d2) -> dpsi,deps,epsa,rb,rp,rbp,rn,rbpn\n\n"
 "Precession-nutation, IAU 2006/2000A model:  a multi-purpose function,\n"
 "supporting classical (equinox-based) use directly and CIO-based\n"
 "use indirectly.\n"
@@ -3897,7 +3897,7 @@ _erfa_pnm00a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pnm00a_doc,
-"pnm00a(d1, d2) -> rbpn\n\n"
+"\npnm00a(d1, d2) -> rbpn\n\n"
 "Form the matrix of precession-nutation for a given date (including\n"
 "frame bias), equinox-based, IAU 2000A model.\n"
 "Given:\n"
@@ -3918,7 +3918,7 @@ _erfa_pnm00b(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pnm00b_doc,
-"pnm00b(d1, d2) -> rbpn\n\n"
+"\npnm00b(d1, d2) -> rbpn\n\n"
 "Form the matrix of precession-nutation for a given date (including\n"
 "frame bias), equinox-based, IAU 2000B model.\n"
 "Given:\n"
@@ -3939,7 +3939,7 @@ _erfa_pnm06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pnm06a_doc,
-"pnm06a(d1, d2) -> rbpn\n\n"
+"\npnm06a(d1, d2) -> rbpn\n\n"
 "Form the matrix of precession-nutation for a given date (including\n"
 "frame bias), IAU 2006 precession and IAU 2000A nutation models.\n"
 "Given:\n"
@@ -3962,7 +3962,7 @@ _erfa_pnm80(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pnm80_doc,
-"pnm80(d1, d2) -> rmatp\n\n"
+"\npnm80(d1, d2) -> rmatp\n\n"
 "Form the matrix of precession/nutation for a given date, IAU 1976\n"
 "precession model, IAU 1980 nutation model.\n"
 "Given:\n"
@@ -3985,7 +3985,7 @@ _erfa_pom00(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pom00_doc,
-"pom00(xp, yp, sp) -> rpom\n\n"
+"\npom00(xp, yp, sp) -> rpom\n\n"
 "Form the matrix of polar motion for a given date, IAU 2000.\n"
 "Given:\n"
 "   xp,yp       coordinates of the pole (radians)\n"
@@ -4005,7 +4005,7 @@ _erfa_pr00(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pr00_doc,
-"pr00(d1,d2) -> dpsipr,depspr\n\n"
+"\npr00(d1,d2) -> dpsipr,depspr\n\n"
 "Precession-rate part of the IAU 2000 precession-nutation models\n"
 "(part of MHB2000).\n"
 "Given:\n"
@@ -4025,7 +4025,7 @@ _erfa_prec76(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_prec76_doc,
-"prec76(ep01, ep02, ep11, ep12) -> zeta, z, theta\n\n"
+"\nprec76(ep01, ep02, ep11, ep12) -> zeta, z, theta\n\n"
 "IAU 1976 precession model.\n"
 "Given:\n"
 "   ep01,ep02   TDB starting epoch as 2-part Julian Date\n"
@@ -4065,7 +4065,7 @@ _erfa_pvstar(PyObject *self, PyObject *args)
     }
 }
 PyDoc_STRVAR(_erfa_pvstar_doc,
-"pvstar(pv[2][3]) -> ra, dec, pmr, pmd, px, rv\n\n"
+"\npvstar(pv[2][3]) -> ra, dec, pmr, pmd, px, rv\n\n"
 "Convert star position+velocity vector to catalog coordinates.\n"
 "Given:\n"
 "   pv[2][3]    pv-vector (AU, AU/day)\n"
@@ -4089,7 +4089,7 @@ _erfa_s00(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_s00_doc,
-"s00(d1, d2, x, y) -> s\n\n"
+"\ns00(d1, d2, x, y) -> s\n\n"
 "The CIO locator s, positioning the Celestial Intermediate Origin on\n"
 "the equator of the Celestial Intermediate Pole, given the CIP's X,Y\n"
 "coordinates.  Compatible with IAU 2000A precession-nutation.\n"
@@ -4111,7 +4111,7 @@ _erfa_s00a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_s00a_doc,
-"s00a(d1, d2) -> s\n\n"
+"\ns00a(d1, d2) -> s\n\n"
 "The CIO locator s, positioning the Celestial Intermediate Origin on\n"
 "the equator of the Celestial Intermediate Pole, using the IAU 2000A\n"
 "precession-nutation model.\n"
@@ -4132,7 +4132,7 @@ _erfa_s00b(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_s00b_doc,
-"s00b(d1, d2) -> s\n\n"
+"\ns00b(d1, d2) -> s\n\n"
 "The CIO locator s, positioning the Celestial Intermediate Origin on\n"
 "the equator of the Celestial Intermediate Pole, using the IAU 2000B\n"
 "precession-nutation model.\n"
@@ -4153,7 +4153,7 @@ _erfa_s06(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_s06_doc,
-"s06(d1, d2, x, y) -> s\n\n"
+"\ns06(d1, d2, x, y) -> s\n\n"
 "The CIO locator s, positioning the Celestial Intermediate Origin on\n"
 "the equator of the Celestial Intermediate Pole, given the CIP's X,Y\n"
 "coordinates.  Compatible with IAU 2006/2000A precession-nutation.\n"
@@ -4175,7 +4175,7 @@ _erfa_s06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_s06a_doc,
-"s06a(d1, d2) -> s\n\n"
+"\ns06a(d1, d2) -> s\n\n"
 "The CIO locator s, positioning the Celestial Intermediate Origin on\n"
 "the equator of the Celestial Intermediate Pole, using the IAU 2006\n"
 "precession and IAU 2000A nutation model.\n"
@@ -4196,7 +4196,7 @@ _erfa_sp00(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_sp00_doc,
-"sp00(d1, d2) -> s\n\n"
+"\nsp00(d1, d2) -> s\n\n"
 "The TIO locator s', positioning the Terrestrial Intermediate Origin\n"
 "on the equator of the Celestial Intermediate Pole.\n"
 "Given:\n"
@@ -4247,7 +4247,7 @@ _erfa_starpm(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_starpm_doc,
-"starpm(ra1, dec1, pmr1, pmd1, px1, rv1, ep1a, ep1b, ep2a, ep2b) -> ra2, dec2, pmr2, pmd2, px2, rv2\n\n"
+"\nstarpm(ra1, dec1, pmr1, pmd1, px1, rv1, ep1a, ep1b, ep2a, ep2b) -> ra2, dec2, pmr2, pmd2, px2, rv2\n\n"
 "Star proper motion:  update star catalog data for space motion.\n"
 "Given:\n"
 "   ra1     right ascension (radians), before\n"
@@ -4305,7 +4305,7 @@ _erfa_starpv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_starpv_doc,
-"starpv(ra1, dec1, pmr1, pmd1, px1, rv1) -> pv\n\n"
+"\nstarpv(ra1, dec1, pmr1, pmd1, px1, rv1) -> pv\n\n"
 "Convert star catalog coordinates to position+velocity vector.\n"
 "Given:\n"
 "   ra      right ascension (radians)\n"
@@ -4334,7 +4334,7 @@ _erfa_taitt(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_taitt_doc,
-"taitt(tai1, tai2) -> tt1, tt2\n\n"
+"\ntaitt(tai1, tai2) -> tt1, tt2\n\n"
 "Time scale transformation:  International Atomic Time, TAI, to\n"
 "Terrestrial Time, TT.\n"
 "Given:\n"
@@ -4359,7 +4359,7 @@ _erfa_taiut1(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_taiut1_doc,
-"taiut1(tai1, tai2, dta) -> ut11, ut12\n\n"
+"\ntaiut1(tai1, tai2, dta) -> ut11, ut12\n\n"
 "Time scale transformation:  International Atomic Time, TAI, to\n"
 "Universal Time, UT1..\n"
 "The argument dta, i.e. UT1-TAI, is an observed quantity, and is\n"
@@ -4393,7 +4393,7 @@ _erfa_taiutc(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_taiutc_doc,
-"taiutc(tai1, tai2) -> utc1, utc2\n\n"
+"\ntaiutc(tai1, tai2) -> utc1, utc2\n\n"
 "Time scale transformation:  International Atomic Time, TAI, to\n"
 "Coordinated Universal Time, UTC.\n"
 "Given:\n"
@@ -4418,7 +4418,7 @@ _erfa_tcbtdb(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_tcbtdb_doc,
-"tcbtdb(tcb1, tcb2) -> tdb1, tdb2\n\n"
+"\ntcbtdb(tcb1, tcb2) -> tdb1, tdb2\n\n"
 "Time scale transformation:  Barycentric Coordinate Time, TCB, to\n"
 "Barycentric Dynamical Time, TDB.\n"
 "Given:\n"
@@ -4443,7 +4443,7 @@ _erfa_tcgtt(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_tcgtt_doc,
-"tcgtt(tcg1, tcg2) -> tt1, tt2\n\n"
+"\ntcgtt(tcg1, tcg2) -> tt1, tt2\n\n"
 "Time scale transformation:  Geocentric Coordinate Time, TCG, to\n"
 "Terrestrial Time, TT.\n"
 "Given:\n"
@@ -4468,7 +4468,7 @@ _erfa_tdbtcb(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_tdbtcb_doc,
-"tdbtcb(tdb1, tdb2) -> tcb1, tcb2\n\n"
+"\ntdbtcb(tdb1, tdb2) -> tcb1, tcb2\n\n"
 "Time scale transformation:  Barycentric Dynamical Time, TDB, to\n"
 "Barycentric Coordinate Time, TCB.\n"
 "Given:\n"
@@ -4493,7 +4493,7 @@ _erfa_tdbtt(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_tdbtt_doc,
-"tdbtt(tdb1, tdb2, dtr) -> tt1, tt2\n\n"
+"\ntdbtt(tdb1, tdb2, dtr) -> tt1, tt2\n\n"
 "Time scale transformation: Barycentric Dynamical Time, TDB, to\n"
 "Terrestrial Time, TT.\n"
 "Given:\n"
@@ -4519,7 +4519,7 @@ _erfa_tttai(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_tttai_doc,
-"tttai(tt1, tt2) -> tai1, tai2\n\n"
+"\ntttai(tt1, tt2) -> tai1, tai2\n\n"
 "Time scale transformation: Terrestrial Time, TT, to\n"
 "International Atomic Time, TAI.\n"
 "Given:\n"
@@ -4544,7 +4544,7 @@ _erfa_tttcg(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_tttcg_doc,
-"tttcg(tt1, tt2) -> tcg1, tcg2\n\n"
+"\ntttcg(tt1, tt2) -> tcg1, tcg2\n\n"
 "Time scale transformation: Terrestrial Time, TT, to Geocentric\n"
 "Coordinate Time, TCG.\n"
 "Given:\n"
@@ -4569,7 +4569,7 @@ _erfa_tttdb(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_tttdb_doc,
-"tttdb(tt1, tt2, dtr) -> tdb1, tdb2\n\n"
+"\ntttdb(tt1, tt2, dtr) -> tdb1, tdb2\n\n"
 "Time scale transformation: Terrestrial Time, TT, to\n"
 "Barycentric Dynamical Time, TDB.\n"
 "Given:\n"
@@ -4595,7 +4595,7 @@ _erfa_ttut1(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ttut1_doc,
-"ttut1(tt1, tt2, dt) -> ut11, ut12\n\n"
+"\nttut1(tt1, tt2, dt) -> ut11, ut12\n\n"
 "Time scale transformation: Terrestrial Time, TT, to\n"
 "Universal Time UT1.\n"
 "Given:\n"
@@ -4621,7 +4621,7 @@ _erfa_ut1tai(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ut1tai_doc,
-"ut1tai(ut11, ut12, dta) -> tai1, tai2\n\n"
+"\nut1tai(ut11, ut12, dta) -> tai1, tai2\n\n"
 "Time scale transformation: Universal Time, UT1, to\n"
 "International Atomic Time, TAI.\n"
 "The argument dta, i.e. UT1-TAI, is an observed quantity, and is\n"
@@ -4649,7 +4649,7 @@ _erfa_ut1tt(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ut1tt_doc,
-"ut1tt(ut11, ut12, dt) -> tt1, tt2\n\n"
+"\nut1tt(ut11, ut12, dt) -> tt1, tt2\n\n"
 "Time scale transformation: Universal Time, UT1, to\n"
 "Terrestrial Time, TT.\n"
 "Given:\n"
@@ -4681,7 +4681,7 @@ _erfa_ut1utc(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ut1utc_doc,
-"ut1utc(ut11, ut12, dut1) -> utc1, utc2\n\n"
+"\nut1utc(ut11, ut12, dut1) -> utc1, utc2\n\n"
 "Time scale transformation: Universal Time, UT1, to\n"
 "Coordinated Universal Time, UTC.\n"
 "Given:\n"
@@ -4713,7 +4713,7 @@ _erfa_utctai(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_utctai_doc,
-"utctai(utc1, utc2) -> tai1, tai2\n\n"
+"\nutctai(utc1, utc2) -> tai1, tai2\n\n"
 "Time scale transformation: Coordinated Universal Time, UTC, to\n"
 "International Atomic Time, TAI.\n"
 "Given:\n"
@@ -4744,7 +4744,7 @@ _erfa_utcut1(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_utcut1_doc,
-"utcut1(utc1, utc2, dut1) -> ut11, ut12\n\n"
+"\nutcut1(utc1, utc2, dut1) -> ut11, ut12\n\n"
 "Time scale transformation: Coordinated Universal Time, UTC, to\n"
 "Universal Time, UT1.\n"
 "Given:\n"
@@ -4765,7 +4765,7 @@ _erfa_xy06(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_xy06_doc,
-"xy06(d1, d2) -> x, y\n\n"
+"\nxy06(d1, d2) -> x, y\n\n"
 "X,Y coordinates of celestial intermediate pole from series based\n"
 "on IAU 2006 precession and IAU 2000A nutation.\n"
 "Given:\n"
@@ -4785,7 +4785,7 @@ _erfa_xys00a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_xys00a_doc,
-"xys00a(d1, d2) -> x, y, s\n\n"
+"\nxys00a(d1, d2) -> x, y, s\n\n"
 "For a given TT date, compute the X,Y coordinates of the Celestial\n"
 "Intermediate Pole and the CIO locator s, using the IAU 2000A\n"
 "precession-nutation model.\n"
@@ -4807,7 +4807,7 @@ _erfa_xys00b(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_xys00b_doc,
-"xys00b(d1, d2) -> x, y, s\n\n"
+"\nxys00b(d1, d2) -> x, y, s\n\n"
 "For a given TT date, compute the X,Y coordinates of the Celestial\n"
 "Intermediate Pole and the CIO locator s, using the IAU 2000B\n"
 "precession-nutation model.\n"
@@ -4829,7 +4829,7 @@ _erfa_xys06a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_xys06a_doc,
-"xys06a(d1, d2) -> x, y, s\n\n"
+"\nxys06a(d1, d2) -> x, y, s\n\n"
 "For a given TT date, compute the X,Y coordinates of the Celestial\n"
 "Intermediate Pole and the CIO locator s, using the IAU 2006\n"
 "precession and IAU 2000A nutation model.\n"
@@ -4857,7 +4857,7 @@ _erfa_a2af(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_a2af_doc,
-"a2af(n, a) -> +/-, d, m, s, f\n\n"
+"\na2af(n, a) -> +/-, d, m, s, f\n\n"
 "Decompose radians into degrees, arcminutes, arcseconds, fraction.\n"
 "Given:\n"
 "   n           resolution\n"
@@ -4887,7 +4887,7 @@ _erfa_a2tf(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_a2tf_doc,
-"a2tf(n, a) -> +/-, h, m, s, f\n\n"
+"\na2tf(n, a) -> +/-, h, m, s, f\n\n"
 "Decompose radians into hours, minutes, seconds, fraction.\n"
 "Given:\n"
 "   n           resolution\n"
@@ -4916,7 +4916,7 @@ _erfa_af2a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_af2a_doc,
-"af2a(d, m, s) -> r\n"
+"\naf2a(d, m, s) -> r\n"
 "Convert degrees, arcminutes, arcseconds to radians.\n"
 "Given:\n"
 /*"    sign       '-' = negative, otherwise positive\n"*/
@@ -4938,7 +4938,7 @@ _erfa_anp(PyObject *self, PyObject *arg)
 }
 
 PyDoc_STRVAR(_erfa_anp_doc,
-"anp(a) -> 0 <= a < 2pi\n\n"
+"\nanp(a) -> 0 <= a < 2pi\n\n"
 "Normalize angle into the range 0 <= a < 2pi.\n"
 "Given:\n"
 "    a          angle (radians)\n"
@@ -4957,7 +4957,7 @@ _erfa_anpm(PyObject *self, PyObject *arg)
 }
 
 PyDoc_STRVAR(_erfa_anpm_doc,
-"anpm(a) -> -pi <= a < +pi\n\n"
+"\nanpm(a) -> -pi <= a < +pi\n\n"
 "Normalize angle into the range -pi <= a < +pi.\n"
 "Given:\n"
 "    a          angle (radians)\n"
@@ -4980,7 +4980,7 @@ _erfa_c2s(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_c2s_doc,
-"c2s(p) -> theta, phi\n\n"
+"\nc2s(p) -> theta, phi\n\n"
 "P-vector to spherical coordinates.\n"
 "Given:\n"
 "    p          p-vector\n"
@@ -5004,7 +5004,7 @@ _erfa_cp(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_cp_doc,
-"cp(p) -> c\n\n"
+"\ncp(p) -> c\n\n"
 "Copy a p-vector.\n"
 "Given:\n"
 "   p           p-vector to be copied\n"
@@ -5032,7 +5032,7 @@ _erfa_cpv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_cpv_doc,
-"cp(pv) -> c\n\n"
+"\ncp(pv) -> c\n\n"
 "Copy a position/velocity vector.\n"
 "Given:\n"
 "   pv          position/velocity vector to be copied\n"
@@ -5065,7 +5065,7 @@ _erfa_cr(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_cr_doc,
-"cr(r) -> c\n\n"
+"\ncr(r) -> c\n\n"
 "Copy an r-matrix.\n"
 "Given:\n"
 "   r           r-matrix to be copied\n"
@@ -5090,7 +5090,7 @@ _erfa_d2tf(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_d2tf_doc,
-"d2tf(n, d) -> +/-,h, m, s, f\n\n"
+"\nd2tf(n, d) -> +/-,h, m, s, f\n\n"
 "Decompose days to hours, minutes, seconds, fraction.\n"
 "Given:\n"
 "    n          resolution\n"
@@ -5120,7 +5120,7 @@ _erfa_p2pv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_p2pv_doc,
-"p2pv(p) -> pv\n\n"
+"\np2pv(p) -> pv\n\n"
 "Extend a p-vector to a pv-vector by appending a zero velocity.\n"
 "Given:\n"
 "    p          p-vector\n"
@@ -5142,7 +5142,7 @@ _erfa_p2s(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_p2s_doc,
-"p2s(p) -> theta, phi, r\n\n"
+"\np2s(p) -> theta, phi, r\n\n"
 "P-vector to spherical polar coordinates.\n"
 "Given:\n"
 "    p          p-vector\n"
@@ -5170,7 +5170,7 @@ _erfa_pap(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pap_doc,
-"pap(a, b) -> theta\n\n"
+"\npap(a, b) -> theta\n\n"
 "Position-angle from two p-vectors.\n"
 "Given:\n"
 "   a       direction of reference point\n"
@@ -5190,7 +5190,7 @@ _erfa_pas(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pas_doc,
-"pas(al, ap, bl, bp) -> p\n\n"
+"\npas(al, ap, bl, bp) -> p\n\n"
 "Position-angle from spherical coordinates.\n"
 "Given:\n"
 "   al  longitude of point A (e.g. RA) in radians\n"
@@ -5219,7 +5219,7 @@ _erfa_pdp(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pdp_doc,
-"pdp(a, b -> a.b\n\n"
+"\npdp(a, b -> a.b\n\n"
 "p-vector inner (=scalar=dot) product.\n"
 "Given:\n"
 "   a       first p-vector\n"
@@ -5242,7 +5242,7 @@ _erfa_pm(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pm_doc,
-"pm(p) -> modulus\n\n"
+"\npm(p) -> modulus\n\n"
 "Modulus of p-vector.\n"
 "Given:\n"
 "   p       p-vector\n"
@@ -5269,7 +5269,7 @@ _erfa_pmp(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pmp_doc,
-"pmp(a, b) -> amb = a-b\n\n"
+"\npmp(a, b) -> amb = a-b\n\n"
 "P-vector subtraction.\n"
 "Given:\n"
 "   a           first p-vector\n"
@@ -5292,7 +5292,7 @@ _erfa_pn(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pn_doc,
-"pn(p) -> r,u\n\n"
+"\npn(p) -> r,u\n\n"
 "Convert a p-vector into modulus and unit vector.\n"
 "Given:\n"
 "   p           p-vector\n"
@@ -5320,7 +5320,7 @@ _erfa_ppp(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ppp_doc,
-"ppp(a, b) -> apb = a+b\n\n"
+"\nppp(a, b) -> apb = a+b\n\n"
 "P-vector addition.\n"
 "Given:\n"
 "   a           first p-vector\n"
@@ -5348,7 +5348,7 @@ _erfa_ppsp(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ppsp_doc,
-"ppsp(a, s, b) -> apsb = a + s*b\n\n"
+"\nppsp(a, s, b) -> apsb = a + s*b\n\n"
 "P-vector plus scaled p-vector.\n"
 "Given:\n"
 "   a           first p-vector\n"
@@ -5377,7 +5377,7 @@ _erfa_pv2p(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pv2p_doc,
-"pv2p(pv) -> p\n\n"
+"\npv2p(pv) -> p\n\n"
 "Discard velocity component of a pv-vector.\n"
 "Given:\n"
 "   pv          pv-vector\n"
@@ -5404,7 +5404,7 @@ _erfa_pv2s(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pv2s_doc,
-"pv2s(pv) -> theta, phi, r, td, pd, rd\n\n"
+"\npv2s(pv) -> theta, phi, r, td, pd, rd\n\n"
 "Convert position/velocity from Cartesian to spherical coordinates.\n"
 "Given:\n"
 "   pv          pv-vector\n"
@@ -5444,7 +5444,7 @@ _erfa_pvdpv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pvdpv_doc,
-"pvdpv(a, b) -> adb = a.b\n\n"
+"\npvdpv(a, b) -> adb = a.b\n\n"
 "Inner (=scalar=dot) product of two pv-vectors.\n"
 "Given:\n"
 "   a           first pv-vector\n"
@@ -5472,7 +5472,7 @@ _erfa_pvm(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pvm_doc,
-"pvm(pv) -> r,s\n\n"
+"\npvm(pv) -> r,s\n\n"
 "Modulus of pv-vector.\n"
 "Given:\n"
 "   pv          pv-vector\n"
@@ -5510,7 +5510,7 @@ _erfa_pvmpv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pvmpv_doc,
-"pvmpv(a, b) -> amb = a-b\n\n"
+"\npvmpv(a, b) -> amb = a-b\n\n"
 "Subtract one pv-vector from another.\n"
 "Given:\n"
 "   a           first pv-vector\n"
@@ -5548,7 +5548,7 @@ _erfa_pvppv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pvppv_doc,
-"pvppv(a, b) -> apb = a+b\n\n"
+"\npvppv(a, b) -> apb = a+b\n\n"
 "Add one pv-vector to another.\n"
 "Given:\n"
 "   a           first pv-vector\n"
@@ -5578,7 +5578,7 @@ _erfa_pvu(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pvu_doc,
-"pvu(dt, pv) -> upv\n\n"
+"\npvu(dt, pv) -> upv\n\n"
 "Update a pv-vector.\n"
 "Given:\n"
 "   dt          time interval\n"
@@ -5606,7 +5606,7 @@ _erfa_pvup(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pvup_doc,
-"pvup(dt, pv) -> p\n\n"
+"\npvup(dt, pv) -> p\n\n"
 "Update a pv-vector, discarding the velocity component.\n"
 "Given:\n"
 "   dt          time interval\n"
@@ -5644,7 +5644,7 @@ _erfa_pvxpv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pvxpv_doc,
-"pvxpv(a, b) -> axb = a x b\n\n"
+"\npvxpv(a, b) -> axb = a x b\n\n"
 "Outer (=vector=cross) product of two pv-vectors.\n"
 "Given:\n"
 "   a           first pv-vector\n"
@@ -5672,7 +5672,7 @@ _erfa_pxp(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pxp_doc,
-"pxp(a, b) -> axb = a x b\n\n"
+"\npxp(a, b) -> axb = a x b\n\n"
 "p-vector outer (=vector=cross) product.\n"
 "Given:\n"
 "   a           first p-vector\n"
@@ -5703,7 +5703,7 @@ _erfa_rm2v(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_rm2v_doc,
-"rm2v(r) -> w\n\n"
+"\nrm2v(r) -> w\n\n"
 "Express an r-matrix as an r-vector.\n"
 "Given:\n"
 "   r          rotation matrix\n"
@@ -5729,7 +5729,7 @@ _erfa_rv2m(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_rv2m_doc,
-"rv2m(w) -> r\n\n"
+"\nrv2m(w) -> r\n\n"
 "Form the r-matrix corresponding to a given r-vector.\n"
 "Given:\n"
 "   w           rotation vector\n"
@@ -5762,7 +5762,7 @@ _erfa_rx(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_rx_doc,
-"rx(phi, r) -> r\n\n"
+"\nrx(phi, r) -> r\n\n"
 "Rotate an r-matrix about the x-axis.\n"
 "Given:\n"
 "   phi         angle (radians)\n"
@@ -5798,7 +5798,7 @@ _erfa_rxp(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_rxp_doc,
-"rxp(r, p) -> rp\n\n"
+"\nrxp(r, p) -> rp\n\n"
 "Multiply a p-vector by an r-matrix.\n"
 "Given:\n"
 "   r           r-matrix\n"
@@ -5841,7 +5841,7 @@ _erfa_rxpv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_rxpv_doc,
-"rxpv(r, pv) -> rpv\n\n"
+"\nrxpv(r, pv) -> rpv\n\n"
 "Multiply a pv-vector by an r-matrix.\n"
 "Given:\n"
 "   r           r-matrix\n"
@@ -5887,7 +5887,7 @@ _erfa_rxr(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_rxr_doc,
-"rxr(a, b -> atb\n\n"
+"\nrxr(a, b -> atb\n\n"
 "Multiply two r-matrices.\n"
 "Given:\n"
 "   a           first r-matrix\n"
@@ -5921,7 +5921,7 @@ _erfa_ry(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ry_doc,
-"ry(theta, r) -> r\n\n"
+"\nry(theta, r) -> r\n\n"
 "Rotate an r-matrix about the y-axis.\n"
 "Given:\n"
 "   theta       angle (radians)\n"
@@ -5954,7 +5954,7 @@ _erfa_rz(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_rz_doc,
-"rz(psi, r) -> r\n\n"
+"\nrz(psi, r) -> r\n\n"
 "Rotate an r-matrix about the z-axis.\n"
 "Given:\n"
 "   psi         angle (radians)\n"
@@ -5973,7 +5973,7 @@ _erfa_s2c(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_s2c_doc,
-"s2c(theta, phi) -> c\n\n"
+"\ns2c(theta, phi) -> c\n\n"
 "Convert spherical coordinates to Cartesian.\n"
 "Given:\n"
 "    theta   longitude angle (radians)\n"
@@ -5993,7 +5993,7 @@ _erfa_s2p(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_s2p_doc,
-"s2p(theta, phi, r) -> p\n\n"
+"\ns2p(theta, phi, r) -> p\n\n"
 "Convert spherical polar coordinates to p-vector.\n"
 "Given:\n"
 "   theta   longitude angle (radians)\n"
@@ -6017,7 +6017,7 @@ _erfa_s2pv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_s2pv_doc,
-"s2pv(theta, phi, r, td, pd, rd) -> pv\n\n"
+"\ns2pv(theta, phi, r, td, pd, rd) -> pv\n\n"
 "Convert position/velocity from spherical to Cartesian coordinates.\n"
 "Given:\n"
 "   theta   longitude angle (radians)\n"
@@ -6051,7 +6051,7 @@ _erfa_s2xpv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_s2xpv_doc,
-"s2xpv(s1, s2, pv) -> spv\n\n"
+"\ns2xpv(s1, s2, pv) -> spv\n\n"
 "Multiply a pv-vector by two scalars.\n"
 "Given:\n"
 "   s1          scalar to multiply position component by\n"
@@ -6080,7 +6080,7 @@ _erfa_sepp(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_sepp_doc,
-"sepp(a, b) -> s\n\n"
+"\nsepp(a, b) -> s\n\n"
 "Angular separation between two p-vectors.\n"
 "Given:\n"
 "   a       first p-vector (not necessarily unit length)\n"
@@ -6127,7 +6127,7 @@ _erfa_sxp(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_sxp_doc,
-"sxp(s, p) -> sp\n\n"
+"\nsxp(s, p) -> sp\n\n"
 "Multiply a p-vector by a scalar.\n"
 "Given:\n"
 "   s           scalar\n"
@@ -6157,7 +6157,7 @@ _erfa_sxpv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_sxpv_doc,
-"sxpv(s, pv) -> spv\n\n"
+"\nsxpv(s, pv) -> spv\n\n"
 "Multiply a pv-vector by a scalar.\n"
 "Given:\n"
 "   s           scalar\n"
@@ -6170,11 +6170,14 @@ _erfa_tf2a(PyObject *self, PyObject *args)
 {
     int ihour, imin, status;
     double sec, rad;
-    int s = '+';
+    char s = '+';
     if (!PyArg_ParseTuple(args, "iid", &ihour, &imin, &sec)) {
         return NULL;
     }
-    if (ihour < 0) s = '-';
+    if (ihour < 0) {
+        s = '-';
+        ihour = -1 * ihour;
+    }
     status = eraTf2a(s, ihour, imin, sec, &rad);
     if (status == 1) {
         PyErr_WarnEx(PyExc_Warning, "hour outside range 0-23", 1);
@@ -6189,7 +6192,7 @@ _erfa_tf2a(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_tf2a_doc,
-"tf2a(hour, min, sec) -> rad\n\n"
+"\ntf2a(hour, min, sec) -> rad\n\n"
 "Convert hours, minutes, seconds to radians.\n"
 "Given:\n"
 "   hour    hours\n"
@@ -6203,7 +6206,7 @@ _erfa_tf2d(PyObject *self, PyObject *args)
 {
     int ihour, imin, status;
     double sec, days;
-    int s = '+';
+    char s = '+';
     if (!PyArg_ParseTuple(args, "iid", &ihour, &imin, &sec)) {
         return NULL;
     }
@@ -6222,7 +6225,7 @@ _erfa_tf2d(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_tf2d_doc,
-"tf2d(hour, min, sec) -> days\n\n"
+"\ntf2d(hour, min, sec) -> days\n\n"
 "Convert hours, minutes, seconds to days.\n"
 "Given:\n"
 "   hour    hours\n"
@@ -6257,7 +6260,7 @@ _erfa_tr(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_tr_doc,
-"tr(r) -> rt\n\n"
+"\ntr(r) -> rt\n\n"
 "Transpose an r-matrix.\n"
 "Given:\n"
 "   r           r-matrix\n"
@@ -6291,7 +6294,7 @@ _erfa_trxp(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_trxp_doc,
-"trxp(r, p) -> trp\n\n"
+"\ntrxp(r, p) -> trp\n\n"
 "Multiply a p-vector by the transpose of an r-matrix.\n"
 "Given:\n"
 "   r           r-matrix\n"
@@ -6332,7 +6335,7 @@ _erfa_trxpv(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_trxpv_doc,
-"trxpv(r, pv) -> trpv\n\n"
+"\ntrxpv(r, pv) -> trpv\n\n"
 "Multiply a pv-vector by the transpose of an r-matrix.\n"
 "Given:\n"
 "   r           r-matrix\n"

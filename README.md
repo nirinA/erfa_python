@@ -14,6 +14,11 @@ what's new
 . 20130815
 **********
 
+- rewrote the wrapper from SOFA to ERFA
+
+. 20130830
+**********
+
 - registered to PyPi
 
 . 20131222
@@ -25,8 +30,8 @@ what's new
 **********
 
 - completed routines from the latest SOFA release
-- rename and sligthly reworked the C extension to _erfamodule.c
+- rename and slightly reworked the C extension to _erfamodule.c
 - a module erfa.py was created especially to handle routines that use
 LDBODY. some missing routines were also added into this module.
 this change *is compatible* with previous version, and users do not
-need to change their code.
+need to change their code. 
