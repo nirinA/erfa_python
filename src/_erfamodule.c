@@ -945,15 +945,11 @@ _erfa_atoc13(PyObject *self, PyObject *args)
     double ob1, ob2, utc1, utc2, dut1;
     double elong, phi, hm, xp, yp, phpa, tc, rh, wl;
     double rc, dc;
-#if PY_VERSION_HEX >= 0x03000000
     if (!PyArg_ParseTuple(args, "sdddddddddddddd",
-#else
-    if (!PyArg_ParseTuple(args, "sdddddddddddddd",
-#endif
                                  &type, &ob1, &ob2, &utc1, &utc2, &dut1,
                                  &elong, &phi, &hm, &xp, &yp, &phpa, &tc, &rh, &wl))      
         return NULL;
-    if (type) {
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
         j = eraAtoc13(type, ob1, ob2, utc1, utc2, dut1,
                       elong, phi, hm, xp, yp, phpa, tc, rh, wl,
                       &rc, &dc);
@@ -1008,9 +1004,15 @@ _erfa_atoi13(PyObject *self, PyObject *args)
                                  &type, &ob1, &ob2, &utc1, &utc2, &dut1,
                                  &elong, &phi, &hm, &xp, &yp, &phpa, &tc, &rh, &wl))      
         return NULL;
-    j = eraAtoi13(type, ob1, ob2, utc1, utc2, dut1,
-                   elong, phi, hm, xp, yp, phpa, tc, rh, wl,
-                   &ri, &di);
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
+        j = eraAtoi13(type, ob1, ob2, utc1, utc2, dut1,
+                      elong, phi, hm, xp, yp, phpa, tc, rh, wl,
+                      &ri, &di);
+    }
+    else {
+        PyErr_SetString(_erfaError, "unknown type of coordinates");
+        return NULL;
+    }
     if (j == +1) {
         PyErr_SetString(_erfaError, "doubious year");
         return NULL;
@@ -1097,7 +1099,13 @@ _erfa_atoiq(PyObject *self, PyObject *args)
     astrom.eral = eral;
     astrom.refa = refa;
     astrom.refb = refb;
-    eraAtoiq(type, ob1, ob2, &astrom, &ri, &di);
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
+        eraAtoiq(type, ob1, ob2, &astrom, &ri, &di);
+    }
+    else {
+        PyErr_SetString(_erfaError, "unknown type of coordinates");
+        return NULL;
+    }
     return Py_BuildValue("dd", ri, di);
 }
 
@@ -6176,7 +6184,7 @@ _erfa_tf2a(PyObject *self, PyObject *args)
     }
     if (ihour < 0) {
         s = '-';
-        ihour = -1 * ihour;
+        /*ihour = -1 * ihour;*/
     }
     status = eraTf2a(s, ihour, imin, sec, &rad);
     if (status == 1) {
@@ -6210,7 +6218,10 @@ _erfa_tf2d(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "iid", &ihour, &imin, &sec)) {
         return NULL;
     }
-    if (ihour < 0) s = '-';
+    if (ihour < 0)  {
+        s = '-';
+        ihour = -1 * ihour;
+    }
     status = eraTf2d(s, ihour, imin, sec, &days);
     if (status == 1) {
         PyErr_WarnEx(PyExc_Warning, "hour outside range 0-23", 1);
@@ -6577,7 +6588,6 @@ static struct PyModuleDef _erfamodule = {
 	NULL
 };
 
-
 PyMODINIT_FUNC
 PyInit__erfa(void)
 {
@@ -6585,53 +6595,6 @@ PyInit__erfa(void)
 	m = PyModule_Create(&_erfamodule);
 	if (m == NULL)
             return NULL;
-        _erfaError = PyErr_NewException("_erfa.error", NULL, NULL);
-        Py_INCREF(_erfaError);
-        PyModule_AddObject(m, "error", _erfaError);
-        PyModule_AddObject(m, "DPI", PyFloat_FromDouble(ERFA_DPI));
-        PyModule_AddObject(m, "D2PI", PyFloat_FromDouble(ERFA_D2PI));
-        PyModule_AddObject(m, "DR2D", PyFloat_FromDouble(ERFA_DR2D));
-        PyModule_AddObject(m, "DD2R", PyFloat_FromDouble(ERFA_DD2R));
-        PyModule_AddObject(m, "DR2AS", PyFloat_FromDouble(ERFA_DR2AS));
-        PyModule_AddObject(m, "DAS2R", PyFloat_FromDouble(ERFA_DAS2R));
-        PyModule_AddObject(m, "DS2R", PyFloat_FromDouble(ERFA_DS2R));
-        PyModule_AddObject(m, "TURNAS", PyFloat_FromDouble(ERFA_TURNAS));
-        PyModule_AddObject(m, "DMAS2R", PyFloat_FromDouble(ERFA_DMAS2R));
-        PyModule_AddObject(m, "DTY", PyFloat_FromDouble(ERFA_DTY));
-        PyModule_AddObject(m, "DAYSEC", PyFloat_FromDouble(ERFA_DAYSEC));
-        PyModule_AddObject(m, "DJY", PyFloat_FromDouble(ERFA_DJY));
-        PyModule_AddObject(m, "DJC", PyFloat_FromDouble(ERFA_DJC));
-        PyModule_AddObject(m, "DJM", PyFloat_FromDouble(ERFA_DJM));
-        PyModule_AddObject(m, "DJ00", PyFloat_FromDouble(ERFA_DJ00));
-        PyModule_AddObject(m, "DJM0", PyFloat_FromDouble(ERFA_DJM0));
-        PyModule_AddObject(m, "DJM00", PyFloat_FromDouble(ERFA_DJM00));
-        PyModule_AddObject(m, "DJM77", PyFloat_FromDouble(ERFA_DJM77));
-        PyModule_AddObject(m, "TTMTAI", PyFloat_FromDouble(ERFA_TTMTAI));
-        PyModule_AddObject(m, "DAU", PyFloat_FromDouble(ERFA_DAU));
-        PyModule_AddObject(m, "CMPS", PyFloat_FromDouble(ERFA_CMPS));
-        PyModule_AddObject(m, "AULT", PyFloat_FromDouble(ERFA_AULT));
-        PyModule_AddObject(m, "DC", PyFloat_FromDouble(ERFA_DC));
-        PyModule_AddObject(m, "ELG", PyFloat_FromDouble(ERFA_ELG));
-        PyModule_AddObject(m, "ELB", PyFloat_FromDouble(ERFA_ELB));
-        PyModule_AddObject(m, "TDB0", PyFloat_FromDouble(ERFA_TDB0));
-        PyModule_AddObject(m, "SRS", PyFloat_FromDouble(ERFA_SRS));
-        PyModule_AddObject(m, "WGS84", PyLong_FromLong(ERFA_WGS84));
-        PyModule_AddObject(m, "GRS80", PyLong_FromLong(ERFA_GRS80));
-        PyModule_AddObject(m, "WGS72", PyLong_FromLong(ERFA_WGS72));
-
-        if (!initialized) {
-            PyStructSequence_InitType(&AstromType, &ASTROM_type_desc);
-            PyStructSequence_InitType(&LdbodyType, &LDBODY_type_desc);
-
-        }
-        Py_INCREF(&AstromType);
-        PyModule_AddObject(m, "ASTROM", (PyObject*) &AstromType);
-        Py_INCREF(&LdbodyType);
-        PyModule_AddObject(m, "LDBODY", (PyObject*) &LdbodyType);
-
-        initialized = 1;
-        return m;
-}
 #else
 PyMODINIT_FUNC
 init_erfa(void)
@@ -6640,6 +6603,7 @@ init_erfa(void)
 	m = Py_InitModule3("_erfa", _erfa_methods, module_doc);
 	if (m == NULL)
             goto finally;
+#endif
         _erfaError = PyErr_NewException("_erfa.error", NULL, NULL);
         Py_INCREF(_erfaError);
         PyModule_AddObject(m, "error", _erfaError);
@@ -6686,8 +6650,10 @@ init_erfa(void)
 
         initialized = 1;
 
+#if PY_VERSION_HEX >= 0x03000000
+        return m;
+#else
         finally:
         return;
- 
-}
 #endif
+}
