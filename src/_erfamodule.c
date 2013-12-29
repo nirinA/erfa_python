@@ -4047,18 +4047,12 @@ static PyObject *
 _erfa_pvstar(PyObject *self, PyObject *args)
 {
     double pv[2][3], ra, dec, pmr, pmd, px, rv;
-    double pv00, pv01, pv02, pv10, pv11, pv12;
     int status;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd))",
-        &pv00, &pv01, &pv02, &pv10, &pv11, &pv12)) {
+                                   &pv[0][0], &pv[0][1], &pv[0][2],
+                                   &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    pv[0][0] = pv00;
-    pv[0][1] = pv01;
-    pv[0][2] = pv02;
-    pv[1][0] = pv10;
-    pv[1][1] = pv11;
-    pv[1][2] = pv12;
     status = eraPvstar(pv, &ra, &dec, &pmr, &pmd, &px, &rv);
     if (status == -1) {
         PyErr_SetString(_erfaError, "superluminal speed");
@@ -4283,7 +4277,7 @@ _erfa_starpv(PyObject *self, PyObject *args)
    double pv[2][3];
    int status;
    if (!PyArg_ParseTuple(args, "dddddd",
-        &ra, &dec, &pmr, &pmd, &px, &rv)) {
+                                &ra, &dec, &pmr, &pmd, &px, &rv)) {
         return NULL;
     }
     status = eraStarpv(ra, dec, pmr, pmd, px, rv, pv);
@@ -5023,20 +5017,15 @@ static PyObject *
 _erfa_cpv(PyObject *self, PyObject *args)
 {
     double pv[2][3], c[2][3];
-    double p00,p01,p02,p10,p11,p12;
     if (!PyArg_ParseTuple(args, "(ddd)(ddd)",
-                        &p00,&p01,&p02,&p10,&p11,&p12)) {
+                                  &pv[0][0], &pv[0][1], &pv[0][2],
+                                  &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    pv[0][0] = p00;
-    pv[0][1] = p01;
-    pv[0][2] = p02;
-    pv[1][0] = p10;
-    pv[1][1] = p11;
-    pv[1][2] = p12;
     eraCpv(pv, c);
     return Py_BuildValue("(ddd)(ddd)",
-                           c[0][0],c[0][1],c[0][2],c[1][0],c[1][1],c[1][2]);    
+                           c[0][0],c[0][1],c[0][2],
+                           c[1][0],c[1][1],c[1][2]);    
 }
 
 PyDoc_STRVAR(_erfa_cpv_doc,
@@ -5369,17 +5358,11 @@ static PyObject *
 _erfa_pv2p(PyObject *self, PyObject *args)
 {
     double pv[2][3], p[3];
-    double p00,p01,p02,p10,p11,p12;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd))",
-                        &p00,&p01,&p02,&p10,&p11,&p12)) {
+                                   &pv[0][0], &pv[0][1], &pv[0][2],
+                                   &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    pv[0][0] = p00;
-    pv[0][1] = p01;
-    pv[0][2] = p02;
-    pv[1][0] = p10;
-    pv[1][1] = p11;
-    pv[1][2] = p12;
     eraPv2p(pv, p);
     return Py_BuildValue("ddd", p[0],p[1],p[2]);    
 }
@@ -5396,17 +5379,11 @@ static PyObject *
 _erfa_pv2s(PyObject *self, PyObject *args)
 {
     double pv[2][3], theta, phi, r, td, pd, rd;
-    double pv00, pv01, pv02, pv10, pv11, pv12;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd))",
-        &pv00, &pv01, &pv02, &pv10, &pv11, &pv12)) {
+                                   &pv[0][0], &pv[0][1], &pv[0][2],
+                                   &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    pv[0][0] = pv00;
-    pv[0][1] = pv01;
-    pv[0][2] = pv02;
-    pv[1][0] = pv10;
-    pv[1][1] = pv11;
-    pv[1][2] = pv12;
     eraPv2s(pv, &theta, &phi, &r, &td, &pd, &rd);
     return Py_BuildValue("dddddd", theta, phi, r, td, pd, rd);
 }
@@ -5428,25 +5405,13 @@ static PyObject *
 _erfa_pvdpv(PyObject *self, PyObject *args)
 {
     double pva[2][3], pvb[2][3], adb[2];
-    double pva00, pva01, pva02, pva10, pva11, pva12;
-    double pvb00, pvb01, pvb02, pvb10, pvb11, pvb12;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd))((ddd)(ddd))",
-        &pva00, &pva01, &pva02, &pva10, &pva11, &pva12,
-        &pvb00, &pvb01, &pvb02, &pvb10, &pvb11, &pvb12)) {
+                                   &pva[0][0], &pva[0][1], &pva[0][2],
+                                   &pva[1][0], &pva[1][1], &pva[1][2],
+                                   &pvb[0][0], &pvb[0][1], &pvb[0][2],
+                                   &pvb[1][0], &pvb[1][1], &pvb[1][2])) {
         return NULL;
     }
-    pva[0][0] = pva00;
-    pva[0][1] = pva01;
-    pva[0][2] = pva02;
-    pva[1][0] = pva10;
-    pva[1][1] = pva11;
-    pva[1][2] = pva12;
-    pvb[0][0] = pvb00;
-    pvb[0][1] = pvb01;
-    pvb[0][2] = pvb02;
-    pvb[1][0] = pvb10;
-    pvb[1][1] = pvb11;
-    pvb[1][2] = pvb12;
     eraPvdpv(pva, pvb, adb);
     return Py_BuildValue("dd", adb[0], adb[1]);
 }
@@ -5464,17 +5429,11 @@ static PyObject *
 _erfa_pvm(PyObject *self, PyObject *args)
 {
     double pv[2][3], r, s;
-    double pv00, pv01, pv02, pv10, pv11, pv12;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd))",
-        &pv00, &pv01, &pv02, &pv10, &pv11, &pv12)) {
+                                   &pv[0][0], &pv[0][1], &pv[0][2],
+                                   &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    pv[0][0] = pv00;
-    pv[0][1] = pv01;
-    pv[0][2] = pv02;
-    pv[1][0] = pv10;
-    pv[1][1] = pv11;
-    pv[1][2] = pv12;
     eraPvm(pv, &r, &s);
     return Py_BuildValue("dd", r, s);
 }
@@ -5492,25 +5451,13 @@ static PyObject *
 _erfa_pvmpv(PyObject *self, PyObject *args)
 {
     double pva[2][3], pvb[2][3], amb[2][3];
-    double pva00, pva01, pva02, pva10, pva11, pva12;
-    double pvb00, pvb01, pvb02, pvb10, pvb11, pvb12;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd))((ddd)(ddd))",
-        &pva00, &pva01, &pva02, &pva10, &pva11, &pva12,
-        &pvb00, &pvb01, &pvb02, &pvb10, &pvb11, &pvb12)) {
+                                   &pva[0][0], &pva[0][1], &pva[0][2],
+                                   &pva[1][0], &pva[1][1], &pva[1][2],
+                                   &pvb[0][0], &pvb[0][1], &pvb[0][2],
+                                   &pvb[1][0], &pvb[1][1], &pvb[1][2])) {
         return NULL;
     }
-    pva[0][0] = pva00;
-    pva[0][1] = pva01;
-    pva[0][2] = pva02;
-    pva[1][0] = pva10;
-    pva[1][1] = pva11;
-    pva[1][2] = pva12;
-    pvb[0][0] = pvb00;
-    pvb[0][1] = pvb01;
-    pvb[0][2] = pvb02;
-    pvb[1][0] = pvb10;
-    pvb[1][1] = pvb11;
-    pvb[1][2] = pvb12;
     eraPvmpv(pva, pvb, amb);
     return Py_BuildValue("(ddd)(ddd)",
                            amb[0][0], amb[0][1], amb[0][2],
@@ -5530,25 +5477,13 @@ static PyObject *
 _erfa_pvppv(PyObject *self, PyObject *args)
 {
     double pva[2][3], pvb[2][3], apb[2][3];
-    double pva00, pva01, pva02, pva10, pva11, pva12;
-    double pvb00, pvb01, pvb02, pvb10, pvb11, pvb12;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd))((ddd)(ddd))",
-        &pva00, &pva01, &pva02, &pva10, &pva11, &pva12,
-        &pvb00, &pvb01, &pvb02, &pvb10, &pvb11, &pvb12)) {
+                                   &pva[0][0], &pva[0][1], &pva[0][2],
+                                   &pva[1][0], &pva[1][1], &pva[1][2],
+                                   &pvb[0][0], &pvb[0][1], &pvb[0][2],
+                                   &pvb[1][0], &pvb[1][1], &pvb[1][2])) {
         return NULL;
     }
-    pva[0][0] = pva00;
-    pva[0][1] = pva01;
-    pva[0][2] = pva02;
-    pva[1][0] = pva10;
-    pva[1][1] = pva11;
-    pva[1][2] = pva12;
-    pvb[0][0] = pvb00;
-    pvb[0][1] = pvb01;
-    pvb[0][2] = pvb02;
-    pvb[1][0] = pvb10;
-    pvb[1][1] = pvb11;
-    pvb[1][2] = pvb12;
     eraPvppv(pva, pvb, apb);
     return Py_BuildValue("(ddd)(ddd)",
                            apb[0][0], apb[0][1], apb[0][2],
@@ -5568,17 +5503,11 @@ static PyObject *
 _erfa_pvu(PyObject *self, PyObject *args)
 {
     double pv[2][3], dt, upv[2][3];
-    double pv00, pv01, pv02, pv10, pv11, pv12;
-    if (!PyArg_ParseTuple(args, "d((ddd)(ddd))",
-        &dt, &pv00, &pv01, &pv02, &pv10, &pv11, &pv12)) {
+    if (!PyArg_ParseTuple(args, "d((ddd)(ddd))", &dt,
+                                   &pv[0][0], &pv[0][1], &pv[0][2],
+                                   &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    pv[0][0] = pv00;
-    pv[0][1] = pv01;
-    pv[0][2] = pv02;
-    pv[1][0] = pv10;
-    pv[1][1] = pv11;
-    pv[1][2] = pv12;
     eraPvu(dt, pv, upv);
     return Py_BuildValue("(ddd)(ddd)",
                            upv[0][0], upv[0][1], upv[0][2],
@@ -5598,17 +5527,11 @@ static PyObject *
 _erfa_pvup(PyObject *self, PyObject *args)
 {
     double pv[2][3], dt, p[3];
-    double pv00, pv01, pv02, pv10, pv11, pv12;
-    if (!PyArg_ParseTuple(args, "d((ddd)(ddd))",
-        &dt, &pv00, &pv01, &pv02, &pv10, &pv11, &pv12)) {
+    if (!PyArg_ParseTuple(args, "d((ddd)(ddd))", &dt,
+                                   &pv[0][0], &pv[0][1], &pv[0][2],
+                                   &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    pv[0][0] = pv00;
-    pv[0][1] = pv01;
-    pv[0][2] = pv02;
-    pv[1][0] = pv10;
-    pv[1][1] = pv11;
-    pv[1][2] = pv12;
     eraPvup(dt, pv, p);
     return Py_BuildValue("ddd", p[0], p[1], p[2]);
 }
@@ -5626,25 +5549,13 @@ static PyObject *
 _erfa_pvxpv(PyObject *self, PyObject *args)
 {
     double pva[2][3], pvb[2][3], axb[2][3];
-    double pva00, pva01, pva02, pva10, pva11, pva12;
-    double pvb00, pvb01, pvb02, pvb10, pvb11, pvb12;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd))((ddd)(ddd))",
-        &pva00, &pva01, &pva02, &pva10, &pva11, &pva12,
-        &pvb00, &pvb01, &pvb02, &pvb10, &pvb11, &pvb12)) {
+                                   &pva[0][0], &pva[0][1], &pva[0][2],
+                                   &pva[1][0], &pva[1][1], &pva[1][2],
+                                   &pvb[0][0], &pvb[0][1], &pvb[0][2],
+                                   &pvb[1][0], &pvb[1][1], &pvb[1][2])) {
         return NULL;
     }
-    pva[0][0] = pva00;
-    pva[0][1] = pva01;
-    pva[0][2] = pva02;
-    pva[1][0] = pva10;
-    pva[1][1] = pva11;
-    pva[1][2] = pva12;
-    pvb[0][0] = pvb00;
-    pvb[0][1] = pvb01;
-    pvb[0][2] = pvb02;
-    pvb[1][0] = pvb10;
-    pvb[1][1] = pvb11;
-    pvb[1][2] = pvb12;
     eraPvxpv(pva, pvb, axb);
     return Py_BuildValue("(ddd)(ddd)",
                            axb[0][0], axb[0][1], axb[0][2],
@@ -5664,17 +5575,11 @@ static PyObject *
 _erfa_pxp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], axb[3];
-    double a0,a1,a2,b0,b1,b2;
     if (!PyArg_ParseTuple(args, "(ddd)(ddd)",
-        &a0, &a1, &a2, &b0, &b1, &b2)) {
+                                  &a[0], &a[1], &a[2],
+                                  &b[0], &b[1], &b[2])) {
         return NULL;
     }
-    a[0] = a0;
-    a[1] = a1;
-    a[2] = a2;
-    b[0] = b0;
-    b[1] = b1;
-    b[2] = b2;
     eraPxp(a, b, axb);
     return Py_BuildValue("ddd", axb[0], axb[1], axb[2]);
 }
@@ -5692,20 +5597,12 @@ static PyObject *
 _erfa_rm2v(PyObject *self, PyObject *args)
 {
     double r[3][3], w[3];
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))",
-                        &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22)) {
+                                   &r[0][0], &r[0][1], &r[0][2],
+                                   &r[1][0], &r[1][1], &r[1][2],
+                                   &r[2][0], &r[2][1], &r[2][2])) {
         return NULL;
     }
-    r[0][0] = r00;
-    r[0][1] = r01;
-    r[0][2] = r02;
-    r[1][0] = r10;
-    r[1][1] = r11;
-    r[1][2] = r12;
-    r[2][0] = r20;
-    r[2][1] = r21;
-    r[2][2] = r22;
     eraRm2v(r, w);
     return Py_BuildValue("ddd", w[0], w[1], w[2]);    
 }
@@ -5722,13 +5619,9 @@ static PyObject *
 _erfa_rv2m(PyObject *self, PyObject *args)
 {    
     double r[3][3], w[3];
-    double w0, w1, w2;
-    if (!PyArg_ParseTuple(args, "(ddd)", &w0,&w1,&w2)) {
+    if (!PyArg_ParseTuple(args, "(ddd)", &w[0], &w[1], &w[2])) {
         return NULL;
     }
-    w[0] = w0;
-    w[1] = w1;
-    w[2] = w2;
     eraRv2m(w, r);
     return Py_BuildValue("((ddd)(ddd)(ddd))",
                             r[0][0],r[0][1],r[0][2],
@@ -5748,20 +5641,12 @@ static PyObject *
 _erfa_rx(PyObject *self, PyObject *args)
 {
     double r[3][3], phi;
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22;
     if (!PyArg_ParseTuple(args, "d((ddd)(ddd)(ddd))", &phi,
-                        &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22)) {
+                                   &r[0][0], &r[0][1], &r[0][2],
+                                   &r[1][0], &r[1][1], &r[1][2],
+                                   &r[2][0], &r[2][1], &r[2][2])) {
         return NULL;
     }
-    r[0][0] = r00;
-    r[0][1] = r01;
-    r[0][2] = r02;
-    r[1][0] = r10;
-    r[1][1] = r11;
-    r[1][2] = r12;
-    r[2][0] = r20;
-    r[2][1] = r21;
-    r[2][2] = r22;
     eraRx(phi, r);
     return Py_BuildValue("((ddd)(ddd)(ddd))",
                             r[0][0],r[0][1],r[0][2],
@@ -5781,26 +5666,13 @@ static PyObject *
 _erfa_rxp(PyObject *self, PyObject *args)
 {
     double r[3][3], p[3], rp[3];
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22, p0, p1, p2;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))(ddd)", 
-                                &r00,&r01,&r02,
-                                &r10,&r11,&r12,
-                                &r20,&r21,&r22,
-                                &p0, &p1, &p2)) {
+                                   &r[0][0], &r[0][1], &r[0][2],
+                                   &r[1][0], &r[1][1], &r[1][2],
+                                   &r[2][0], &r[2][1], &r[2][2],
+                                   &p[0], &p[1], &p[2])) {
         return NULL;
     }
-    r[0][0] = r00;
-    r[0][1] = r01;
-    r[0][2] = r02;
-    r[1][0] = r10;
-    r[1][1] = r11;
-    r[1][2] = r12;
-    r[2][0] = r20;
-    r[2][1] = r21;
-    r[2][2] = r22;
-    p[0] = p0;
-    p[1] = p1;
-    p[2] = p2;
     eraRxp(r, p, rp);
     return Py_BuildValue("ddd", rp[0], rp[1], rp[2]);
 }
@@ -5818,30 +5690,14 @@ static PyObject *
 _erfa_rxpv(PyObject *self, PyObject *args)
 {
     double r[3][3], pv[2][3], rpv[2][3];
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22;
-    double pv00, pv01, pv02, pv10, pv11, pv12;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))((ddd)(ddd))", 
-                                &r00,&r01,&r02,
-                                &r10,&r11,&r12,
-                                &r20,&r21,&r22,
-                                &pv00, &pv01, &pv02, &pv10, &pv11, &pv12)) {
+                                   &r[0][0], &r[0][1], &r[0][2],
+                                   &r[1][0], &r[1][1], &r[1][2],
+                                   &r[2][0], &r[2][1], &r[2][2],
+                                   &pv[0][0], &pv[0][1], &pv[0][2],
+                                   &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    r[0][0] = r00;
-    r[0][1] = r01;
-    r[0][2] = r02;
-    r[1][0] = r10;
-    r[1][1] = r11;
-    r[1][2] = r12;
-    r[2][0] = r20;
-    r[2][1] = r21;
-    r[2][2] = r22;
-    pv[0][0] = pv00;
-    pv[0][1] = pv01;
-    pv[0][2] = pv02;
-    pv[1][0] = pv10;
-    pv[1][1] = pv11;
-    pv[1][2] = pv12;
     eraRxpv(r, pv, rpv);
     return Py_BuildValue("(ddd)(ddd)",
                           rpv[0][0], rpv[0][1], rpv[0][2],
@@ -5861,32 +5717,15 @@ static PyObject *
 _erfa_rxr(PyObject *self, PyObject *args)
 {
     double a[3][3], b[3][3], atb[3][3];
-    double a00,a01,a02,a10,a11,a12,a20,a21,a22;
-    double b00,b01,b02,b10,b11,b12,b20,b21,b22;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))((ddd)(ddd)(ddd))",
-                        &a00,&a01,&a02,&a10,&a11,&a12,&a20,&a21,&a22,
-                        &b00,&b01,&b02,&b10,&b11,&b12,&b20,&b21,&b22)) {
+                                   &a[0][0], &a[0][1], &a[0][2],
+                                   &a[1][0], &a[1][1], &a[1][2],
+                                   &a[2][0], &a[2][1], &a[2][2],
+                                   &b[0][0], &b[0][1], &b[0][2],
+                                   &b[1][0], &b[1][1], &b[1][2],
+                                   &b[2][0], &b[2][1], &b[2][2])) {
         return NULL;
     }
-    a[0][0] = a00;
-    a[0][1] = a01;
-    a[0][2] = a02;
-    a[1][0] = a10;
-    a[1][1] = a11;
-    a[1][2] = a12;
-    a[2][0] = a20;
-    a[2][1] = a21;
-    a[2][2] = a22;
-
-    b[0][0] = b00;
-    b[0][1] = b01;
-    b[0][2] = b02;
-    b[1][0] = b10;
-    b[1][1] = b11;
-    b[1][2] = b12;
-    b[2][0] = b20;
-    b[2][1] = b21;
-    b[2][2] = b22;
     eraRxr(a, b, atb);
     return Py_BuildValue("((ddd)(ddd)(ddd))",
                            atb[0][0],atb[0][1],atb[0][2],
@@ -5907,20 +5746,12 @@ static PyObject *
 _erfa_ry(PyObject *self, PyObject *args)
 {
     double r[3][3], theta;
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22;
     if (!PyArg_ParseTuple(args, "d((ddd)(ddd)(ddd))", &theta,
-                        &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22)) {
+                                 &r[0][0], &r[0][1], &r[0][2],
+                                 &r[1][0], &r[1][1], &r[1][2],
+                                 &r[2][0], &r[2][1], &r[2][2])) {
         return NULL;
     }
-    r[0][0] = r00;
-    r[0][1] = r01;
-    r[0][2] = r02;
-    r[1][0] = r10;
-    r[1][1] = r11;
-    r[1][2] = r12;
-    r[2][0] = r20;
-    r[2][1] = r21;
-    r[2][2] = r22;
     eraRy(theta, r);
     return Py_BuildValue("((ddd)(ddd)(ddd))",
                             r[0][0],r[0][1],r[0][2],
@@ -5940,20 +5771,12 @@ static PyObject *
 _erfa_rz(PyObject *self, PyObject *args)
 {
     double r[3][3], psi;
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22;
     if (!PyArg_ParseTuple(args, "d((ddd)(ddd)(ddd))", &psi,
-                        &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22)) {
+                                 &r[0][0], &r[0][1], &r[0][2],
+                                 &r[1][0], &r[1][1], &r[1][2],
+                                 &r[2][0], &r[2][1], &r[2][2])) {
         return NULL;
     }
-    r[0][0] = r00;
-    r[0][1] = r01;
-    r[0][2] = r02;
-    r[1][0] = r10;
-    r[1][1] = r11;
-    r[1][2] = r12;
-    r[2][0] = r20;
-    r[2][1] = r21;
-    r[2][2] = r22;
     eraRz(psi, r);
     return Py_BuildValue("((ddd)(ddd)(ddd))",
                             r[0][0],r[0][1],r[0][2],
@@ -6041,17 +5864,11 @@ static PyObject *
 _erfa_s2xpv(PyObject *self, PyObject *args)
 {
     double s1, s2, pv[2][3], spv[2][3];
-    double pv00, pv01, pv02, pv10, pv11, pv12;
-    if (!PyArg_ParseTuple(args, "dd((ddd)(ddd))",
-        &s1, &s2, &pv00, &pv01, &pv02, &pv10, &pv11, &pv12)) {
+    if (!PyArg_ParseTuple(args, "dd((ddd)(ddd))", &s1, &s2,
+                                 &pv[0][0], &pv[0][1], &pv[0][2],
+                                 &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    pv[0][0] = pv00;
-    pv[0][1] = pv01;
-    pv[0][2] = pv02;
-    pv[1][0] = pv10;
-    pv[1][1] = pv11;
-    pv[1][2] = pv12;
     eraS2xpv(s1, s2, pv, spv);
     return Py_BuildValue("(ddd)(ddd)",
                         spv[0][0], spv[0][1], spv[0][2],
@@ -6072,17 +5889,11 @@ static PyObject *
 _erfa_sepp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], s;
-    double a0, a1, a2, b0, b1, b2;
     if (!PyArg_ParseTuple(args, "(ddd)(ddd)",
-        &a0, &a1, &a2, &b0, &b1, &b2)) {
+                                  &a[0], &a[1], &a[2],
+                                  &b[0], &b[1], &b[2])) {
         return NULL;
     }
-    a[0] = a0;
-    a[1] = a1;
-    a[2] = a2;
-    b[0] = b0;
-    b[1] = b1;
-    b[2] = b2;
     s = eraSepp(a, b);
     return Py_BuildValue("d", s);
 }
@@ -6122,14 +5933,11 @@ PyDoc_STRVAR(_erfa_seps_doc,
 static PyObject *
 _erfa_sxp(PyObject *self, PyObject *args)
 {
-    double s, p[3], sp[3], p0, p1, p2;
+    double s, p[3], sp[3];
     if (!PyArg_ParseTuple(args, "d(ddd)", &s,
-                                &p0, &p1, &p2)) {
+                                 &p[0], &p[1], &p[2])) {
         return NULL;
     }
-    p[0] = p0;
-    p[1] = p1;
-    p[2] = p2;
     eraSxp(s, p, sp);
     return Py_BuildValue("ddd", sp[0], sp[1], sp[2]);
 }
@@ -6147,17 +5955,11 @@ static PyObject *
 _erfa_sxpv(PyObject *self, PyObject *args)
 {
     double s, pv[2][3], spv[2][3];
-    double pv00, pv01, pv02, pv10, pv11, pv12;
     if (!PyArg_ParseTuple(args, "d((ddd)(ddd))", &s,
-                                &pv00, &pv01, &pv02, &pv10, &pv11, &pv12)) {
+                                 &pv[0][0], &pv[0][1], &pv[0][2],
+                                 &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    pv[0][0] = pv00;
-    pv[0][1] = pv01;
-    pv[0][2] = pv02;
-    pv[1][0] = pv10;
-    pv[1][1] = pv11;
-    pv[1][2] = pv12;
     eraSxpv(s, pv, spv);
     return Py_BuildValue("(ddd)(ddd)",
                         spv[0][0], spv[0][1], spv[0][2],
@@ -6249,20 +6051,12 @@ static PyObject *
 _erfa_tr(PyObject *self, PyObject *args)
 {
     double r[3][3], rt[3][3];
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22;
-    if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))", 
-                                &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22)) {
+    if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))",
+                                   &r[0][0], &r[0][1], &r[0][2],
+                                   &r[1][0], &r[1][1], &r[1][2],
+                                   &r[2][0], &r[2][1], &r[2][2])) {
         return NULL;
     }
-    r[0][0] = r00;
-    r[0][1] = r01;
-    r[0][2] = r02;
-    r[1][0] = r10;
-    r[1][1] = r11;
-    r[1][2] = r12;
-    r[2][0] = r20;
-    r[2][1] = r21;
-    r[2][2] = r22;
     eraTr(r, rt);
     return Py_BuildValue("((ddd)(ddd)(ddd))",
                             rt[0][0],rt[0][1],rt[0][2],
@@ -6282,24 +6076,13 @@ static PyObject *
 _erfa_trxp(PyObject *self, PyObject *args)
 {
     double r[3][3], p[3], trp[3];
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22,p0,p1,p2;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))(ddd)", 
-                                &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22,
-                                &p0,&p1,&p2)) {
+                                   &r[0][0], &r[0][1], &r[0][2],
+                                   &r[1][0], &r[1][1], &r[1][2],
+                                   &r[2][0], &r[2][1], &r[2][2],
+                                   &p[0], &p[1], &p[2])) {
         return NULL;
     }
-    r[0][0] = r00;
-    r[0][1] = r01;
-    r[0][2] = r02;
-    r[1][0] = r10;
-    r[1][1] = r11;
-    r[1][2] = r12;
-    r[2][0] = r20;
-    r[2][1] = r21;
-    r[2][2] = r22;
-    p[0] = p0;
-    p[1] = p1;
-    p[2] = p2;
     eraTrxp(r, p, trp);
     return Py_BuildValue("ddd", trp[0], trp[1], trp[2]);    
 }
@@ -6317,28 +6100,14 @@ static PyObject *
 _erfa_trxpv(PyObject *self, PyObject *args)
 {
     double r[3][3], pv[2][3], trpv[2][3];
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22;
-    double pv00, pv01, pv02, pv10, pv11, pv12;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))((ddd)(ddd))", 
-                                &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22,
-                                &pv00, &pv01, &pv02, &pv10, &pv11, &pv12)) {
+                                   &r[0][0], &r[0][1], &r[0][2],
+                                   &r[1][0], &r[1][1], &r[1][2],
+                                   &r[2][0], &r[2][1], &r[2][2],
+                                   &pv[0][0], &pv[0][1], &pv[0][2],
+                                   &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
-    r[0][0] = r00;
-    r[0][1] = r01;
-    r[0][2] = r02;
-    r[1][0] = r10;
-    r[1][1] = r11;
-    r[1][2] = r12;
-    r[2][0] = r20;
-    r[2][1] = r21;
-    r[2][2] = r22;
-    pv[0][0] = pv00;
-    pv[0][1] = pv01;
-    pv[0][2] = pv02;
-    pv[1][0] = pv10;
-    pv[1][1] = pv11;
-    pv[1][2] = pv12;
     eraTrxpv(r, pv, trpv);
     return Py_BuildValue("(ddd)(ddd)",
                         trpv[0][0], trpv[0][1], trpv[0][2],
