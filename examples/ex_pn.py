@@ -9,8 +9,8 @@ import erfa
 from pprint import pprint
 
 # some init
-AS2R = erfa.AS2R ##4.848136811095359935899141E-6
-R2AS = erfa.R2AS ##206264.8062470963551564734
+AS2R = erfa.DAS2R ##4.848136811095359935899141E-6
+R2AS = erfa.DR2AS ##206264.8062470963551564734
 D2PI = 6.283185307179586476925287E0
 
 # UTC
@@ -101,7 +101,7 @@ print("celestial to terrestrial matrix (no polar motion)")
 pprint(RC2TI)
 
 # Polar motion matrix (TIRS->ITRS, IERS 1996).
-RPOM = ((1.,0.,0.),(0.,1.,0.),(0.,0.,1.)) #should be init with erfa.ir
+RPOM = erfa.ir()
 RPOM = erfa.rx(-YP, RPOM)
 RPOM = erfa.ry(-XP, RPOM)
 
