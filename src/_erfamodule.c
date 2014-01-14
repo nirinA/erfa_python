@@ -1998,15 +1998,17 @@ _erfa_dtdb(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_dtdb_doc,
-"\ndtdb(d1, d2, ut, elon, u, v) -> TDB-TT\n\n"
+"\ndtdb(d1, d2, ut1, elon, u, v) -> TDB-TT\n\n"
 "An approximation to TDB-TT, the difference between barycentric\n"
 "dynamical time and terrestrial time, for an observer on the Earth.\n"
 "Given:\n"
 "    d1,d2      TDB date as 2-part Julian Date\n"
-"    ut         UT1 universal time as fraction of one day\n"
+"    ut1        UT1 universal time as fraction of one day\n"
 "    elong      longitude (east positive, radians)\n"
 "    u          distance from Earth spin axis (km)\n"
-"    v          distance north of equatorial plane (km)");
+"    v          distance north of equatorial plane (km)\n"
+"Returned:\n"
+"    tdbtt      TDB-TT (seconds)");
 
 static PyObject *
 _erfa_dtf2d(PyObject *self, PyObject *args)
@@ -2078,15 +2080,11 @@ static PyObject *
 _erfa_ee00(PyObject *self, PyObject *args)
 {
     double d1,d2,epsa,dpsi,ee;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dddd", &d1,&d2,&epsa,&dpsi);
-    if (ok) {
-        ee = eraEe00(d1,d2,epsa,dpsi);
-        return PyFloat_FromDouble(ee);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "dddd", &d1,&d2,&epsa,&dpsi)) {
         return NULL;
     }
+    ee = eraEe00(d1,d2,epsa,dpsi);
+    return PyFloat_FromDouble(ee);
 }
 
 PyDoc_STRVAR(_erfa_ee00_doc,
@@ -2104,15 +2102,11 @@ static PyObject *
 _erfa_ee00a(PyObject *self, PyObject *args)
 {
     double d1,d2,ee;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dd", &d1,&d2);
-    if (ok) {
-        ee = eraEe00a(d1,d2);
-        return Py_BuildValue("d",ee); //PyFloat_FromDouble(ee);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "dd", &d1,&d2)) {
         return NULL;
     }
+    ee = eraEe00a(d1,d2);
+    return Py_BuildValue("d",ee); //PyFloat_FromDouble(ee);
 }
 
 PyDoc_STRVAR(_erfa_ee00a_doc,
@@ -2127,15 +2121,11 @@ static PyObject *
 _erfa_ee00b(PyObject *self, PyObject *args)
 {
     double d1,d2,ee;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dd", &d1,&d2);
-    if (ok) {
-        ee = eraEe00b(d1,d2);
-        return Py_BuildValue("d",ee); //PyFloat_FromDouble(ee);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "dd", &d1,&d2)) {
         return NULL;
     }
+    ee = eraEe00b(d1,d2);
+    return Py_BuildValue("d",ee); //PyFloat_FromDouble(ee);
 }
 
 PyDoc_STRVAR(_erfa_ee00b_doc,
@@ -2151,15 +2141,11 @@ static PyObject *
 _erfa_ee06a(PyObject *self, PyObject *args)
 {
     double d1,d2,ee;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dd", &d1,&d2);
-    if (ok) {
-        ee = eraEe06a(d1,d2);
-        return Py_BuildValue("d",ee); //PyFloat_FromDouble(ee);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "dd", &d1,&d2)) {
         return NULL;
     }
+    ee = eraEe06a(d1,d2);
+    return Py_BuildValue("d",ee); //PyFloat_FromDouble(ee);
 }
 
 PyDoc_STRVAR(_erfa_ee06a_doc,
@@ -2175,15 +2161,11 @@ static PyObject *
 _erfa_eect00(PyObject *self, PyObject *args)
 {
     double d1,d2,ct;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dd", &d1,&d2);
-    if (ok) {
-        ct = eraEect00(d1,d2);
-        return Py_BuildValue("d",ct);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "dd", &d1,&d2)) {
         return NULL;
     }
+    ct = eraEect00(d1,d2);
+    return Py_BuildValue("d",ct);
 }
 
 PyDoc_STRVAR(_erfa_eect00_doc,
@@ -2197,20 +2179,17 @@ PyDoc_STRVAR(_erfa_eect00_doc,
 static PyObject *
 _erfa_eform(PyObject *self, PyObject *args)
 {
-    int n, status, ok;
+    int n, status;
     double a, f;
-    ok = PyArg_ParseTuple(args, "i", &n);
-    if (ok) {
-        status = eraEform(n, &a, &f);
-        if (status) {
-            PyErr_SetString(_erfaError, "illegal identifier; n should be 1,2 or 3");
-            return NULL;
-        }            
-        return Py_BuildValue("dd",a,f);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "i", &n)) {
         return NULL;
     }
+    status = eraEform(n, &a, &f);
+    if (status) {
+        PyErr_SetString(_erfaError, "illegal identifier; n should be 1,2 or 3");
+        return NULL;
+    }
+    return Py_BuildValue("dd",a,f);
 }
 
 PyDoc_STRVAR(_erfa_eform_doc,
@@ -2229,15 +2208,11 @@ static PyObject *
 _erfa_eo06a(PyObject *self, PyObject *args)
 {
     double d1, d2, eo;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dd", &d1, &d2);
-    if (ok) {
-        eo = eraEo06a(d1, d2);
-        return Py_BuildValue("d",eo);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
         return NULL;
-    }    
+    }
+    eo = eraEo06a(d1, d2);
+    return Py_BuildValue("d",eo);
 }
 
 PyDoc_STRVAR(_erfa_eo06a_doc,
@@ -2252,26 +2227,14 @@ static PyObject *
 _erfa_eors(PyObject *self, PyObject *args)
 {
     double rnpb[3][3], s, eo;
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22;
-    int ok;
-    ok = PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))d",
-        &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22,&s);
-    if (ok) {
-        rnpb[0][0] = r00;
-        rnpb[0][1] = r01;
-        rnpb[0][2] = r02;
-        rnpb[1][0] = r10;
-        rnpb[1][1] = r11;
-        rnpb[1][2] = r12;
-        rnpb[2][0] = r20;
-        rnpb[2][1] = r21;
-        rnpb[2][2] = r22;
-        eo = eraEors(rnpb, s);
-        return Py_BuildValue("d",eo);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))d",
+                                 &rnpb[0][0], &rnpb[0][1], &rnpb[0][2],
+                                 &rnpb[1][0], &rnpb[1][1], &rnpb[1][2],
+                                 &rnpb[2][0], &rnpb[2][1], &rnpb[2][2], &s)) {
         return NULL;
     }        
+    eo = eraEors(rnpb, s);
+    return Py_BuildValue("d",eo);
 }
 
 PyDoc_STRVAR(_erfa_eors_doc,
@@ -2287,15 +2250,11 @@ static PyObject *
 _erfa_epb(PyObject *self, PyObject *args)
 {
     double d1, d2, b;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dd", &d1, &d2);
-    if (ok) {
-        b = eraEpb(d1,d2);
-        return Py_BuildValue("d",b);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
         return NULL;
-    }                
+    }
+    b = eraEpb(d1,d2);
+    return Py_BuildValue("d",b);
 }
 
 PyDoc_STRVAR(_erfa_epb_doc,
@@ -2328,15 +2287,11 @@ static PyObject *
 _erfa_epj(PyObject *self, PyObject *args)
 {
     double d1, d2, j;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dd", &d1, &d2);
-    if (ok) {
-        j = eraEpj(d1,d2);
-        return Py_BuildValue("d",j);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
         return NULL;
-    }                
+    }
+    j = eraEpj(d1,d2);
+    return Py_BuildValue("d",j);
 }
 
 PyDoc_STRVAR(_erfa_epj_doc,
@@ -2410,15 +2365,11 @@ static PyObject *
 _erfa_eqeq94(PyObject *self, PyObject *args)
 {
     double d1, d2, ee;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dd", &d1, &d2);
-    if (ok) {
-        ee = eraEqeq94(d1,d2);
-        return Py_BuildValue("d",ee);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
         return NULL;
-    }   
+    }
+    ee = eraEqeq94(d1,d2);
+    return Py_BuildValue("d",ee);
 }
 
 PyDoc_STRVAR(_erfa_eqeq94_doc,
@@ -2433,15 +2384,11 @@ static PyObject *
 _erfa_era00(PyObject *self, PyObject *args)
 {
     double d1, d2, era;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dd", &d1, &d2);
-    if (ok) {
-        era = eraEra00(d1,d2);
-        return Py_BuildValue("d",era);
-    }
-    else {
+    if (!PyArg_ParseTuple(args, "dd", &d1, &d2)) {
         return NULL;
     }   
+    era = eraEra00(d1,d2);
+    return Py_BuildValue("d",era);
 }
 
 PyDoc_STRVAR(_erfa_era00_doc,
@@ -2856,28 +2803,21 @@ static PyObject *
 _erfa_gc2gd(PyObject *self, PyObject *args)
 {
     double xyz[3], elong, phi, height;
-    double x, y, z;
-    int ok, n, status;
-    ok = PyArg_ParseTuple(args, "n(ddd)", &n, &x, &y, &z);
-    if (ok) {
-        xyz[0] = x;
-        xyz[1] = y;
-        xyz[2] = z;
-        status = eraGc2gd(n, xyz, &elong, &phi, &height);
-        if (status == -1) {
-            PyErr_SetString(_erfaError, "illegal identifier; n should be 1,2 or 3");
-            return NULL;
-        }            
-        else if (status == -2) {
-            PyErr_SetString(_erfaError, "internal error");
-            return NULL;
-        }  
-        else {
-            return Py_BuildValue("ddd", elong, phi, height);
-        }
+    int n, status;
+    if (!PyArg_ParseTuple(args, "n(ddd)", &n, &xyz[0], &xyz[1], &xyz[2])) {
+        return NULL;
+    }
+    status = eraGc2gd(n, xyz, &elong, &phi, &height);
+    if (status == -1) {
+        PyErr_SetString(_erfaError, "illegal identifier; n should be 1,2 or 3");
+        return NULL;
+    }
+    else if (status == -2) {
+        PyErr_SetString(_erfaError, "internal error");
+        return NULL;
     }
     else {
-        return NULL;
+        return Py_BuildValue("ddd", elong, phi, height);
     }
 }
 
@@ -2897,29 +2837,22 @@ static PyObject *
 _erfa_gc2gde(PyObject *self, PyObject *args)
 {
     double xyz[3], a, f, elong, phi, height;
-    double x, y, z;
-    int ok, status;
-    ok = PyArg_ParseTuple(args, "dd(ddd)", &a, &f, &x, &y, &z);
-    if (ok) {
-        xyz[0] = x;
-        xyz[1] = y;
-        xyz[2] = z;
-        status = eraGc2gde(a, f, xyz, &elong, &phi, &height);
-        if (status == -1) {
-            PyErr_SetString(_erfaError, "illegal f");
-            return NULL;
-        }            
-        else if (status == -2) {
-            PyErr_SetString(_erfaError, "illegal a");
-            return NULL;
-        }  
-        else {
-            return Py_BuildValue("ddd", elong, phi, height);
-        }
-    }
-    else {
+    int status;
+    if (!PyArg_ParseTuple(args, "dd(ddd)", &a, &f, &xyz[0], &xyz[1], &xyz[2])) {
         return NULL;
     }    
+    status = eraGc2gde(a, f, xyz, &elong, &phi, &height);
+    if (status == -1) {
+        PyErr_SetString(_erfaError, "illegal f");
+        return NULL;
+    }
+    else if (status == -2) {
+        PyErr_SetString(_erfaError, "illegal a");
+        return NULL;
+    }
+    else {
+        return Py_BuildValue("ddd", elong, phi, height);
+    }
 }
 
 PyDoc_STRVAR(_erfa_gc2gde_doc,
@@ -2939,24 +2872,21 @@ static PyObject *
 _erfa_gd2gc(PyObject *self, PyObject *args)
 {
     double elong, phi, height, xyz[3];
-    int n, status, ok;
-    ok = PyArg_ParseTuple(args, "iddd", &n, &elong, &phi, &height);
-    if (ok) {
-        status = eraGd2gc(n, elong, phi, height, xyz);
-        if (status == -1) {
-            PyErr_SetString(_erfaError, "illegal identifier; n should be 1,2 or 3");
-            return NULL;
-        }            
-        else if (status == -2) {
-            PyErr_SetString(_erfaError, "illegal case");
-            return NULL;
-        }  
-        else {
-            return Py_BuildValue("ddd", xyz[0], xyz[1], xyz[2]);
-        }
+    int n, status;
+    if (!PyArg_ParseTuple(args, "iddd", &n, &elong, &phi, &height)) {
+        return NULL;
+    }
+    status = eraGd2gc(n, elong, phi, height, xyz);
+    if (status == -1) {
+        PyErr_SetString(_erfaError, "illegal identifier; n should be 1,2 or 3");
+        return NULL;
+    }
+    else if (status == -2) {
+        PyErr_SetString(_erfaError, "illegal case");
+        return NULL;
     }
     else {
-        return NULL;
+        return Py_BuildValue("ddd", xyz[0], xyz[1], xyz[2]);
     }
 }
 
@@ -2976,20 +2906,17 @@ static PyObject *
 _erfa_gd2gce(PyObject *self, PyObject *args)
 {
     double a, f, elong, phi, height, xyz[3];
-    int status, ok;
-    ok = PyArg_ParseTuple(args, "ddddd", &a, &f, &elong, &phi, &height);
-    if (ok) {
-        status = eraGd2gce(a, f, elong, phi, height, xyz);
-        if (status == -1) {
-            PyErr_SetString(_erfaError, "illegal case");
-            return NULL;
-        }  
-        else {
-            return Py_BuildValue("ddd", xyz[0], xyz[1], xyz[2]);
-        }
+    int status;
+    if (!PyArg_ParseTuple(args, "ddddd", &a, &f, &elong, &phi, &height)) {
+        return NULL;
+    }
+    status = eraGd2gce(a, f, elong, phi, height, xyz);
+    if (status == -1) {
+        PyErr_SetString(_erfaError, "illegal case");
+        return NULL;
     }
     else {
-        return NULL;
+        return Py_BuildValue("ddd", xyz[0], xyz[1], xyz[2]);
     }
 }
 
@@ -3111,28 +3038,16 @@ PyDoc_STRVAR(_erfa_gst00b_doc,
 static PyObject *
 _erfa_gst06(PyObject *self, PyObject *args)
 {
-    double uta, utb, tta, ttb, rnpb[3][3];
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22, g;
-    int ok;
-    ok = PyArg_ParseTuple(args, "dddd((ddd)(ddd)(ddd))",
-        &uta, &utb, &tta, &ttb, 
-        &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22);
-    if (ok) {
-        rnpb[0][0] = r00;
-        rnpb[0][1] = r01;
-        rnpb[0][2] = r02;
-        rnpb[1][0] = r10;
-        rnpb[1][1] = r11;
-        rnpb[1][2] = r12;
-        rnpb[2][0] = r20;
-        rnpb[2][1] = r21;
-        rnpb[2][2] = r22;
-        g = eraGst06(uta, utb, tta, ttb, rnpb);
-        return Py_BuildValue("d",g);
-    }
-    else {
+    double uta, utb, tta, ttb, rnpb[3][3], g;
+    if (!PyArg_ParseTuple(args, "dddd((ddd)(ddd)(ddd))",
+                                 &uta, &utb, &tta, &ttb,
+                                 &rnpb[0][0], &rnpb[0][1], &rnpb[0][2],
+                                 &rnpb[1][0], &rnpb[1][1], &rnpb[1][2],
+                                 &rnpb[2][0], &rnpb[2][1], &rnpb[2][2])) {
         return NULL;
     }        
+    g = eraGst06(uta, utb, tta, ttb, rnpb);
+    return Py_BuildValue("d",g);
 }
 
 PyDoc_STRVAR(_erfa_gst06_doc,
@@ -4969,13 +4884,9 @@ PyDoc_STRVAR(_erfa_anpm_doc,
 static PyObject *
 _erfa_c2s(PyObject *self, PyObject *args)
 {
-    double p0, p1, p2, theta, phi, p[3];
-    int ok;
-    ok = PyArg_ParseTuple(args, "(ddd)", &p0, &p1, &p2);
-    if (ok) {
-        p[0]=p0;
-        p[1]=p1;
-        p[2]=p2;
+    double theta, phi, p[3];
+    if (!PyArg_ParseTuple(args, "(ddd)", &p[0], &p[1], &p[2])) {
+        return NULL;
     }
     eraC2s(p, &theta, &phi);
     return Py_BuildValue("dd", theta, phi);
@@ -4994,15 +4905,11 @@ static PyObject *
 _erfa_cp(PyObject *self, PyObject *args)
 {
     double p[3], c[3];
-    double p0,p1,p2;
-    if (!PyArg_ParseTuple(args, "(ddd)",&p0,&p1,&p2)) {
+    if (!PyArg_ParseTuple(args, "(ddd)", &p[0], &p[1], &p[2])) {
         return NULL;
     }
-    p[0] = p0;
-    p[1] = p1;
-    p[2] = p2;
     eraCp(p, c);
-    return Py_BuildValue("ddd",c[0],c[1],c[2]);
+    return Py_BuildValue("ddd", c[0], c[1], c[2]);
 }
 
 PyDoc_STRVAR(_erfa_cp_doc,
@@ -5040,25 +4947,17 @@ static PyObject *
 _erfa_cr(PyObject *self, PyObject *args)
 {
     double r[3][3], c[3][3];
-    double r00,r01,r02,r10,r11,r12,r20,r21,r22;
     if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))",
-                                   &r00,&r01,&r02,&r10,&r11,&r12,&r20,&r21,&r22)) {
+                                   &r[0][0], &r[0][1], &r[0][2],
+                                   &r[1][0], &r[1][1], &r[1][2],
+                                   &r[2][0], &r[2][1], &r[2][2])) {
         return NULL;
     }
-    r[0][0] = r00;
-    r[0][1] = r01;
-    r[0][2] = r02;
-    r[1][0] = r10;
-    r[1][1] = r11;
-    r[1][2] = r12;
-    r[2][0] = r20;
-    r[2][1] = r21;
-    r[2][2] = r22;
     eraCr(r, c);
     return Py_BuildValue("((ddd)(ddd)(ddd))",
-    c[0][0],c[0][1],c[0][2],
-    c[1][0],c[1][1],c[1][2],
-    c[2][0],c[2][1],c[2][2]);    
+                            c[0][0],c[0][1],c[0][2],
+                            c[1][0],c[1][1],c[1][2],
+                            c[2][0],c[2][1],c[2][2]);    
 }
 
 PyDoc_STRVAR(_erfa_cr_doc,
@@ -5103,14 +5002,9 @@ static PyObject *
 _erfa_p2pv(PyObject *self, PyObject *args)
 {
     double p[3], pv[2][3];
-    double p0,p1,p2;
-    if (!PyArg_ParseTuple(args, "(ddd)",
-                        &p0,&p1,&p2)) {
+    if (!PyArg_ParseTuple(args, "(ddd)", &p[0], &p[1], &p[2])) {
         return NULL;
     }
-    p[0] = p0;
-    p[1] = p1;
-    p[2] = p2;
     eraP2pv(p, pv);
     return Py_BuildValue("(ddd)(ddd)",
     pv[0][0],pv[0][1],pv[0][2],pv[1][0],pv[1][1],pv[1][2]);
@@ -5127,13 +5021,10 @@ PyDoc_STRVAR(_erfa_p2pv_doc,
 static PyObject *
 _erfa_p2s(PyObject *self, PyObject *args)
 {
-    double p[3], p0, p1, p2, theta, phi, r;
-    if (!PyArg_ParseTuple(args, "(ddd)",&p0, &p1, &p2)) {
+    double p[3], theta, phi, r;
+    if (!PyArg_ParseTuple(args, "(ddd)", &p[0], &p[1], &p[2])) {
         return NULL;
     }
-    p[0] = p0;
-    p[1] = p1;
-    p[2] = p2;
     eraP2s(p, &theta, &phi, &r);
     return Py_BuildValue("ddd", theta, phi, r);
 }
@@ -5152,16 +5043,11 @@ static PyObject *
 _erfa_pap(PyObject *self, PyObject *args)
 {
     double a[3], b[3], theta;
-    double a0,a1,a2,b0,b1,b2;
-    if (!PyArg_ParseTuple(args, "(ddd)(ddd)",&a0,&a1,&a2,&b0,&b1,&b2)) {
+    if (!PyArg_ParseTuple(args, "(ddd)(ddd)",
+                                  &a[0], &a[1], &a[2],
+                                  &b[0], &b[1], &b[2])) {
         return NULL;
     }
-    a[0] = a0;
-    a[1] = a1;
-    a[2] = a2;
-    b[0] = b0;
-    b[1] = b1;
-    b[2] = b2;
     theta = eraPap(a, b);
     return Py_BuildValue("d", theta);
 }
@@ -5201,16 +5087,11 @@ static PyObject *
 _erfa_pdp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], ab;
-    double a0,a1,a2, b0,b1,b2;
-    if (!PyArg_ParseTuple(args, "(ddd)(ddd)",&a0,&a1,&a2,&b0,&b1,&b2)) {
+    if (!PyArg_ParseTuple(args, "(ddd)(ddd)",
+                                  &a[0], &a[1], &a[2],
+                                  &b[0], &b[1], &b[2])) {
         return NULL;
     }
-    a[0] = a0;
-    a[1] = a1;
-    a[2] = a2;
-    b[0] = b0;
-    b[1] = b1;
-    b[2] = b2;
     ab = eraPdp(a,b);
     return Py_BuildValue("d", ab);
 }
@@ -5227,13 +5108,10 @@ PyDoc_STRVAR(_erfa_pdp_doc,
 static PyObject *
 _erfa_pm(PyObject *self, PyObject *args)
 {
-    double p[3], p0, p1, p2, m;
-    if (!PyArg_ParseTuple(args, "(ddd)",&p0, &p1, &p2)) {
+    double p[3], m;
+    if (!PyArg_ParseTuple(args, "(ddd)",&p[0], &p[1], &p[2])) {
         return NULL;
     }
-    p[0] = p0;
-    p[1] = p1;
-    p[2] = p2;
     m = eraPm(p);
     return Py_BuildValue("d", m);
 }
@@ -5250,17 +5128,11 @@ static PyObject *
 _erfa_pmp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], amb[3];
-    double a0,a1,a2,b0,b1,b2;
     if (!PyArg_ParseTuple(args, "(ddd)(ddd)",
-        &a0, &a1, &a2, &b0, &b1, &b2)) {
+                                  &a[0], &a[1], &a[2],
+                                  &b[0], &b[1], &b[2])) {
         return NULL;
     }
-    a[0] = a0;
-    a[1] = a1;
-    a[2] = a2;
-    b[0] = b0;
-    b[1] = b1;
-    b[2] = b2;
     eraPmp(a, b, amb);
     return Py_BuildValue("ddd", amb[0], amb[1], amb[2]);
 }
@@ -5277,13 +5149,10 @@ PyDoc_STRVAR(_erfa_pmp_doc,
 static PyObject *
 _erfa_pn(PyObject *self, PyObject *args)
 {
-    double p[3], p0, p1, p2, r, u[3];
-    if (!PyArg_ParseTuple(args, "(ddd)",&p0, &p1, &p2)) {
+    double p[3], r, u[3];
+    if (!PyArg_ParseTuple(args, "(ddd)",&p[0], &p[1], &p[2])) {
         return NULL;
     }
-    p[0] = p0;
-    p[1] = p1;
-    p[2] = p2;
     eraPn(p, &r, u);
     return Py_BuildValue("d(ddd)", r, u[0], u[1], u[2]);    
 }
@@ -5301,17 +5170,11 @@ static PyObject *
 _erfa_ppp(PyObject *self, PyObject *args)
 {
     double a[3], b[3], apb[3];
-    double a0,a1,a2,b0,b1,b2;
     if (!PyArg_ParseTuple(args, "(ddd)(ddd)",
-        &a0, &a1, &a2, &b0, &b1, &b2)) {
+                                  &a[0], &a[1], &a[2],
+                                  &b[0], &b[1], &b[2])) {
         return NULL;
     }
-    a[0] = a0;
-    a[1] = a1;
-    a[2] = a2;
-    b[0] = b0;
-    b[1] = b1;
-    b[2] = b2;
     eraPpp(a, b, apb);
     return Py_BuildValue("ddd", apb[0], apb[1], apb[2]);
 }
@@ -5328,18 +5191,13 @@ PyDoc_STRVAR(_erfa_ppp_doc,
 static PyObject *
 _erfa_ppsp(PyObject *self, PyObject *args)
 {
-    double a[3], b[3], apsb[3];
-    double a0,a1,a2,s,b0,b1,b2;
+    double s, a[3], b[3], apsb[3];
     if (!PyArg_ParseTuple(args, "(ddd)d(ddd)",
-        &a0, &a1, &a2, &s, &b0, &b1, &b2)) {
+                                  &a[0], &a[1], &a[2],
+                                  &s,
+                                  &b[0], &b[1], &b[2])) {
         return NULL;
     }
-    a[0] = a0;
-    a[1] = a1;
-    a[2] = a2;
-    b[0] = b0;
-    b[1] = b1;
-    b[2] = b2;
     eraPpsp(a, s, b, apsb);
     return Py_BuildValue("ddd", apsb[0], apsb[1], apsb[2]);
 }
@@ -6362,6 +6220,7 @@ PyInit__erfa(void)
 {
 	PyObject *m;
 	m = PyModule_Create(&_erfamodule);
+	/*import_array();*/
 	if (m == NULL)
             return NULL;
 #else
@@ -6370,6 +6229,7 @@ init_erfa(void)
 {
 	PyObject *m;
 	m = Py_InitModule3("_erfa", _erfa_methods, module_doc);
+	/*import_array();*/
 	if (m == NULL)
             goto finally;
 #endif
