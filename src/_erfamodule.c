@@ -2332,8 +2332,7 @@ _erfa_epv00(PyObject *self, PyObject *args)
         return NULL;
     status = eraEpv00(dj1, dj2, pvh, pvb);
     if (status) {
-        PyErr_SetString(_erfaError, "date outside the range 1900-2100 AD, set prec!=0 to force computation");
-        return NULL;
+        PyErr_WarnEx(PyExc_Warning, "date outside the range 1900-2100 AD", 1);
     }
     return Py_BuildValue("((ddd)(ddd))((ddd)(ddd))",
         pvh[0][0], pvh[0][1], pvh[0][2], pvh[1][0], pvh[1][1], pvh[1][2],
