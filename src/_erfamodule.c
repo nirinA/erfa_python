@@ -3529,11 +3529,11 @@ _erfa_plan94(PyObject *self, PyObject *args)
         PyErr_SetString(_erfaError, "illegal np,  not in range(1,8) for planet");
         return NULL;
     }
-/*    else if (status == 1){
-        PyErr_SetString(_erfaError, "year outside range(1000:3000)");
+    if (status == 1){
+        PyErr_WarnEx(PyExc_Warning, "year outside range(1000:3000)", 1);
         return NULL;
-    }*/
-    else if (status == 2){
+    }
+    if (status == 2){
         PyErr_SetString(_erfaError, "computation failed to converge");
         return NULL;
     }
