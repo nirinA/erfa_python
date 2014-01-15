@@ -3531,7 +3531,6 @@ _erfa_plan94(PyObject *self, PyObject *args)
     }
     if (status == 1){
         PyErr_WarnEx(PyExc_Warning, "year outside range(1000:3000)", 1);
-        return NULL;
     }
     if (status == 2){
         PyErr_SetString(_erfaError, "computation failed to converge");
