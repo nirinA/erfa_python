@@ -2322,41 +2322,30 @@ PyDoc_STRVAR(_erfa_epj2jd_doc,
 "    djm        Modified Julian Date");
 
 static PyObject *
-_erfa_epv00(PyObject *self, PyObject *args, PyObject *kwds)
+_erfa_epv00(PyObject *self, PyObject *args)
 {
-    static char *kwlist[] = {"dj1", "dj2", "prec", NULL};
     double dj1, dj2;
-    int prec=0, status;
+    int status;
     double pvh[2][3] = {{[0]=0.},{[0]=0.}};
     double pvb[2][3] = {{[0]=0.},{[0]=0.}};
-    if (! PyArg_ParseTupleAndKeywords(args, kwds, "dd|i", kwlist, &dj1, &dj2, &prec))
+    if (! PyArg_ParseTuple(args, "dd", &dj1, &dj2))
         return NULL;
     status = eraEpv00(dj1, dj2, pvh, pvb);
-    if (status == 1) {
-        if (prec) {
-           return Py_BuildValue("((ddd)(ddd))((ddd)(ddd))",
-           pvh[0][0], pvh[0][1], pvh[0][2], pvh[1][0], pvh[1][1], pvh[1][2],
-           pvb[0][0], pvb[0][1], pvb[0][2], pvb[1][0], pvb[1][1], pvb[1][2]);
-        }
-        else {
-            PyErr_SetString(_erfaError, "date outside the range 1900-2100 AD, set prec!=0 to force computation");
-            return NULL;
-        }
+    if (status) {
+        PyErr_SetString(_erfaError, "date outside the range 1900-2100 AD, set prec!=0 to force computation");
+        return NULL;
     }
-    else {
-       return Py_BuildValue("((ddd)(ddd))((ddd)(ddd))",
-       pvh[0][0], pvh[0][1], pvh[0][2], pvh[1][0], pvh[1][1], pvh[1][2],
-       pvb[0][0], pvb[0][1], pvb[0][2], pvb[1][0], pvb[1][1], pvb[1][2]);
-    }
+    return Py_BuildValue("((ddd)(ddd))((ddd)(ddd))",
+        pvh[0][0], pvh[0][1], pvh[0][2], pvh[1][0], pvh[1][1], pvh[1][2],
+        pvb[0][0], pvb[0][1], pvb[0][2], pvb[1][0], pvb[1][1], pvb[1][2]);
 }
 
 PyDoc_STRVAR(_erfa_epv00_doc,
-"\nepv00(d1,d2 |prec=0) -> pvh, pvb\n\n"
+"\nepv00(d1,d2) -> pvh, pvb\n\n"
 "Earth position and velocity, heliocentric and barycentric,\n"
 "with respect to the Barycentric Celestial Reference System.\n"
 "Given:\n"
 "    d1,d2      TDB as 2-part Julian Date\n"
-"    prec!=0    optional, to compute outside the range 1900-2100 AD\n"
 "Returned:\n"
 "    pvh        heliocentric Earth position/velocity\n"
 "    pvb        barycentric Earth position/velocity");
@@ -6045,7 +6034,7 @@ static PyMethodDef _erfa_methods[] = {
     {"epb2jd", _erfa_epb2jd, METH_VARARGS, _erfa_epb2jd_doc},
     {"epj", _erfa_epj, METH_VARARGS, _erfa_epj_doc},
     {"epj2jd", _erfa_epj2jd, METH_VARARGS, _erfa_epj2jd_doc},
-    {"epv00", (PyCFunction)_erfa_epv00, METH_VARARGS|METH_KEYWORDS, _erfa_epv00_doc},
+    {"epv00", _erfa_epv00, METH_VARARGS, _erfa_epv00_doc},
     {"eqeq94", _erfa_eqeq94, METH_VARARGS, _erfa_eqeq94_doc},
     {"era00", _erfa_era00, METH_VARARGS, _erfa_era00_doc},
     {"fad03", _erfa_fad03, METH_VARARGS, _erfa_fad03_doc},

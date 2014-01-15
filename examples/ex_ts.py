@@ -38,9 +38,63 @@ u1, u2 = erfa.taiutc(a1, a2)
 
 # decode and report UTC
 print("UTC :%4d/%2.2d/%2.2d%3d:%2.2d:%2.2d.%3.3d"%erfa.d2dtf(3, u1, u2))
+print('=====')
+print('convert time interval')
+# The time
+ih = 23
+im = 5
+s = 11.63079
+print( "%2d:%2.2d:%9.6f\n"%(ih, im, s))
+
+print('Express as a fraction of 1 day:')
+f = erfa.tf2d(ih, im, s)
+print ( "%14.12f\n"%f )
+
+print('Six hours earlier:')
+f -= 0.25
+
+#Report to 1 ms precision.
+ihmsf = erfa.d2tf(3, f)
+print ( "%s%2d:%2.2d:%2.2d.%3.3d\n"%ihmsf)
 
 print('=====')
+print('''
+Date and time.''')
+iy = 2008; im = 2; id = 29;
+ihour = 23; imin = 59; sec = 59.9;
+print("%4d/%2.2d/%2.2d%3d:%2.2d:%4.1f\n"%
+         (iy, im, id, ihour, imin, sec))
+print('Express as 2-part JD.')
+d1, d2 = erfa.cal2jd ( iy, im, id)
+d = erfa.tf2d (ihour, imin, sec)
+d2 += d
+print("%9.1f +%13.6f =%15.6f\n"%( d1, d2, d1 + d))
+print('Express as calendar date and fraction of a day.')
+iy, im, id, fd = erfa.jd2cal(d1, d2)
+d = id + fd
+print( "%4d/%2.2d/%9.6f\n"%(iy, im, d))
+print('Round to 0.001 day.')
+iymdf = erfa.jdcalf ( 3, d1, d2)
+print( "%4d/%2.2d/%2.2d.%3.3d\n"%iymdf)
+print('=====')
+print('''
+Besselian and Julian epochs''')
+print('Julian Date.')
+d = 2457073.05631
+print ( "%13.5f"%d )
+print('Transform into Besselian epoch:')
+e = erfa.epb ( 0.0, d)
+print( "B%15.10f"%e )
+print('Transform back.')
+d1, d2 = erfa.epb2jd ( e )
+print ( "%17.9f"%(d1+d2) )
+print('The same for Julian epoch.')
+e = erfa.epj ( 0.0, d )
+print ( "J%15.10f"%e )
+d1, d2 = erfa.epj2jd ( e )
+print ( "%17.9f"%(d1+d2) )
 
+print('=====')
 print('''
 transform UTC to other times.
 an observer at north latitude +19°28'52''.5,
