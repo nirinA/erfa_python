@@ -29,7 +29,7 @@ class Validate(unittest.TestCase):
         ebpv=((0.901310875,-0.417402664,-0.180982288),
               ( 0.00742727954,0.0140507459,0.00609045792))
         ehp=(0.903358544,-0.415395237,-0.180084014)
-        astrom=erfa.apcg(date1,date2,ebpv,ehp)
+        astrom = erfa.apcg(date1,date2,ebpv,ehp)
         self.assertAlmostEqual(astrom.pmt, 12.65133794027378508, places=11)
         self.assertAlmostEqual(astrom.eb[0], 0.901310875, places=12)
         self.assertAlmostEqual(astrom.eb[1], -0.417402664, places=12,)
@@ -328,7 +328,6 @@ class Validate(unittest.TestCase):
         astrom = erfa.aper13(ut11, ut12, astrom)
         self.assertAlmostEqual(astrom.eral, 3.316236661789694933, places=12)
 
-
     def test_apio(self):
         sp = -3.01974337e-11
         theta = 3.14540971
@@ -388,7 +387,7 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(di, 0.1729371367218230438, places=12)
         self.assertAlmostEqual(eo, -0.002900618712657375647, places=14)
 
-    def test_aticq(self):
+    def test_atciq(self):
         date1 = 2456165.5
         date2 = 0.401182685
         astrom, eo = erfa.apci13(date1, date2)
