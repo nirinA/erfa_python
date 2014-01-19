@@ -325,7 +325,7 @@ _erfa_apco13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_apco13_doc,
-"\napco13(utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> astrom, eo\n"
+"\napco13(utc1, utc2, dut1, elong, phi, hm, xp, yp, sp, phpa, tc, rh, wl) -> astrom, eo\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and geocentric CIRS\n"
 "coordinates.  The caller supplies the date, and ERFA models are used\n"
@@ -1690,50 +1690,26 @@ PyDoc_STRVAR(_erfa_c2t06a_doc,
 "    uta,utb    UT1 as 2-part Julian Date\n"
 "    xp, yp     coordinates of the pole (radians)\n"
 "Returned:\n"
-"    rc2t       celestial-to-terrestrial matrix"
-);
+"    rc2t       celestial-to-terrestrial matrix");
 
 static PyObject *
 _erfa_c2tcio(PyObject *self, PyObject *args)
 {
-    double c00,c01,c02,c10,c11,c12,c20,c21,c22,rc2i[3][3];
-    double era, rc2t[3][3];
-    double p00,p01,p02,p10,p11,p12,p20,p21,p22,rpom[3][3];
-    int ok;
-    ok = PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))d((ddd)(ddd)(ddd))",
-    &c00,&c01,&c02,&c10,&c11,&c12,&c20,&c21,&c22,
-    &era,
-    &p00,&p01,&p02,&p10,&p11,&p12,&p20,&p21,&p22);
-    if (ok) {
-        rc2i[0][0] = c00;
-        rc2i[0][1] = c01;
-        rc2i[0][2] = c02;
-        rc2i[1][0] = c10;
-        rc2i[1][1] = c11;
-        rc2i[1][2] = c12;
-        rc2i[2][0] = c20;
-        rc2i[2][1] = c21;
-        rc2i[2][2] = c22;
-        rpom[0][0] = p00;
-        rpom[0][1] = p01;
-        rpom[0][2] = p02;
-        rpom[1][0] = p10;
-        rpom[1][1] = p11;
-        rpom[1][2] = p12;
-        rpom[2][0] = p20;
-        rpom[2][1] = p21;
-        rpom[2][2] = p22;
-        eraC2tcio(rc2i, era, rpom, rc2t);
-        return Py_BuildValue(
-        "((ddd)(ddd)(ddd))",
-        rc2t[0][0],rc2t[0][1],rc2t[0][2],
-        rc2t[1][0],rc2t[1][1],rc2t[1][2],
-        rc2t[2][0],rc2t[2][1],rc2t[2][2]
-        );
-    }
-    else {
+    double rc2i[3][3], era, rc2t[3][3] ,rpom[3][3];
+    if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))d((ddd)(ddd)(ddd))",
+                                   &rc2i[0][0], &rc2i[0][1], &rc2i[0][2],
+                                   &rc2i[1][0], &rc2i[1][1], &rc2i[1][2],
+                                   &rc2i[2][0], &rc2i[2][1], &rc2i[2][2],
+                                   &era,
+                                   &rpom[0][0], &rpom[0][1], &rpom[0][2],
+                                   &rpom[1][0], &rpom[1][1], &rpom[1][2],
+                                   &rpom[2][0], &rpom[2][1], &rpom[2][2]))
         return NULL;
-    }
+    eraC2tcio(rc2i, era, rpom, rc2t);
+    return Py_BuildValue("((ddd)(ddd)(ddd))",
+                            rc2t[0][0],rc2t[0][1],rc2t[0][2],
+                            rc2t[1][0],rc2t[1][1],rc2t[1][2],
+                            rc2t[2][0],rc2t[2][1],rc2t[2][2]);
 }
 
 PyDoc_STRVAR(_erfa_c2tcio_doc,
@@ -1750,44 +1726,21 @@ PyDoc_STRVAR(_erfa_c2tcio_doc,
 static PyObject *
 _erfa_c2teqx(PyObject *self, PyObject *args)
 {
-    double c00,c01,c02,c10,c11,c12,c20,c21,c22,rc2i[3][3];
-    double gst, rc2t[3][3];
-    double p00,p01,p02,p10,p11,p12,p20,p21,p22,rpom[3][3];
-    int ok;
-    ok = PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))d((ddd)(ddd)(ddd))",
-    &c00,&c01,&c02,&c10,&c11,&c12,&c20,&c21,&c22,
-    &gst,
-    &p00,&p01,&p02,&p10,&p11,&p12,&p20,&p21,&p22);
-    if (ok) {
-        rc2i[0][0] = c00;
-        rc2i[0][1] = c01;
-        rc2i[0][2] = c02;
-        rc2i[1][0] = c10;
-        rc2i[1][1] = c11;
-        rc2i[1][2] = c12;
-        rc2i[2][0] = c20;
-        rc2i[2][1] = c21;
-        rc2i[2][2] = c22;
-        rpom[0][0] = p00;
-        rpom[0][1] = p01;
-        rpom[0][2] = p02;
-        rpom[1][0] = p10;
-        rpom[1][1] = p11;
-        rpom[1][2] = p12;
-        rpom[2][0] = p20;
-        rpom[2][1] = p21;
-        rpom[2][2] = p22;
-        eraC2teqx(rc2i, gst, rpom, rc2t);
-        return Py_BuildValue(
-        "((ddd)(ddd)(ddd))",
-        rc2t[0][0],rc2t[0][1],rc2t[0][2],
-        rc2t[1][0],rc2t[1][1],rc2t[1][2],
-        rc2t[2][0],rc2t[2][1],rc2t[2][2]
-        );
-    }
-    else {
+    double rc2i[3][3], gst, rc2t[3][3], rpom[3][3];
+    if (!PyArg_ParseTuple(args, "((ddd)(ddd)(ddd))d((ddd)(ddd)(ddd))",
+                                   &rc2i[0][0], &rc2i[0][1], &rc2i[0][2],
+                                   &rc2i[1][0], &rc2i[1][1], &rc2i[1][2],
+                                   &rc2i[2][0], &rc2i[2][1], &rc2i[2][2],
+                                   &gst,
+                                   &rpom[0][0], &rpom[0][1], &rpom[0][2],
+                                   &rpom[1][0], &rpom[1][1], &rpom[1][2],
+                                   &rpom[2][0], &rpom[2][1], &rpom[2][2]))
         return NULL;
-    }
+    eraC2teqx(rc2i, gst, rpom, rc2t);
+    return Py_BuildValue("((ddd)(ddd)(ddd))",
+                            rc2t[0][0],rc2t[0][1],rc2t[0][2],
+                            rc2t[1][0],rc2t[1][1],rc2t[1][2],
+                            rc2t[2][0],rc2t[2][1],rc2t[2][2]);
 }
 
 PyDoc_STRVAR(_erfa_c2teqx_doc,
@@ -2792,7 +2745,7 @@ _erfa_gc2gd(PyObject *self, PyObject *args)
 {
     double xyz[3], elong, phi, height;
     int n, status;
-    if (!PyArg_ParseTuple(args, "n(ddd)", &n, &xyz[0], &xyz[1], &xyz[2])) {
+    if (!PyArg_ParseTuple(args, "i(ddd)", &n, &xyz[0], &xyz[1], &xyz[2])) {
         return NULL;
     }
     status = eraGc2gd(n, xyz, &elong, &phi, &height);
@@ -2810,7 +2763,7 @@ _erfa_gc2gd(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_gc2gd_doc,
-"\ngc2gd(n, xyz[3]) -> elong, phi, height\n\n"
+"\ngc2gd(n, xyz) -> elong, phi, height\n\n"
 "Transform geocentric coordinates to geodetic\n"
 "using the specified reference ellipsoid.\n"
 "Given:\n"
@@ -3132,7 +3085,7 @@ _erfa_hfk5z(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_hfk5z_doc,
-"\nhf5kz(rh, dh, d1, d2) -> r5, d5, dr5, dd5\n\n"
+"\nhfk5z(rh, dh, d1, d2) -> r5, d5, dr5, dd5\n\n"
 "Transform a Hipparcos star position into FK5 J2000.0, assuming\n"
 "zero Hipparcos proper motion.\n"
 "Given:\n"
@@ -3394,7 +3347,7 @@ PyDoc_STRVAR(_erfa_nutm80_doc,
 "Given:\n"
 "    d1,d2      TDB as a 2-part Julian Date\n"
 "Returned:\n"
-"    rmatn[     nutation matrix");
+"    rmatn      nutation matrix");
 
 static PyObject *
 _erfa_obl06(PyObject *self, PyObject *args)
@@ -3723,7 +3676,7 @@ PyDoc_STRVAR(_erfa_pn00b_doc,
 "   rb          frame bias matrix\n"
 "   rp          precession matrix\n"
 "   rbp         bias-precession matrix\n"
-"   rn[         nutation matrix\n"
+"   rn          nutation matrix\n"
 "   rbpn        GCRS-to-true matrix");
 
 static PyObject *
@@ -4815,7 +4768,7 @@ _erfa_af2a(PyObject *self, PyObject *args)
     if (ideg < 0) {
         sign = '-';
     }
-    eraAf2a(sign, ideg, iamin, asec, &rad);
+    eraAf2a(sign, abs(ideg), iamin, asec, &rad);
     return Py_BuildValue("d", rad);
 }
 
