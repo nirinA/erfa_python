@@ -37,36 +37,6 @@ Earth rotation angle. The caller provides UT1, (n.b. not UTC).'''
     era = era00(ut11, ut12)
     return aper(era, astrom)
 
-def ldn(ldbody, ob, sc):
-    '''ldn(ldbody[], ob[3], sc[3])) -> sn[3]
-For a star, apply light deflection by multiple solar-system bodies,
-as part of transforming coordinate direction into natural direction.
-Given:
-    b    data for each of the n bodies
-    ob   barycentric position of the observer (au)
-    sc   observer to star coord direction (unit vector)
-Returned:
-    sn   observer to deflected star (unit vector)'''
-    # Light time for 1 AU (days)
-    CR = AULT/DAYSEC
-    # Star direction prior to deflection.
-    sn = list(cp(sc))
-    # Body by body.
-    for l in ldbody:
-        # Body to observer vector at epoch of observation (au).
-        v = pmp(ob, l.pv[0])
-        # Minus the time since the light passed the body (days). 
-        dt = pdp(sn, v) * CR
-        # Neutralize if the star is "behind" the observer. 
-        dt = min(dt, 0.)
-        # Backtrack the body to the time the light was passing the body.
-        ev = ppsp(v, -dt, l.pv[1])
-        # Body to observer vector as magnitude and direction. 
-        em, e = pn(ev)
-        # Apply light deflection for this body. 
-        sn = ld(l.bm, sn, sn, e, em, l.dl)
-    return sn
-
 def atciqn(rc, dc, pr, pd, px,rv, astrom, ldbody):
     '''atciqn(rc, dc, pr, pd, px, rv, astrom, ldbody) -> ri,di
 Quick ICRS, epoch J2000.0, to CIRS transformation, given precomputed
@@ -113,7 +83,7 @@ Use of this function is appropriate when efficiency is important and
 where many star positions are all to be transformed for one date.
 The star-independent astrometry parameters can be obtained by
 calling one of the functions apci[13], apcg[13], apco[13]
-or eraApcs[13].
+or apcs[13].
 
 If the only light-deflecting body to be taken into account is the
 Sun, the eraAticq function can be used instead.

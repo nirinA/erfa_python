@@ -428,7 +428,7 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(ri, 2.710122008105325582, places=12)
         self.assertAlmostEqual(di, 0.1729371916491459122, places=12)
 
-    def test_aticqz(self):
+    def test_atciqz(self):
         date1 = 2456165.5
         date2 = 0.401182685
         astrom, eo = erfa.apci13(date1, date2)
@@ -2205,14 +2205,6 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(c[2][0], 3.0, places=12)
         self.assertAlmostEqual(c[2][1], 4.0, places=12)
         self.assertAlmostEqual(c[2][2], 5.0, places=12)
-
-    def test_d2tf(self):
-        c,h,m,s,f = erfa.d2tf(4, -0.987654321)
-        self.assertEqual(c, '-')
-        self.assertEqual(h, 23)
-        self.assertEqual(m, 42)
-        self.assertEqual(s, 13)
-        self.assertEqual(f, 3333)
 
     def test_p2pv(self):
         pv = erfa.p2pv((0.25,1.2,3.0))

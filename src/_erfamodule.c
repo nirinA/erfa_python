@@ -10,6 +10,12 @@ static PyObject *_erfaError;
 
 static int initialized;
 
+/* local prototype */
+#if PY_VERSION_HEX < 0x03000000
+#define PyStructSequence_GET_ITEM(op, i) PyTuple_GET_ITEM(op, i)
+#endif
+
+
 static PyTypeObject AstromType;
 
 static PyTypeObject LdbodyType;
@@ -585,7 +591,7 @@ PyDoc_STRVAR(_erfa_atciq_doc,
 "star-independent parameters can be obtained by calling one of the\n"
 "functions apci[13], apcg[13], apco[13] or apcs[13].\n"
 "\n"
-"If the parallax and proper motions are zero the eraAtciqz function\n"
+"If the parallax and proper motions are zero the atciqz function\n"
 "can be used instead.\n"
 "Given:\n"
 "    rc,dc      ICRS RA,Dec at J2000.0 (radians)\n"
@@ -1153,6 +1159,83 @@ PyDoc_STRVAR(_erfa_ld_doc,
 "    p1     observer to deflected source (unit vector)");
 
 static PyObject *
+_erfa_ldn(PyObject *self, PyObject *args)
+{
+    double ob[3], sc[3], sn[3];
+    PyObject *ldbody;
+    int n;
+    if (!PyArg_ParseTuple(args, "O!(ddd)(ddd)",
+                                 &PyList_Type, &ldbody,
+                                 &ob[0], &ob[1], &ob[2],
+                                 &sc[0], &sc[1], &sc[2]))
+        return NULL;
+
+        n = (int)PyList_Size(ldbody);
+        eraLDBODY b[n];
+        int j;
+        PyObject *pyl, *pybm, *pydl, *pypv;
+        for (j=0;j<n;j++) {
+            pyl = PyList_GetItem(ldbody, j);
+            Py_INCREF(pyl);
+            pybm = PyStructSequence_GET_ITEM(pyl, 0);
+            Py_INCREF(pybm);
+            b[j].bm = (double)PyFloat_AsDouble(pybm);
+            Py_DECREF(pybm);
+            Py_DECREF(pyl);
+
+            Py_INCREF(pyl);
+            pydl = PyStructSequence_GET_ITEM(pyl, 1);
+            Py_INCREF(pydl);
+            b[j].dl = (double)PyFloat_AsDouble(pydl);
+            Py_DECREF(pydl);
+            Py_DECREF(pyl);
+
+            Py_INCREF(pyl);
+            pypv = PyStructSequence_GET_ITEM(pyl, 2);
+            Py_INCREF(pypv);
+            int k,l;
+            PyObject *a = NULL, *p = NULL;
+            for (k=0;k<2;k++) {
+                p = PyStructSequence_GET_ITEM(pypv, k);
+                Py_INCREF(p);
+                for (l=0;l<3;l++) {
+                    a = PyStructSequence_GET_ITEM(p, l);
+                    if (a == NULL) {
+                        PyErr_SetString(_erfaError, "cannot retrieve data from args");
+                        Py_XDECREF(a);
+                        Py_XDECREF(p);
+                        Py_XDECREF(pypv);
+                        return NULL;
+                    }
+                    Py_INCREF(a);
+                    b[j].pv[k][l] = (double)PyFloat_AsDouble(a);
+                    Py_DECREF(a);
+                }
+                Py_DECREF(p);
+            }
+
+            Py_DECREF(pypv);
+            Py_DECREF(pyl);
+            
+        }
+        eraLdn(n, b, ob, sc, sn);
+
+    return Py_BuildValue("ddd", sn[0], sn[1], sn[2]);
+}
+
+PyDoc_STRVAR(_erfa_ldn_doc,
+"\nld(b[], ob[3], sc[3]) -> sn[3]\n"
+"For a star, apply light deflection by multiple solar-system bodies,\n"
+"as part of transforming coordinate direction into natural direction.\n"
+"Given:\n"
+"    n    number of bodies\n"
+"    b    data for each of the n bodies\n"
+"    ob   barycentric position of the observer (au)\n"
+"    sc   observer to star coord direction (unit vector)\n"
+"Returned:\n"
+"    sn    observer to deflected star (unit vector)");
+
+static PyObject *
 _erfa_ldsun(PyObject *self, PyObject *args)
 {
     double p[3], e[3], em, p1[3];
@@ -1188,7 +1271,7 @@ _erfa_pmpx(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pmpx_doc,
-"\npmpx(rc, dc, pr, pd, px, rv, pmt, pob[3],) -> pco[3]\n"
+"\npmpx(rc, dc, pr, pd, px, rv, pmt, pob) -> pco[3]\n"
 "Proper motion and parallax.\n"
 "Given:\n"
 "    rc,dc  ICRS RA,Dec at catalog epoch (radians)\n"
@@ -4819,7 +4902,7 @@ PyDoc_STRVAR(_erfa_anpm_doc,
 "Given:\n"
 "    a          angle (radians)\n"
 "Returned:\n"
-"    a          angle in range 0-2pi");
+"    a          angle in range +/-pi");
 
 static PyObject *
 _erfa_c2s(PyObject *self, PyObject *args)
@@ -5784,9 +5867,8 @@ _erfa_tf2a(PyObject *self, PyObject *args)
     }
     if (ihour < 0) {
         s = '-';
-        /*ihour = -1 * ihour;*/
     }
-    status = eraTf2a(s, ihour, imin, sec, &rad);
+    status = eraTf2a(s, abs(ihour), imin, sec, &rad);
     if (status == 1) {
         PyErr_WarnEx(PyExc_Warning, "hour outside range 0-23", 1);
     }
@@ -5820,9 +5902,8 @@ _erfa_tf2d(PyObject *self, PyObject *args)
     }
     if (ihour < 0)  {
         s = '-';
-        ihour = -1 * ihour;
     }
-    status = eraTf2d(s, ihour, imin, sec, &days);
+    status = eraTf2d(s, abs(ihour), imin, sec, &days);
     if (status == 1) {
         PyErr_WarnEx(PyExc_Warning, "hour outside range 0-23", 1);
     }
@@ -5946,6 +6027,7 @@ static PyMethodDef _erfa_methods[] = {
     {"atoi13", _erfa_atoi13, METH_VARARGS, _erfa_atoi13_doc},
     {"atoiq", _erfa_atoiq, METH_VARARGS, _erfa_atoiq_doc},
     {"ld", _erfa_ld, METH_VARARGS, _erfa_ld_doc},
+    {"ldn", _erfa_ldn, METH_VARARGS, _erfa_ldn_doc},
     {"ldsun", _erfa_ldsun, METH_VARARGS, _erfa_ldsun_doc},
     {"pmpx", _erfa_pmpx, METH_VARARGS, _erfa_pmpx_doc},
     {"pmsafe", _erfa_pmsafe, METH_VARARGS, _erfa_pmsafe_doc},
