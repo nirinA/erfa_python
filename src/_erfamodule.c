@@ -604,6 +604,113 @@ PyDoc_STRVAR(_erfa_atciq_doc,
 "    ri,di      CIRS RA,Dec (radians)\n");
 
 static PyObject *
+_erfa_atciqn(PyObject *self, PyObject *args)
+{
+    int n, j, k, l;
+    double rc, dc, pr, pd, px, rv;
+    double ri, di;
+    PyObject *ldbody;
+    PyObject *pyl, *pybm, *pydl, *pypv;
+    PyObject *a = NULL, *p = NULL;
+    eraASTROM astrom;
+    eraLDBODY *b;
+    if (!PyArg_ParseTuple(args, "O!ddddddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
+                                 &PyList_Type, &ldbody,
+                                 &rc, &dc, &pr, &pd, &px, &rv,
+                                 &astrom.pmt,
+                                 &astrom.eb[0], &astrom.eb[1], &astrom.eb[2],
+                                 &astrom.eh[0], &astrom.eh[1], &astrom.eh[2],
+                                 &astrom.em,
+                                 &astrom.v[0], &astrom.v[1], &astrom.v[2],
+                                 &astrom.bm1,
+                                 &astrom.bpn[0][0],&astrom.bpn[0][1],&astrom.bpn[0][2],
+                                 &astrom.bpn[1][0],&astrom.bpn[1][1],&astrom.bpn[1][2],
+                                 &astrom.bpn[2][0],&astrom.bpn[2][1],&astrom.bpn[2][2],
+                                 &astrom.along, &astrom.phi, &astrom.xpl,
+                                 &astrom.ypl, &astrom.sphi, &astrom.cphi,
+                                 &astrom.diurab, &astrom.eral,
+                                 &astrom.refa, &astrom.refb))      
+        return NULL;
+        n = (int)PyList_Size(ldbody);
+        b = (eraLDBODY *)malloc(n * sizeof(eraLDBODY));
+        if (NULL == b) {
+            PyErr_SetString(_erfaError, "malloc failed with LDBODY");
+            return NULL;
+        }
+        for (j=0;j<n;j++) {
+            pyl = PyList_GetItem(ldbody, j);
+            Py_INCREF(pyl);
+            pybm = PyStructSequence_GET_ITEM(pyl, 0);
+            Py_INCREF(pybm);
+            b[j].bm = (double)PyFloat_AsDouble(pybm);
+            Py_DECREF(pybm);
+            Py_DECREF(pyl);
+
+            Py_INCREF(pyl);
+            pydl = PyStructSequence_GET_ITEM(pyl, 1);
+            Py_INCREF(pydl);
+            b[j].dl = (double)PyFloat_AsDouble(pydl);
+            Py_DECREF(pydl);
+            Py_DECREF(pyl);
+
+            Py_INCREF(pyl);
+            pypv = PyStructSequence_GET_ITEM(pyl, 2);
+            Py_INCREF(pypv);
+            
+            for (k=0;k<2;k++) {
+                p = PyStructSequence_GET_ITEM(pypv, k);
+                Py_INCREF(p);
+                for (l=0;l<3;l++) {
+                    a = PyStructSequence_GET_ITEM(p, l);
+                    if (a == NULL) {
+                        PyErr_SetString(_erfaError, "cannot retrieve data from args");
+                        Py_XDECREF(a);
+                        Py_XDECREF(p);
+                        Py_XDECREF(pypv);
+                        return NULL;
+                    }
+                    Py_INCREF(a);
+                    b[j].pv[k][l] = (double)PyFloat_AsDouble(a);
+                    Py_DECREF(a);
+                }
+                Py_DECREF(p);
+            }
+
+            Py_DECREF(pypv);
+            Py_DECREF(pyl);
+            
+        }
+    eraAtciqn(rc, dc, pr, pd, px, rv, &astrom, n, b, &ri, &di);
+    free(b);
+    return Py_BuildValue("dd", ri, di);
+}
+
+PyDoc_STRVAR(_erfa_atciqn_doc,
+"\natciqn(n, ldbody, rc, dc, pr, pd, px, rv, astrom) -> ri,di\n"
+"Quick ICRS, epoch J2000.0, to CIRS transformation, given precomputed\n"
+"star-independent astrometry parameters plus a list of light-deflecting bodies.\n"
+"\n"
+"Use of this function is appropriate when efficiency is important and\n"
+"where many star positions are to be transformed for one date.  The\n"
+"star-independent parameters can be obtained by calling one of the\n"
+"functions apci[13], apcg[13], apco[13] or apcs[13].\n"
+"\n"
+"If the only light-deflecting body to be taken into account is the\n"
+"Sun, the atciq function can be used instead.  If in addition the\n"
+"parallax and proper motions are zero, the aciqz function can be used.\n"
+"Given:\n"
+"    n          number of bodies\n"
+"    ldbody     data for each of the n bodies\n"
+"    rc,dc      ICRS RA,Dec at J2000.0 (radians)\n"
+"    pr         RA proper motion (radians/year)\n"
+"    pd         Dec proper motion (radians/year)\n"
+"    px         parallax (arcsec)\n"
+"    rv         radial velocity (km/s, +ve if receding)\n"
+"    astrom     star-independent astrometry parameters\n"
+"Returned:\n"
+"    ri,di      CIRS RA,Dec (radians)\n");
+
+static PyObject *
 _erfa_atciqz(PyObject *self, PyObject *args)
 {
     double rc, dc;
@@ -1163,7 +1270,10 @@ _erfa_ldn(PyObject *self, PyObject *args)
 {
     double ob[3], sc[3], sn[3];
     PyObject *ldbody;
-    int n;
+    PyObject *pyl, *pybm, *pydl, *pypv;
+    PyObject *a = NULL, *p = NULL;
+    int n, j, k, l;
+    eraLDBODY *b;
     if (!PyArg_ParseTuple(args, "O!(ddd)(ddd)",
                                  &PyList_Type, &ldbody,
                                  &ob[0], &ob[1], &ob[2],
@@ -1171,9 +1281,11 @@ _erfa_ldn(PyObject *self, PyObject *args)
         return NULL;
 
         n = (int)PyList_Size(ldbody);
-        eraLDBODY b[n];
-        int j;
-        PyObject *pyl, *pybm, *pydl, *pypv;
+        b = (eraLDBODY *)malloc(n * sizeof(eraLDBODY));
+        if (NULL == b) {
+            PyErr_SetString(_erfaError, "malloc failed with LDBODY");
+            return NULL;
+        }
         for (j=0;j<n;j++) {
             pyl = PyList_GetItem(ldbody, j);
             Py_INCREF(pyl);
@@ -1193,8 +1305,7 @@ _erfa_ldn(PyObject *self, PyObject *args)
             Py_INCREF(pyl);
             pypv = PyStructSequence_GET_ITEM(pyl, 2);
             Py_INCREF(pypv);
-            int k,l;
-            PyObject *a = NULL, *p = NULL;
+            
             for (k=0;k<2;k++) {
                 p = PyStructSequence_GET_ITEM(pypv, k);
                 Py_INCREF(p);
@@ -1219,7 +1330,7 @@ _erfa_ldn(PyObject *self, PyObject *args)
             
         }
         eraLdn(n, b, ob, sc, sn);
-
+    free(b);
     return Py_BuildValue("ddd", sn[0], sn[1], sn[2]);
 }
 
@@ -6017,6 +6128,7 @@ static PyMethodDef _erfa_methods[] = {
     {"apio13", _erfa_apio13, METH_VARARGS, _erfa_apio13_doc},
     {"atci13", _erfa_atci13, METH_VARARGS, _erfa_atci13_doc},
     {"atciq", _erfa_atciq, METH_VARARGS, _erfa_atciq_doc},
+    {"atciqn", _erfa_atciqn, METH_VARARGS, _erfa_atciqn_doc},
     {"atciqz", _erfa_atciqz, METH_VARARGS, _erfa_atciqz_doc},
     {"atco13", _erfa_atco13, METH_VARARGS, _erfa_atco13_doc},
     {"atic13", _erfa_atic13, METH_VARARGS, _erfa_atic13_doc},

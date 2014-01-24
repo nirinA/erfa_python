@@ -37,41 +37,41 @@ Earth rotation angle. The caller provides UT1, (n.b. not UTC).'''
     era = era00(ut11, ut12)
     return aper(era, astrom)
 
-def atciqn(rc, dc, pr, pd, px,rv, astrom, ldbody):
-    '''atciqn(rc, dc, pr, pd, px, rv, astrom, ldbody) -> ri,di
-Quick ICRS, epoch J2000.0, to CIRS transformation, given precomputed
-star-independent astrometry parameters plus a list of light-deflecting bodies.
-
-Use of this function is appropriate when efficiency is important and
-where many star positions are to be transformed for one date.  The
-star-independent parameters can be obtained by calling one of the
-functions apci[13], apcg[13], apco[13] or apcs[13].
-
-If the only light-deflecting body to be taken into account is the
-Sun, the atciq function can be used instead.  If in addition the
-parallax and proper motions are zero, the aciqz function can be used.
-Given:
-    rc,dc      ICRS RA,Dec at J2000.0 (radians)
-    pr         RA proper motion (radians/year)
-    pd         Dec proper motion (radians/year)
-    px         parallax (arcsec)
-    rv         radial velocity (km/s, +ve if receding)
-    astrom     star-independent astrometry parameters
-    ldbody     data for each of the n bodies
-Returned:
-    ri,di      CIRS RA,Dec (radians)'''
-    # Proper motion and parallax, giving BCRS coordinate direction.
-    pco = pmpx(rc, dc, pr, pd, px, rv, astrom.pmt, astrom.eb)
-    # Light deflection, giving BCRS natural direction.
-    pnat = ldn(ldbody, astrom.eb, pco)
-    # Aberration, giving GCRS proper direction.
-    ppr = ab(pnat, astrom.v, astrom.em, astrom.bm1)
-    # Bias-precession-nutation, giving CIRS proper direction.
-    pi = rxp(astrom.bpn, ppr)
-    # CIRS RA,Dec.
-    w, di = c2s(pi)
-    ri = anp(w)
-    return ri, di
+##def atciqn(rc, dc, pr, pd, px,rv, astrom, ldbody):
+##    '''atciqn(rc, dc, pr, pd, px, rv, astrom, ldbody) -> ri,di
+##Quick ICRS, epoch J2000.0, to CIRS transformation, given precomputed
+##star-independent astrometry parameters plus a list of light-deflecting bodies.
+##
+##Use of this function is appropriate when efficiency is important and
+##where many star positions are to be transformed for one date.  The
+##star-independent parameters can be obtained by calling one of the
+##functions apci[13], apcg[13], apco[13] or apcs[13].
+##
+##If the only light-deflecting body to be taken into account is the
+##Sun, the atciq function can be used instead.  If in addition the
+##parallax and proper motions are zero, the aciqz function can be used.
+##Given:
+##    rc,dc      ICRS RA,Dec at J2000.0 (radians)
+##    pr         RA proper motion (radians/year)
+##    pd         Dec proper motion (radians/year)
+##    px         parallax (arcsec)
+##    rv         radial velocity (km/s, +ve if receding)
+##    astrom     star-independent astrometry parameters
+##    ldbody     data for each of the n bodies
+##Returned:
+##    ri,di      CIRS RA,Dec (radians)'''
+##    # Proper motion and parallax, giving BCRS coordinate direction.
+##    pco = pmpx(rc, dc, pr, pd, px, rv, astrom.pmt, astrom.eb)
+##    # Light deflection, giving BCRS natural direction.
+##    pnat = ldn(ldbody, astrom.eb, pco)
+##    # Aberration, giving GCRS proper direction.
+##    ppr = ab(pnat, astrom.v, astrom.em, astrom.bm1)
+##    # Bias-precession-nutation, giving CIRS proper direction.
+##    pi = rxp(astrom.bpn, ppr)
+##    # CIRS RA,Dec.
+##    w, di = c2s(pi)
+##    ri = anp(w)
+##    return ri, di
 
 def aticqn(ri, di, astrom, ldbody):
     '''aticqn(ri, di, astrom, ldbody) -> rc, dc
