@@ -7,6 +7,8 @@ Fundamental Astronomy).
 
 for installation, see ``doc/installation.rst``
 
+some examples in ``examples/`` directory.
+
 ----------
 what's new
 ----------
@@ -29,9 +31,10 @@ what's new
 . 20131226
 **********
 
-- completed routines from the latest SOFA release
+- completed routines from the latest SOFA release.
 - rename and slightly reworked the C extension to _erfamodule.c
-- a module erfa.py was created especially to handle routines that use
-LDBODY. some missing routines were also added into this module.
-this change *is compatible* with previous version, and users do not
-need to change their code. 
+
+. 20140126
+**********
+
+- support Python-3.4.
