@@ -532,51 +532,23 @@ _erfa_atciq(PyObject *self, PyObject *args)
 {
     double rc, dc, pr, pd, px, rv;
     double ri, di;
-    double pmt, eb[3], eh[3], em, v[3], bm1, bpn[3][3];
-    double along, phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb;
     eraASTROM astrom;
     if (!PyArg_ParseTuple(args, "ddddddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
-                          &rc, &dc, &pr, &pd, &px, &rv,
-                          &pmt, &eb[0], &eb[1], &eb[2],
-                          &eh[0], &eh[1], &eh[2], &em,
-                          &v[0], &v[1], &v[2], &bm1,
-                          &bpn[0][0],&bpn[0][1],&bpn[0][2],
-                          &bpn[1][0],&bpn[1][1],&bpn[1][2],      
-                          &bpn[2][0],&bpn[2][1],&bpn[2][2],
-                          &along, &phi, &xpl, &ypl, &sphi, &cphi, &diurab,
-                          &eral, &refa, &refb))      
+                                 &rc, &dc, &pr, &pd, &px, &rv,
+                                 &astrom.pmt,
+                                 &astrom.eb[0], &astrom.eb[1], &astrom.eb[2],
+                                 &astrom.eh[0], &astrom.eh[1], &astrom.eh[2],
+                                 &astrom.em,
+                                 &astrom.v[0], &astrom.v[1], &astrom.v[2],
+                                 &astrom.bm1,
+                                 &astrom.bpn[0][0],&astrom.bpn[0][1],&astrom.bpn[0][2],
+                                 &astrom.bpn[1][0],&astrom.bpn[1][1],&astrom.bpn[1][2],
+                                 &astrom.bpn[2][0],&astrom.bpn[2][1],&astrom.bpn[2][2],
+                                 &astrom.along, &astrom.phi, &astrom.xpl,
+                                 &astrom.ypl, &astrom.sphi, &astrom.cphi,
+                                 &astrom.diurab, &astrom.eral,
+                                 &astrom.refa, &astrom.refb))      
         return NULL;
-    astrom.pmt = pmt;
-    astrom.eb[0] = eb[0];
-    astrom.eb[1] = eb[1];
-    astrom.eb[2] = eb[2];
-    astrom.eh[0] = eh[0];
-    astrom.eh[1] = eh[1];
-    astrom.eh[2] = eh[2];
-    astrom.em = em;
-    astrom.v[0] = v[0];
-    astrom.v[1] = v[1];
-    astrom.v[2] = v[2];
-    astrom.bm1 = bm1;
-    astrom.bpn[0][0] = bpn[0][0];
-    astrom.bpn[0][1] = bpn[0][1];
-    astrom.bpn[0][2] = bpn[0][2];
-    astrom.bpn[1][0] = bpn[1][0];
-    astrom.bpn[1][1] = bpn[1][1];
-    astrom.bpn[1][2] = bpn[1][2];
-    astrom.bpn[2][0] = bpn[2][0];
-    astrom.bpn[2][1] = bpn[2][1];
-    astrom.bpn[2][2] = bpn[2][2];
-    astrom.along = along;
-    astrom.phi = phi;
-    astrom.xpl = xpl;
-    astrom.ypl = ypl;
-    astrom.sphi = sphi;
-    astrom.cphi = cphi;
-    astrom.diurab = diurab;
-    astrom.eral = eral;
-    astrom.refa = refa;
-    astrom.refb = refb;
     eraAtciq(rc, dc, pr, pd, px, rv, &astrom, &ri, &di);
     return Py_BuildValue("dd", ri, di);
 }
@@ -614,9 +586,9 @@ _erfa_atciqn(PyObject *self, PyObject *args)
     PyObject *a = NULL, *p = NULL;
     eraASTROM astrom;
     eraLDBODY *b;
-    if (!PyArg_ParseTuple(args, "O!ddddddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
-                                 &PyList_Type, &ldbody,
+    if (!PyArg_ParseTuple(args, "ddddddO!d(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
                                  &rc, &dc, &pr, &pd, &px, &rv,
+                                 &PyList_Type, &ldbody,
                                  &astrom.pmt,
                                  &astrom.eb[0], &astrom.eb[1], &astrom.eb[2],
                                  &astrom.eh[0], &astrom.eh[1], &astrom.eh[2],
@@ -686,7 +658,7 @@ _erfa_atciqn(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atciqn_doc,
-"\natciqn(ldbody, rc, dc, pr, pd, px, rv, astrom) -> ri,di\n"
+"\natciqn(rc, dc, pr, pd, px, rv, ldbody, astrom) -> ri,di\n"
 "Quick ICRS, epoch J2000.0, to CIRS transformation, given precomputed\n"
 "star-independent astrometry parameters plus a list of light-deflecting bodies.\n"
 "\n"
@@ -715,51 +687,23 @@ _erfa_atciqz(PyObject *self, PyObject *args)
 {
     double rc, dc;
     double ri, di;
-    double pmt, eb[3], eh[3], em, v[3], bm1, bpn[3][3];
-    double along, phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb;
     eraASTROM astrom;
     if (!PyArg_ParseTuple(args, "ddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
-                          &rc, &dc,
-                          &pmt, &eb[0], &eb[1], &eb[2],
-                          &eh[0], &eh[1], &eh[2], &em,
-                          &v[0], &v[1], &v[2], &bm1,
-                          &bpn[0][0],&bpn[0][1],&bpn[0][2],
-                          &bpn[1][0],&bpn[1][1],&bpn[1][2],      
-                          &bpn[2][0],&bpn[2][1],&bpn[2][2],
-                          &along, &phi, &xpl, &ypl, &sphi, &cphi, &diurab,
-                          &eral, &refa, &refb))      
+                                 &rc, &dc,
+                                 &astrom.pmt,
+                                 &astrom.eb[0], &astrom.eb[1], &astrom.eb[2],
+                                 &astrom.eh[0], &astrom.eh[1], &astrom.eh[2],
+                                 &astrom.em,
+                                 &astrom.v[0], &astrom.v[1], &astrom.v[2],
+                                 &astrom.bm1,
+                                 &astrom.bpn[0][0],&astrom.bpn[0][1],&astrom.bpn[0][2],
+                                 &astrom.bpn[1][0],&astrom.bpn[1][1],&astrom.bpn[1][2],
+                                 &astrom.bpn[2][0],&astrom.bpn[2][1],&astrom.bpn[2][2],
+                                 &astrom.along, &astrom.phi, &astrom.xpl,
+                                 &astrom.ypl, &astrom.sphi, &astrom.cphi,
+                                 &astrom.diurab, &astrom.eral,
+                                 &astrom.refa, &astrom.refb))      
         return NULL;
-    astrom.pmt = pmt;
-    astrom.eb[0] = eb[0];
-    astrom.eb[1] = eb[1];
-    astrom.eb[2] = eb[2];
-    astrom.eh[0] = eh[0];
-    astrom.eh[1] = eh[1];
-    astrom.eh[2] = eh[2];
-    astrom.em = em;
-    astrom.v[0] = v[0];
-    astrom.v[1] = v[1];
-    astrom.v[2] = v[2];
-    astrom.bm1 = bm1;
-    astrom.bpn[0][0] = bpn[0][0];
-    astrom.bpn[0][1] = bpn[0][1];
-    astrom.bpn[0][2] = bpn[0][2];
-    astrom.bpn[1][0] = bpn[1][0];
-    astrom.bpn[1][1] = bpn[1][1];
-    astrom.bpn[1][2] = bpn[1][2];
-    astrom.bpn[2][0] = bpn[2][0];
-    astrom.bpn[2][1] = bpn[2][1];
-    astrom.bpn[2][2] = bpn[2][2];
-    astrom.along = along;
-    astrom.phi = phi;
-    astrom.xpl = xpl;
-    astrom.ypl = ypl;
-    astrom.sphi = sphi;
-    astrom.cphi = cphi;
-    astrom.diurab = diurab;
-    astrom.eral = eral;
-    astrom.refa = refa;
-    astrom.refb = refb;
     eraAtciqz(rc, dc, &astrom, &ri, &di);
     return Py_BuildValue("dd", ri, di);
 }
@@ -865,51 +809,23 @@ static PyObject *
 _erfa_aticq(PyObject *self, PyObject *args)
 {
     double rc, dc, ri, di;
-    double pmt, eb[3], eh[3], em, v[3], bm1, bpn[3][3];
-    double along, phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb;
     eraASTROM astrom;
     if (!PyArg_ParseTuple(args, "ddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
-                          &ri, &di,
-                          &pmt, &eb[0], &eb[1], &eb[2],
-                          &eh[0], &eh[1], &eh[2], &em,
-                          &v[0], &v[1], &v[2], &bm1,
-                          &bpn[0][0],&bpn[0][1],&bpn[0][2],
-                          &bpn[1][0],&bpn[1][1],&bpn[1][2],      
-                          &bpn[2][0],&bpn[2][1],&bpn[2][2],
-                          &along, &phi, &xpl, &ypl, &sphi, &cphi, &diurab,
-                          &eral, &refa, &refb))      
+                                 &ri, &di,
+                                 &astrom.pmt,
+                                 &astrom.eb[0], &astrom.eb[1], &astrom.eb[2],
+                                 &astrom.eh[0], &astrom.eh[1], &astrom.eh[2],
+                                 &astrom.em,
+                                 &astrom.v[0], &astrom.v[1], &astrom.v[2],
+                                 &astrom.bm1,
+                                 &astrom.bpn[0][0],&astrom.bpn[0][1],&astrom.bpn[0][2],
+                                 &astrom.bpn[1][0],&astrom.bpn[1][1],&astrom.bpn[1][2],
+                                 &astrom.bpn[2][0],&astrom.bpn[2][1],&astrom.bpn[2][2],
+                                 &astrom.along, &astrom.phi, &astrom.xpl,
+                                 &astrom.ypl, &astrom.sphi, &astrom.cphi,
+                                 &astrom.diurab, &astrom.eral,
+                                 &astrom.refa, &astrom.refb))      
         return NULL;
-    astrom.pmt = pmt;
-    astrom.eb[0] = eb[0];
-    astrom.eb[1] = eb[1];
-    astrom.eb[2] = eb[2];
-    astrom.eh[0] = eh[0];
-    astrom.eh[1] = eh[1];
-    astrom.eh[2] = eh[2];
-    astrom.em = em;
-    astrom.v[0] = v[0];
-    astrom.v[1] = v[1];
-    astrom.v[2] = v[2];
-    astrom.bm1 = bm1;
-    astrom.bpn[0][0] = bpn[0][0];
-    astrom.bpn[0][1] = bpn[0][1];
-    astrom.bpn[0][2] = bpn[0][2];
-    astrom.bpn[1][0] = bpn[1][0];
-    astrom.bpn[1][1] = bpn[1][1];
-    astrom.bpn[1][2] = bpn[1][2];
-    astrom.bpn[2][0] = bpn[2][0];
-    astrom.bpn[2][1] = bpn[2][1];
-    astrom.bpn[2][2] = bpn[2][2];
-    astrom.along = along;
-    astrom.phi = phi;
-    astrom.xpl = xpl;
-    astrom.ypl = ypl;
-    astrom.sphi = sphi;
-    astrom.cphi = cphi;
-    astrom.diurab = diurab;
-    astrom.eral = eral;
-    astrom.refa = refa;
-    astrom.refb = refb;
     eraAticq(ri, di, &astrom, &rc, &dc);
     return Py_BuildValue("dd", rc, dc);
 }
@@ -1081,52 +997,24 @@ static PyObject *
 _erfa_atioq(PyObject *self, PyObject *args)
 {
     double ri, di;
-    double pmt, eb[3], eh[3], em, v[3], bm1, bpn[3][3];
-    double along, phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb;
     double aob, zob, hob, dob, rob;
     eraASTROM astrom;
     if (!PyArg_ParseTuple(args, "ddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
-                          &ri, &di,
-                          &pmt, &eb[0], &eb[1], &eb[2],
-                          &eh[0], &eh[1], &eh[2], &em,
-                          &v[0], &v[1], &v[2], &bm1,
-                          &bpn[0][0],&bpn[0][1],&bpn[0][2],
-                          &bpn[1][0],&bpn[1][1],&bpn[1][2],      
-                          &bpn[2][0],&bpn[2][1],&bpn[2][2],
-                          &along, &phi, &xpl, &ypl, &sphi, &cphi, &diurab,
-                          &eral, &refa, &refb))      
+                                 &ri, &di,
+                                 &astrom.pmt,
+                                 &astrom.eb[0], &astrom.eb[1], &astrom.eb[2],
+                                 &astrom.eh[0], &astrom.eh[1], &astrom.eh[2],
+                                 &astrom.em,
+                                 &astrom.v[0], &astrom.v[1], &astrom.v[2],
+                                 &astrom.bm1,
+                                 &astrom.bpn[0][0],&astrom.bpn[0][1],&astrom.bpn[0][2],
+                                 &astrom.bpn[1][0],&astrom.bpn[1][1],&astrom.bpn[1][2],
+                                 &astrom.bpn[2][0],&astrom.bpn[2][1],&astrom.bpn[2][2],
+                                 &astrom.along, &astrom.phi, &astrom.xpl,
+                                 &astrom.ypl, &astrom.sphi, &astrom.cphi,
+                                 &astrom.diurab, &astrom.eral,
+                                 &astrom.refa, &astrom.refb))      
         return NULL;
-    astrom.pmt = pmt;
-    astrom.eb[0] = eb[0];
-    astrom.eb[1] = eb[1];
-    astrom.eb[2] = eb[2];
-    astrom.eh[0] = eh[0];
-    astrom.eh[1] = eh[1];
-    astrom.eh[2] = eh[2];
-    astrom.em = em;
-    astrom.v[0] = v[0];
-    astrom.v[1] = v[1];
-    astrom.v[2] = v[2];
-    astrom.bm1 = bm1;
-    astrom.bpn[0][0] = bpn[0][0];
-    astrom.bpn[0][1] = bpn[0][1];
-    astrom.bpn[0][2] = bpn[0][2];
-    astrom.bpn[1][0] = bpn[1][0];
-    astrom.bpn[1][1] = bpn[1][1];
-    astrom.bpn[1][2] = bpn[1][2];
-    astrom.bpn[2][0] = bpn[2][0];
-    astrom.bpn[2][1] = bpn[2][1];
-    astrom.bpn[2][2] = bpn[2][2];
-    astrom.along = along;
-    astrom.phi = phi;
-    astrom.xpl = xpl;
-    astrom.ypl = ypl;
-    astrom.sphi = sphi;
-    astrom.cphi = cphi;
-    astrom.diurab = diurab;
-    astrom.eral = eral;
-    astrom.refa = refa;
-    astrom.refb = refb;
     eraAtioq(ri, di, &astrom, &aob, &zob, &hob, &dob, &rob);
     return Py_BuildValue("ddddd", aob, zob, hob, dob, rob);
 }
@@ -1266,51 +1154,23 @@ _erfa_atoiq(PyObject *self, PyObject *args)
     const char *type;
     double ob1, ob2;
     double ri, di;
-    double pmt, eb[3], eh[3], em, v[3], bm1, bpn[3][3];
-    double along, phi, xpl, ypl, sphi, cphi, diurab, eral, refa, refb;
     eraASTROM astrom;
     if (!PyArg_ParseTuple(args, "sddd(ddd)(ddd)d(ddd)d((ddd)(ddd)(ddd))dddddddddd",
-                          &type, &ob1, &ob2,
-                          &pmt, &eb[0], &eb[1], &eb[2],
-                          &eh[0], &eh[1], &eh[2], &em,
-                          &v[0], &v[1], &v[2], &bm1,
-                          &bpn[0][0],&bpn[0][1],&bpn[0][2],
-                          &bpn[1][0],&bpn[1][1],&bpn[1][2],      
-                          &bpn[2][0],&bpn[2][1],&bpn[2][2],
-                          &along, &phi, &xpl, &ypl, &sphi, &cphi, &diurab,
-                          &eral, &refa, &refb))      
+                                 &type, &ob1, &ob2,
+                                 &astrom.pmt,
+                                 &astrom.eb[0], &astrom.eb[1], &astrom.eb[2],
+                                 &astrom.eh[0], &astrom.eh[1], &astrom.eh[2],
+                                 &astrom.em,
+                                 &astrom.v[0], &astrom.v[1], &astrom.v[2],
+                                 &astrom.bm1,
+                                 &astrom.bpn[0][0],&astrom.bpn[0][1],&astrom.bpn[0][2],
+                                 &astrom.bpn[1][0],&astrom.bpn[1][1],&astrom.bpn[1][2],
+                                 &astrom.bpn[2][0],&astrom.bpn[2][1],&astrom.bpn[2][2],
+                                 &astrom.along, &astrom.phi, &astrom.xpl,
+                                 &astrom.ypl, &astrom.sphi, &astrom.cphi,
+                                 &astrom.diurab, &astrom.eral,
+                                 &astrom.refa, &astrom.refb))      
         return NULL;
-    astrom.pmt = pmt;
-    astrom.eb[0] = eb[0];
-    astrom.eb[1] = eb[1];
-    astrom.eb[2] = eb[2];
-    astrom.eh[0] = eh[0];
-    astrom.eh[1] = eh[1];
-    astrom.eh[2] = eh[2];
-    astrom.em = em;
-    astrom.v[0] = v[0];
-    astrom.v[1] = v[1];
-    astrom.v[2] = v[2];
-    astrom.bm1 = bm1;
-    astrom.bpn[0][0] = bpn[0][0];
-    astrom.bpn[0][1] = bpn[0][1];
-    astrom.bpn[0][2] = bpn[0][2];
-    astrom.bpn[1][0] = bpn[1][0];
-    astrom.bpn[1][1] = bpn[1][1];
-    astrom.bpn[1][2] = bpn[1][2];
-    astrom.bpn[2][0] = bpn[2][0];
-    astrom.bpn[2][1] = bpn[2][1];
-    astrom.bpn[2][2] = bpn[2][2];
-    astrom.along = along;
-    astrom.phi = phi;
-    astrom.xpl = xpl;
-    astrom.ypl = ypl;
-    astrom.sphi = sphi;
-    astrom.cphi = cphi;
-    astrom.diurab = diurab;
-    astrom.eral = eral;
-    astrom.refa = refa;
-    astrom.refb = refb;
     if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
         eraAtoiq(type, ob1, ob2, &astrom, &ri, &di);
     }

@@ -424,7 +424,7 @@ class Validate(unittest.TestCase):
                           ((-0.000712174377, -0.00230478303, -0.00105865966),
                            (6.29235213e-6, -3.30888387e-7, -2.96486623e-7))))
         b = [b0, b1, b2]
-        ri, di = erfa.atciqn(b, rc, dc, pr, pd, px, rv, *astrom)
+        ri, di = erfa.atciqn(rc, dc, pr, pd, px, rv, b, *astrom)
         self.assertAlmostEqual(ri, 2.710122008105325582, places=12)
         self.assertAlmostEqual(di, 0.1729371916491459122, places=12)
 

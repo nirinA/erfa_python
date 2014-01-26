@@ -127,9 +127,9 @@ b2 = erfa.LDBODY((1.0, 6e-6,
                   ((-0.0007121743770509, -0.0023047830339257, -0.0010586596574639),
                    (0.0000062923521264, -0.0000003308883872, -0.0000002964866231))))
 b= [b0, b1, b2]
-ri, di = erfa.atciqn(rc, dc, pr, pd, px, rv, astrom, b)
+ri, di = erfa.atciqn(rc, dc, pr, pd, px, rv, b, *astrom)
 reprd ( "ICRS -> CIRS (+ planets):", ri, di )
 
 # CIRS to ICRS (astrometric).
-rca, dca = erfa.aticqn(ri, di, astrom, b)
+rca, dca = erfa.aticqn(ri, di, b, *astrom)
 reprd ( "CIRS -> astrometric:", rca, dca )

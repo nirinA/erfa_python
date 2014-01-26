@@ -13,20 +13,10 @@ some examples in ``examples/`` directory.
 what's new
 ----------
 
-. 20130815
+. 20140126
 **********
 
-- rewrote the wrapper from SOFA to ERFA
-
-. 20130830
-**********
-
-- registered to PyPi
-
-. 20131222
-**********
-
-- added a few routines from the latest SOFA release.
+- support Python-3.4.
 
 . 20131226
 **********
@@ -34,7 +24,18 @@ what's new
 - completed routines from the latest SOFA release.
 - rename and slightly reworked the C extension to _erfamodule.c
 
-. 20140126
+. 20131222
 **********
 
-- support Python-3.4.
+- added a few routines from the latest SOFA release.
+
+. 20130830
+**********
+
+- registered to PyPi
+
+. 20130815
+**********
+
+- rewrote the wrapper from SOFA to ERFA
+
