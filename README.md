@@ -13,10 +13,10 @@ some examples in ``examples/`` directory.
 what's new
 ----------
 
-. 20140126
+. 20140127
 **********
 
-- support Python-3.4.
+- support for Python-3.4.
 
 . 20131226
 **********
