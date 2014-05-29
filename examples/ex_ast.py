@@ -8,14 +8,14 @@ def reprd(title, r, d):
           " %s%2.2d %2.2d %2.2d.%6.6d"%erfa.a2af(6, d))
     
 # site longitude, latitude (radians) and height above the geoid (m).
-phi = erfa.af2a(-70,44,11.560)
-elong = erfa.af2a(-30,14,26.731)
-hm = 2738.0
+phi = erfa.af2a(-15,57,42.8)
+elong = erfa.af2a(-5,41,54.2)
+hm = 625.0
 
 # Ambient pressure (HPa), temperature (C) and rel. humidity (frac).
-phpa = 731.0
-tc = 12.8
-rh = 0.59
+phpa = 952.0
+tc = 18.5
+rh = 0.83
 
 # Effective color (microns).
 wl = 0.55

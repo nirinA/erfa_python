@@ -2,15 +2,15 @@
 installation
 ============
 
-------------
-requirements
-------------
+-----------------------
+installing ERFA library
+-----------------------
 
-erfa_python requires the erfa_c library installed.
+erfa_python requires the erfa_c library to be installed.
 
     https://github.com/liberfa/erfa
 
-you may need to build shared library if Python is built with
+you may need to build a shared library if Python is built with
 shared library enable.
 
 erfa headers (erfa.h and erfam.h) are expected to
@@ -22,16 +22,28 @@ at $HOME/lib, /usr/lib64, /usr/lib, or /usr/local/lib.
 if your erfa_c library is in other location, you need to adjust
 INC_DIR and LIB_DIR in ``setup.py`` to point out their location.
 
+Note for building erfa_python on OSX:
+------------------------------------
+
+on OSX system, to be compatible with erfa_python,
+liberfa needs to be compiled with some extra flags:
+
+```
+gcc -Wall -O -fPIC -shared -Wl,-compatibility_version,2.0.0,-current_version,2.0.0 -o liberfa.dylib erfa.c
+```
+
+see:
+
+    https://github.com/nirinA/erfa_python/issues/4
+
+thanks to @vhaasteren for reporting and solving this issue.
+
 *********************************************
 building ERFA against the latest SOFA release
 *********************************************
 
-in order to build the ERFA library that includes the latest
+to build the ERFA library that includes the latest
 routines released within the SOFA library, you need to
-download the SOFA package from here:
-
-    http://www.iausofa.org/2013_1202_C/sofa_c-20131202.tar.gz
-
 run this script:
 
     https://github.com/liberfa/erfa-fetch/blob/master/sofa_deriver.py
@@ -42,11 +54,11 @@ and run the usual:
 
 to build and install ERFA.
 
------------------------
-building and installing
------------------------
+-----------------------------------
+building and installing erfa_python
+-----------------------------------
 
-do the usual:
+now, do the usual:
 
     python setup.py build
 
@@ -59,6 +71,7 @@ to install.
 Note: if previous version is already installed in ``site-packages``,
 be sure to remove all related files before installing the new version
 
+
 -------
 testing
 -------
@@ -69,13 +82,6 @@ do:
     python erfa_test.py
 
 to validate erfa_python module.
-
---------
-examples
---------
-
-examples adapted from SOFA documentation
-can be found in ``examples/`` directory
 
 --------------------------
 building the documentation
