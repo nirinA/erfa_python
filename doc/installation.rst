@@ -99,6 +99,8 @@ also, usual on-line documentation is available with:
 
     pydoc erfa
 
+    pydoc -w erfa
+    
 and
 
    >>> help(erfa)

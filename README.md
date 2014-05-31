@@ -6,17 +6,16 @@ This is a Python wrapper for ERFA, Essential Routines for
 Fundamental Astronomy, a library derived from SOFA,
 Standards of Fundamental Astronomy.
 
+ERFA : https://github.com/liberfa/erfa
+SOFA : http://www.iausofa.org
+
 -----------
 requirements
 -----------
 
-To use this wrapper, you need:
+to use this wrapper, you need:
 
-    * a working liberfa:
-        
-    https://github.com/liberfa/erfa
-
-    * Python 2.7 to 3.4
+* Python 2.7 - 3.4
 
 --------
 download
@@ -73,6 +72,11 @@ can be found in ``examples/`` directory.
 ----------
 what's new
 ----------
+
+. 20140601
+**********
+
+- erfa source is included, so a pre-installed liberfa is no longer required.
 
 . 20140530
 **********
