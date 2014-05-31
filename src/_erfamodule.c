@@ -4,7 +4,7 @@
 #include <math.h>
 #include <time.h>
 #include "erfa.h"
-#include "erfam.h"
+/* #include "erfam.h" */
 
 static PyObject *_erfaError;
 
