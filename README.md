@@ -7,6 +7,7 @@ Fundamental Astronomy, a library derived from SOFA,
 Standards of Fundamental Astronomy.
 
 ERFA : https://github.com/liberfa/erfa
+
 SOFA : http://www.iausofa.org
 
 -----------
@@ -33,14 +34,67 @@ and from github:
 installation
 ------------
 
-unpack the tarball, cd to ``erfa_python`` directory and:
-    
+unpack the tarball, cd to ``erfa_python`` directory and do the usual:
+
 ```
-python setup.py install
+    python setup.py build
 ```
 
-for a complete installation procedure, including
-the installation of ERFA, see ``doc/installation.rst``
+to build and (may need root privilege):
+
+```
+    python setup.py install
+```
+
+to install.
+
+Note: if previous version is already installed in ``site-packages``,
+be sure to remove all related files before installing the new version
+
+-------
+testing
+-------
+
+a test-suit adapted from t_erfa_c.c is provided.
+do:
+
+```
+    python erfa_test.py
+```
+
+to validate erfa_python module.
+
+-------------
+documentation
+-------------
+
+on-line documentation is available with:
+
+```
+    pydoc erfa
+```
+
+to generate a html version:
+
+```
+    pydoc -w erfa
+```
+    
+and, from the interpreter:
+
+   >>> help(erfa)
+   >>> help(erfa.<function>)
+
+c-api reference for liberfa is available in ``doc/api.rst``.
+a html version can be built:
+
+```
+    cd doc   
+    mkdir _build  
+    sphinx-build . _build
+```
+
+you need ``sphinx`` and its dependencies to build the doc.
 
 --------
 examples
@@ -76,7 +130,7 @@ what's new
 . 20140601
 **********
 
-- erfa source is included, so a pre-installed liberfa is no longer required.
+- ``erfa`` source is included, so a pre-installed ``liberfa`` is no longer required.
 
 . 20140530
 **********
