@@ -18,6 +18,8 @@ to use this wrapper, you need:
 
 * Python 2.7 - 3.4
 
+* a C compiler to build the module.
+
 --------
 download
 --------
@@ -82,10 +84,12 @@ to generate a html version:
     
 and, from the interpreter:
 
+```
    >>> help(erfa)
    >>> help(erfa.<function>)
+```
 
-c-api reference for liberfa is available in ``doc/api.rst``.
+C-api reference for liberfa is available in ``doc/api.rst``.
 a html version can be built:
 
 ```
@@ -103,21 +107,25 @@ examples
 some examples adapted from SOFA documentation
 can be found in ``examples/`` directory.
 
+***********
 . ex_ast.py
 ***********
 
   example of Astrometry Tools
 
+***********
 . ex_pn.py
 ***********
 
   example of tools for Earth Attitude 
 
+***********
 . ex_ts.py
 ***********
 
   example of Time Scale and Calendar Tools
 
+***********
 . ex_ephem.py
 ***********
 
@@ -127,38 +135,45 @@ can be found in ``examples/`` directory.
 what's new
 ----------
 
+***********
 . 20140601
 **********
 
 - ``erfa`` source is included, so a pre-installed ``liberfa`` is no longer required.
 
+***********
 . 20140530
 **********
 
 - update ex_ast.py
 - fix _erfamodule.c docstring
 
+***********
 . 20140127
 **********
 
 - support for Python-3.4.
 
+***********
 . 20131226
 **********
 
 - completed routines from the latest SOFA release.
 - rename and slightly reworked the C extension to _erfamodule.c
 
+***********
 . 20131222
 **********
 
 - added a few routines from the latest SOFA release.
 
+***********
 . 20130830
 **********
 
 - registered to PyPi
 
+***********
 . 20130815
 **********
 
