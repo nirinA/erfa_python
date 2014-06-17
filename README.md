@@ -3,7 +3,7 @@ erfa_python
 ===========
 
 This is a Python wrapper for ERFA, Essential Routines for 
-Fundamental Astronomy, a library derived from SOFA,
+Fundamental Astronomy, a library derived and 'freed' from SOFA,
 Standards of Fundamental Astronomy.
 
 ERFA : https://github.com/liberfa/erfa
@@ -18,7 +18,9 @@ to use this wrapper, you need:
 
 * Python 2.7 - 3.4
 
-* a C compiler to build the module.
+* C compiler to build the module.
+
+  . newer version of gcc (4.7+) is prefered.
 
 --------
 download
@@ -31,33 +33,46 @@ erfa_python is available from Pypi:
 and from github:
 
     https://github.com/nirinA/erfa_python/
-    
+
+
 ------------
-installation
+building
 ------------
 
-unpack the tarball, cd to ``erfa_python`` directory and do the usual:
+* to build the module, unpack the tarball,
+cd to ``erfa_python`` directory and do the usual:
 
 ```
     python setup.py build
 ```
 
-to build and (may need root privilege):
+note for OS X:
+**************
+
+* on OSX platform, it seems that ``erfa`` needs to be build as a library,
+and some 'compatibility version' needs to be adjusted
+thanks to @vhaasteren for reporting and solving this issue, see:
+
+https://github.com/nirinA/erfa_python/issues/4
+
+------------
+installing
+------------
+
+* if previous version of erfa_python is already installed in ``site-packages``,
+be sure to remove all related files before installing the new version.
+
+* install (may need root privilege) with:
 
 ```
     python setup.py install
 ```
 
-to install.
-
-Note: if previous version is already installed in ``site-packages``,
-be sure to remove all related files before installing the new version
-
 -------
 testing
 -------
 
-a test-suit adapted from t_erfa_c.c is provided.
+a test-suite adapted from t_erfa_c.c is provided.
 do:
 
 ```
@@ -65,6 +80,13 @@ do:
 ```
 
 to validate erfa_python module.
+
+note:
+*****
+some test fail with older version of gcc (4.5).
+thanks to @yanwang2012 for this report, see:
+    
+https://github.com/nirinA/erfa_python/issues/6
 
 -------------
 documentation
@@ -89,7 +111,7 @@ and, from the interpreter:
    >>> help(erfa.<function>)
 ```
 
-C-api reference for liberfa is available in ``doc/api.rst``.
+C-api reference of liberfa is available in ``doc/api.rst``.
 a html version can be built:
 
 ```
@@ -159,7 +181,7 @@ what's new
 **********
 
 - completed routines from the latest SOFA release.
-- rename and slightly reworked the C extension to _erfamodule.c
+- renamed and slightly reworked the C extension to _erfamodule.c
 
 ***********
 . 20131222

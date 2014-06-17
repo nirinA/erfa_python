@@ -1,8 +1,5 @@
 import unittest
-try:
-    from test import support
-except ImportError:
-    from test import test_support as support
+import sys
 import math
 import erfa
 
@@ -2585,5 +2582,14 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(trpv[1][1], 5.3, places=12)
         self.assertAlmostEqual(trpv[1][2], 4.1, places=12)
 
-support.run_unittest(Validate)
-
+## some older version of Python 2.7
+## failed to use 'support'
+if __name__ == '__main__':
+    if sys.version_info.major >= 3:
+        try:
+            from test import support
+        except ImportError:
+            from test import test_support as support
+        support.run_unittest(Validate)
+    else:
+        unittest.main()
