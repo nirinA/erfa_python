@@ -97,6 +97,8 @@ class TimeScale(Observer):
             self.dut1 = -0.2
         elif (self.utc1+self.utc2) >= 2456785.5:
             self.dut1 = -0.3
+        elif (self.utc1+self.utc2) >= 2456925.5:
+            self.dut1 = -0.4
         self.dt = 35+32.184-self.dut1
         self.ut11, self.ut12 = erfa.utcut1(self.utc1, self.utc2, self.dut1)
         # Extract fraction for TDB-TT calculation, later.
