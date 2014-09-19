@@ -4,7 +4,6 @@
 #include <math.h>
 #include <time.h>
 #include "erfa.h"
-/* #include "erfam.h" */
 
 static PyObject *_erfaError;
 
@@ -125,7 +124,7 @@ _erfa_ab(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ab_doc,
-"ab(pnat[3], v[3], s, bm1) -> ppr\n"
+"ab(pnat[3], v[3], s, bm1) -> ppr\n\n"
 "Apply aberration to transform natural direction into proper direction.\n"
 "Given:\n"
 "    pnat       natural direction to the source (unit vector)\n"
@@ -151,7 +150,7 @@ _erfa_apcg(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_apcg_doc,
-"apcg(date1, date2, ebpv[2][3], ehp[3]) -> astrom\n"
+"apcg(date1, date2, ebpv[2][3], ehp[3]) -> astrom\n\n"
 "For a geocentric observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and GCRS coordinates.\n"
 "The Earth ephemeris is supplied by the caller.\n"
@@ -180,7 +179,7 @@ _erfa_apcg13(PyObject *self, PyObject *args)
 
 PyDoc_STRVAR(_erfa_apcg13_doc,
 "apcg13(date1, date2) -> astrom\n"
-"For a geocentric observer, prepare star-independent astrometry\n"
+"For a geocentric observer, prepare star-independent astrometry\n\n"
 "parameters for transformations between ICRS and GCRS coordinates.\n"
 "The caller supplies the date, and ERFA models are used to predict\n"
 "the Earth ephemeris.\n"
@@ -211,7 +210,7 @@ _erfa_apci(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_apci_doc,
-"apci(date1, date2, ebpv[2][3], ehp[3], x, y, s) -> astrom\n"
+"apci(date1, date2, ebpv[2][3], ehp[3], x, y, s) -> astrom\n\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and geocentric CIRS\n"
 "coordinates.  The Earth ephemeris and CIP/CIO are supplied by the caller.\n"
@@ -241,7 +240,7 @@ _erfa_apci13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_apci13_doc,
-"apci13(date1, date2) -> astrom, eo\n"
+"apci13(date1, date2) -> astrom, eo\n\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and geocentric CIRS\n"
 "coordinates.  The caller supplies the date, and ERFA models are used\n"
@@ -281,7 +280,7 @@ _erfa_apco(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_apco_doc,
-"apco(date1, date2, ebpv[2][3], ehp[3], x, y, s,theta,,elong, phi, hm,xp, yp, refa, refb) -> astrom\n"
+"apco(date1, date2, ebpv[2][3], ehp[3], x, y, s,theta,,elong, phi, hm,xp, yp, refa, refb) -> astrom\n\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and observed\n"
 "coordinates. The caller supplies the Earth ephemeris, the Earth\n"
@@ -331,7 +330,7 @@ _erfa_apco13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_apco13_doc,
-"apco13(utc1, utc2, dut1, elong, phi, hm, xp, yp, sp, phpa, tc, rh, wl) -> astrom, eo\n"
+"apco13(utc1, utc2, dut1, elong, phi, hm, xp, yp, sp, phpa, tc, rh, wl) -> astrom, eo\n\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between ICRS and geocentric CIRS\n"
 "coordinates.  The caller supplies the date, and ERFA models are used\n"
@@ -375,7 +374,7 @@ _erfa_apcs(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_apcs_doc,
-"apcs(date1, date2, pv[2][3], ebpv[2][3], ehp[3]) -> astrom\n"
+"apcs(date1, date2, pv[2][3], ebpv[2][3], ehp[3]) -> astrom\n\n"
 "For an observer whose geocentric position and velocity are known,\n"
 "prepare star-independent astrometry parameters for transformations\n"
 "between ICRS and GCRS.  The Earth ephemeris is supplied by the caller.\n"
@@ -407,7 +406,7 @@ _erfa_apcs13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_apcs13_doc,
-"apcs13(date1, date2, pv[2][3]) -> astrom\n"
+"apcs13(date1, date2, pv[2][3]) -> astrom\n\n"
 "For an observer whose geocentric position and velocity are known,\n"
 "prepare star-independent astrometry parameters for transformations\n"
 "between ICRS and GCRS.  The Earth ephemeris is is from ERFA models.\n"
@@ -436,7 +435,7 @@ _erfa_apio(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_apio_doc,
-"apio(sp,theta,elong,phi,hm,xp,yp,refa,refb) -> astrom\n"
+"apio(sp,theta,elong,phi,hm,xp,yp,refa,refb) -> astrom\n\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between CIRS and observed\n"
 "coordinates.  The caller supplies the Earth orientation information\n"
@@ -479,7 +478,7 @@ _erfa_apio13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_apio13_doc,
-"apio13(utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> astrom, eo\n"
+"apio13(utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> astrom, eo\n\n"
 "For a terrestrial observer, prepare star-independent astrometry\n"
 "parameters for transformations between CIRS and observed\n"
 "coordinates.  The caller supplies UTC, site coordinates, ambient air\n"
@@ -512,7 +511,7 @@ _erfa_atci13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atci13_doc,
-"atci13(rc, dc, pr, pd, px, rv, date1, date2) -> ri, di, eo\n"
+"atci13(rc, dc, pr, pd, px, rv, date1, date2) -> ri, di, eo\n\n"
 "Transform ICRS star data, epoch J2000.0, to CIRS.\n"
 "Given:\n"
 "    rc     ICRS right ascension at J2000.0 (radians)\n"
@@ -554,7 +553,7 @@ _erfa_atciq(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atciq_doc,
-"atciq( rc, dc, pr, pd, px, rv, astrom) -> ri,di\n"
+"atciq( rc, dc, pr, pd, px, rv, astrom) -> ri,di\n\n"
 "Quick ICRS, epoch J2000.0, to CIRS transformation, given precomputed\n"
 "star-independent astrometry parameters.\n"
 "\n"
@@ -658,7 +657,7 @@ _erfa_atciqn(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atciqn_doc,
-"atciqn(rc, dc, pr, pd, px, rv, ldbody, astrom) -> ri,di\n"
+"atciqn(rc, dc, pr, pd, px, rv, ldbody, astrom) -> ri,di\n\n"
 "Quick ICRS, epoch J2000.0, to CIRS transformation, given precomputed\n"
 "star-independent astrometry parameters plus a list of light-deflecting bodies.\n"
 "\n"
@@ -709,7 +708,7 @@ _erfa_atciqz(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atciqz_doc,
-"atciqz( rc, dc, astrom) -> ri,di\n"
+"atciqz( rc, dc, astrom) -> ri,di\n\n"
 "Quick ICRS to CIRS transformation, given precomputed star-\n"
 "independent astrometry parameters, and assuming zero parallax and proper motion.\n"
 "\n"
@@ -752,7 +751,7 @@ _erfa_atco13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atco13_doc,
-"atco13(rc, dc, pr, pd, px, rv, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> aob, zob, hob, dob, rob, eo\n"
+"atco13(rc, dc, pr, pd, px, rv, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> aob, zob, hob, dob, rob, eo\n\n"
 "ICRS RA,Dec to observed place.  The caller supplies UTC, site\n"
 "coordinates, ambient air conditions and observing wavelength.\n"
 "\n"
@@ -795,7 +794,7 @@ _erfa_atic13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atic13_doc,
-"atic13(ri, di, date1, date2) -> rc, dc, eo\n"
+"atic13(ri, di, date1, date2) -> rc, dc, eo\n\n"
 "Transform star RA,Dec from geocentric CIRS to ICRS astrometric.\n"
 "Given:\n"
 "    ri,di  CIRS geocentric RA,Dec (radians)\n"
@@ -831,7 +830,7 @@ _erfa_aticq(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_aticq_doc,
-"aticq(ri,di, astrom) -> rc, dc\n"
+"aticq(ri,di, astrom) -> rc, dc\n\n"
 "Quick CIRS RA,Dec to ICRS astrometric place, given the star-\n"
 "independent astrometry parameters.\n"
 "\n"
@@ -925,7 +924,7 @@ _erfa_aticqn(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_aticqn_doc,
-"aticqn(ri, di, ldbody, astrom) -> rc, dc\n"
+"aticqn(ri, di, ldbody, astrom) -> rc, dc\n\n"
 "Quick CIRS to ICRS astrometric place transformation, given the star-\n"
 "independent astrometry parameters plus a list of light-deflecting bodies.\n"
 "\n"
@@ -969,7 +968,7 @@ _erfa_atio13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atio13_doc,
-"atio13(ri, di, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> aob, zob, hob, dob, rob\n"
+"atio13(ri, di, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> aob, zob, hob, dob, rob\n\n"
 "CIRS RA,Dec to observed place.  The caller supplies UTC, site\n"
 "coordinates, ambient air conditions and observing wavelength.\n"
 "Given:\n"
@@ -1020,7 +1019,7 @@ _erfa_atioq(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atioq_doc,
-"atioq(ri,di, astrom) -> aob, zob, hob, dob, rob\n"
+"atioq(ri,di, astrom) -> aob, zob, hob, dob, rob\n\n"
 "Quick CIRS to observed place transformation.\n"
 "\n"
 "Use of this function is appropriate when efficiency is important and\n"
@@ -1070,7 +1069,7 @@ _erfa_atoc13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atoc13_doc,
-"atoc13(type, ob1, ob2, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> rc, dc\n"
+"atoc13(type, ob1, ob2, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> rc, dc\n\n"
 "Observed place at a groundbased site to to ICRS astrometric RA,Dec.\n"
 "The caller supplies UTC, site coordinates, ambient air conditions\n"
 "and observing wavelength.\n"
@@ -1125,7 +1124,7 @@ _erfa_atoi13(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atoi13_doc,
-"atoi13(type, ob1, ob2, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> ri, di\n"
+"atoi13(type, ob1, ob2, utc1, utc2, dut1, elong, phi, hm, xp, yp, phpa, tc, rh, wl) -> ri, di\n\n"
 "Observed place at a groundbased site to to ICRS astrometric RA,Dec.\n"
 "The caller supplies UTC, site coordinates, ambient air conditions\n"
 "and observing wavelength.\n"
@@ -1182,7 +1181,7 @@ _erfa_atoiq(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_atoiq_doc,
-"atoiq(type, ob1, ob2, astrom) -> ri, di\n"
+"atoiq(type, ob1, ob2, astrom) -> ri, di\n\n"
 "Observed place at a groundbased site to to ICRS astrometric RA,Dec.\n"
 "The caller supplies UTC, site coordinates, ambient air conditions\n"
 "and observing wavelength.\n"
@@ -1211,7 +1210,7 @@ _erfa_ld(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ld_doc,
-"ld(bm, p[3], q[3], e[3], em, dlim) -> p1[3]\n"
+"ld(bm, p[3], q[3], e[3], em, dlim) -> p1[3]\n\n"
 "Apply light deflection by a solar-system body, as part of\n"
 "transforming coordinate direction into natural direction.\n"
 "Given:\n"
@@ -1294,12 +1293,11 @@ _erfa_ldn(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ldn_doc,
-"ld(b[], ob[3], sc[3]) -> sn[3]\n"
+"ld(b[], ob[3], sc[3]) -> sn[3]\n\n"
 "For a star, apply light deflection by multiple solar-system bodies,\n"
 "as part of transforming coordinate direction into natural direction.\n"
 "Given:\n"
-"    n    number of bodies\n"
-"    b    data for each of the n bodies\n"
+"    b    data for each of the bodies\n"
 "    ob   barycentric position of the observer (au)\n"
 "    sc   observer to star coord direction (unit vector)\n"
 "Returned:\n"
@@ -1319,7 +1317,7 @@ _erfa_ldsun(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_ldsun_doc,
-"ldsun(p[3], e[3], em) -> p1[3]\n"
+"ldsun(p[3], e[3], em) -> p1[3]\n\n"
 "Light deflection by the Sun.\n"
 "Given:\n"
 "    p      direction from observer to source (unit vector)\n"
@@ -1341,7 +1339,7 @@ _erfa_pmpx(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pmpx_doc,
-"pmpx(rc, dc, pr, pd, px, rv, pmt, pob) -> pco[3]\n"
+"pmpx(rc, dc, pr, pd, px, rv, pmt, pob) -> pco[3]\n\n"
 "Proper motion and parallax.\n"
 "Given:\n"
 "    rc,dc  ICRS RA,Dec at catalog epoch (radians)\n"
@@ -1387,7 +1385,7 @@ _erfa_pmsafe(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pmsafe_doc,
-"pmsafe(ra1, dec1, pmr1, pmd1, px1, rv1, ep1a, ep1b, ep2a, ep2b, -> ra2, dec2, pmr2, pmd2, px2, rv2)\n"
+"pmsafe(ra1, dec1, pmr1, pmd1, px1, rv1, ep1a, ep1b, ep2a, ep2b, -> ra2, dec2, pmr2, pmd2, px2, rv2)\n\n"
 "Star proper motion:  update star catalog data for space motion, with\n"
 "special handling to handle the zero parallax case.\n"
 "Given:\n"
@@ -1423,7 +1421,7 @@ _erfa_pvtob(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_pvtob_doc,
-"pvtob(elong, phi, hm, xp, yp, sp, theta) -> pv[2][3]\n"
+"pvtob(elong, phi, hm, xp, yp, sp, theta) -> pv[2][3]\n\n"
 "Position and velocity of a terrestrial observing station.\n"
 "Given:\n"
 "    elong   double       longitude (radians, east +ve)\n"
@@ -1447,7 +1445,7 @@ _erfa_refco(PyObject *self, PyObject *args)
 }
 
 PyDoc_STRVAR(_erfa_refco_doc,
-"refco(phpa, tc, rh, wl) -> refa, refb\n"
+"refco(phpa, tc, rh, wl) -> refa, refb\n\n"
 "Determine the constants A and B in the atmospheric refraction model\n"
 "dZ = A tan Z + B tan^3 Z.\n"
 "\n"
@@ -1477,7 +1475,7 @@ _erfa_bi00(PyObject *self)
 }
 
 PyDoc_STRVAR(_erfa_bi00_doc,
-"bi00() -> dpsibi,depsbi,dra\n"
+"bi00() -> dpsibi,depsbi,dra\n\n"
 "Frame bias components of IAU 2000 precession-nutation models (part of MHB2000 with additions).\n"
 "Returned:\n"
 "    dpsibi,depsbi    obliquity and correction\n"
@@ -2076,6 +2074,10 @@ _erfa_dat(PyObject *self, PyObject *args)
         }      
         else if (status == -4){
             PyErr_SetString(_erfaError, "bad fraction day, should be < 1.");
+            return NULL;
+        }      
+        else if (status == -5){
+            PyErr_SetString(_erfaError, "Internal error");
             return NULL;
         }      
     }
