@@ -1087,15 +1087,6 @@ class Validate(unittest.TestCase):
         self.assertEqual(S, 13)
         self.assertEqual(F, 3333)
 
-##    def test_d2tf(self):
-##        c,h,m,s,f = erfa.d2tf(4, -0.987654321)
-##        self.assertEqual(c, '-')
-##        self.assertEqual(h, 23)
-##        self.assertEqual(m, 42)
-##        self.assertEqual(s, 13)
-##        self.assertEqual(f, 3333)
-##
-
     def test_dat(self):
         d = erfa.dat(2003, 6, 1, 0.0)
         self.assertAlmostEqual(d, 32.0, 9)
@@ -2196,6 +2187,17 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(c[0], 0.3, places=12)        
         self.assertAlmostEqual(c[1], 1.2, places=12)        
         self.assertAlmostEqual(c[2], -2.5, places=12)        
+
+    def test_cpv(self):
+        pv = ((0.3,1.2,-2.5),
+              (-0.5,3.1,0.9))
+        c = erfa.cpv(pv)
+        self.assertAlmostEqual(c[0][0],  0.3, 0.0,)
+        self.assertAlmostEqual(c[0][1],  1.2, 0.0,)
+        self.assertAlmostEqual(c[0][2], -2.5, 0.0,)
+        self.assertAlmostEqual(c[1][0], -0.5, 0.0,)
+        self.assertAlmostEqual(c[1][1],  3.1, 0.0,)
+        self.assertAlmostEqual(c[1][2],  0.9, 0.0,)
 
     def test_cr(self):
         a = ((2.0,3.0,2.0),

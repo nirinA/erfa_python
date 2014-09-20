@@ -5019,13 +5019,13 @@ static PyObject *
 _erfa_cpv(PyObject *self, PyObject *args)
 {
     double pv[2][3], c[2][3];
-    if (!PyArg_ParseTuple(args, "(ddd)(ddd)",
+    if (!PyArg_ParseTuple(args, "((ddd)(ddd))",
                                   &pv[0][0], &pv[0][1], &pv[0][2],
                                   &pv[1][0], &pv[1][1], &pv[1][2])) {
         return NULL;
     }
     eraCpv(pv, c);
-    return Py_BuildValue("(ddd)(ddd)",
+    return Py_BuildValue("((ddd)(ddd))",
                            c[0][0],c[0][1],c[0][2],
                            c[1][0],c[1][1],c[1][2]);    
 }
