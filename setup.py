@@ -9,6 +9,8 @@ LIBRARIES = ['m']
 sources = ['src/erfa.c', 'src/_erfamodule.c']
 extra_compile_args = []
 
+## TODO: add buildext for use of system liberfa
+
 if sys.platform == 'darwin':
 #### is there some way to check this compatibility version on OSX ?
 ##    extra_compile_args.extend(['-Wl','-compatibility_version,0.0.0','-current_version,0.0.0'])

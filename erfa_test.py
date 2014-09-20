@@ -2244,10 +2244,12 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(ab, 20, 12)
 
     def test_pm(self):
-        m = erfa.pm((2.,2.,3.))
-        r = math.sqrt(2.*2.+2.*2.+3.*3.)
-        self.assertAlmostEqual(m, r, 14)
-
+##        m = erfa.pm((2.,2.,3.))
+##        r = math.sqrt(2.*2.+2.*2.+3.*3.)
+##        self.assertAlmostEqual(m, r, 14)
+        m = erfa.pm((0.3,1.2,-2.5))
+        self.assertAlmostEqual(m, 2.789265136196270604, 14)
+        
     def test_pmp(self):
         a = (2.0,2.0,3.0)
         b = (1.0,3.0,4.0)
@@ -2355,6 +2357,9 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(axb[0][0],  -1.0, places=12)
         self.assertAlmostEqual(axb[0][1],  -5.0, places=12)
         self.assertAlmostEqual(axb[0][2],   4.0, places=12)
+        self.assertAlmostEqual(axb[1][0],  -2.0, places=12,)
+        self.assertAlmostEqual(axb[1][1], -36.0, places=12,)
+        self.assertAlmostEqual(axb[1][2],  22.0, places=12,)
 
     def test_pxp(self):
         axb = erfa.pxp((2.0,2.0,3.0),(1.0,3.0,4.0))
