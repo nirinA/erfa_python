@@ -73,4 +73,5 @@ __all__ = ['ASTROM', 'AULT', 'CMPS', 'D2PI', 'DAS2R', 'DAU', 'DAYSEC',
            'tcgtt', 'tdbtcb', 'tdbtt', 'tf2a', 'tf2d', 'tr', 'trxp',
            'trxpv', 'tttai', 'tttcg', 'tttdb', 'ttut1', 'ut1tai',
            'ut1tt', 'ut1utc', 'utctai', 'utcut1', 'xy06', 'xys00a',
-           'xys00b', 'xys06a', 'zp', 'zpv', 'zr']
+           'xys00b', 'xys06a', 'zp', 'zpv', 'zr',
+           'icrs2g']

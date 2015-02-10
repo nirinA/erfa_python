@@ -2589,6 +2589,20 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(trpv[1][1], 5.3, places=12)
         self.assertAlmostEqual(trpv[1][2], 4.1, places=12)
 
+    def test_icrs2g(self):
+        dr =  5.9338074302227188048671087
+        dd = -1.1784870613579944551540570
+        dl, db = erfa.icrs2g(dr,dd)
+        self.assertAlmostEqual(dl,  5.5850536063818546461558, places=14)
+        self.assertAlmostEqual(db, -0.7853981633974483096157, places=14)
+
+    def test_g2icrs(self):
+        dl =  5.5850536063818546461558105
+        db = -0.7853981633974483096156608
+        dr, dd = erfa.g2icrs(dl, db)
+        self.assertAlmostEqual(dr,  5.9338074302227188048671, places=14)
+        self.assertAlmostEqual(dd, -1.1784870613579944551541, places=14)
+        
 ## some older version of Python 2.7
 ## failed to use 'support'
 if __name__ == '__main__':

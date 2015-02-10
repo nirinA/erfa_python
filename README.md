@@ -22,6 +22,8 @@ to use this wrapper, you need:
 
   . newer version of gcc (4.7+) is prefered.
 
+for windows, only Python 2.7 is supported.
+
 --------
 download
 --------
@@ -156,6 +158,18 @@ can be found in ``examples/`` directory.
 ----------
 what's new
 ----------
+
+***********
+. 20150211
+***********
+
+- add new functions ``icrs2g`` and ``g2icrs`` from latest SOFA release
+
+***********
+. 20141016
+**********
+
+- upload a windows binary to PyPi.
 
 ***********
 . 20140921

@@ -70,6 +70,7 @@ _to_py_astrom(eraASTROM *a)
     return v;
 }
 
+
 static PyStructSequence_Field ASTROM_type_fields[] = {
     {"pmt", "PM time interval (SSB, Julian years)"},
     {"eb", "SSB to observer (vector, au)"},
@@ -6074,6 +6075,48 @@ PyDoc_STRVAR(_erfa_trxpv_doc,
 "Given and returned:\n"
 "   trpv        r * pv");
 
+static PyObject *
+_erfa_icrs2g(PyObject *self, PyObject *args)
+{
+    double dr, dd, dl, db;
+    if (!PyArg_ParseTuple(args, "dd", &dr, &dd)) {
+        return NULL;
+    }
+    eraIcrs2g(dr, dd, &dl, &db);
+    return Py_BuildValue("dd", dl, db);
+}
+
+PyDoc_STRVAR(_erfa_icrs2g_doc,
+"icrs2g(dr, dd) -> (dl, db)\n\n"
+"Transformation from ICRS to Galactic Coordinates.\n"
+"Given:\n"
+"   dr          ICRS right ascension (radians)\n"
+"   dd          ICRS declination (radians)\n"
+"Returned:\n"
+"   dl          galactic longitude (radians)\n"
+"   db          galactic latitude (radians)");
+
+static PyObject *
+_erfa_g2icrs(PyObject *self, PyObject *args)
+{
+    double dr, dd, dl, db;
+    if (!PyArg_ParseTuple(args, "dd", &dl, &db)) {
+        return NULL;
+    }
+    eraG2icrs(dl, db, &dr, &dd);
+    return Py_BuildValue("dd", dr, dd);
+}
+
+PyDoc_STRVAR(_erfa_g2icrs_doc,
+"g2icrs(dl, db) -> (dr, dd)\n\n"
+"Transformation from ICRS to Galactic Coordinates.\n"
+"Given:\n"
+"   dl          galactic longitude (radians)\n"
+"   db          galactic latitude (radians)\n"
+"Returned:\n"
+"   dr          ICRS right ascension (radians)\n"
+"   dd          ICRS declination (radians)");
+
 
 static PyMethodDef _erfa_methods[] = {
     {"ab", _erfa_ab, METH_VARARGS, _erfa_ab_doc},
@@ -6289,6 +6332,8 @@ static PyMethodDef _erfa_methods[] = {
     {"tr", _erfa_tr, METH_VARARGS, _erfa_tr_doc},
     {"trxp", _erfa_trxp, METH_VARARGS, _erfa_trxp_doc},
     {"trxpv", _erfa_trxpv, METH_VARARGS, _erfa_trxpv_doc},
+    {"icrs2g", _erfa_icrs2g, METH_VARARGS, _erfa_icrs2g_doc},
+    {"g2icrs", _erfa_g2icrs, METH_VARARGS, _erfa_g2icrs_doc},
     {NULL,		NULL}		/* sentinel */
 };
 
