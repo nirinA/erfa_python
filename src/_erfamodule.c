@@ -1049,7 +1049,8 @@ _erfa_atoc13(PyObject *self, PyObject *args)
                                  &type, &ob1, &ob2, &utc1, &utc2, &dut1,
                                  &elong, &phi, &hm, &xp, &yp, &phpa, &tc, &rh, &wl))      
         return NULL;
-    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0 ||
+        strcmp("r", type) == 0 || strcmp("h", type) == 0 || strcmp("a", type) == 0) {
         j = eraAtoc13(type, ob1, ob2, utc1, utc2, dut1,
                       elong, phi, hm, xp, yp, phpa, tc, rh, wl,
                       &rc, &dc);
@@ -1104,7 +1105,8 @@ _erfa_atoi13(PyObject *self, PyObject *args)
                                  &type, &ob1, &ob2, &utc1, &utc2, &dut1,
                                  &elong, &phi, &hm, &xp, &yp, &phpa, &tc, &rh, &wl))      
         return NULL;
-    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0 ||
+        strcmp("r", type) == 0 || strcmp("h", type) == 0 || strcmp("a", type) == 0) {
         j = eraAtoi13(type, ob1, ob2, utc1, utc2, dut1,
                       elong, phi, hm, xp, yp, phpa, tc, rh, wl,
                       &ri, &di);
@@ -1171,7 +1173,8 @@ _erfa_atoiq(PyObject *self, PyObject *args)
                                  &astrom.diurab, &astrom.eral,
                                  &astrom.refa, &astrom.refb))      
         return NULL;
-    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0 ||
+        strcmp("r", type) == 0 || strcmp("h", type) == 0 || strcmp("a", type) == 0) {
         eraAtoiq(type, ob1, ob2, &astrom, &ri, &di);
     }
     else {
