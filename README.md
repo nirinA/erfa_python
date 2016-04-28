@@ -16,7 +16,7 @@ requirements
 
 to use this wrapper, you need:
 
-* Python 2.7 - 3.4
+* Python 2.7 - 3.5
 
 * C compiler to build the module.
 
