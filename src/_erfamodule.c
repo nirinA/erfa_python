@@ -70,7 +70,6 @@ _to_py_astrom(eraASTROM *a)
     return v;
 }
 
-
 static PyStructSequence_Field ASTROM_type_fields[] = {
     {"pmt", "PM time interval (SSB, Julian years)"},
     {"eb", "SSB to observer (vector, au)"},
@@ -603,55 +602,55 @@ _erfa_atciqn(PyObject *self, PyObject *args)
                                  &astrom.diurab, &astrom.eral,
                                  &astrom.refa, &astrom.refb))      
         return NULL;
-        n = (int)PyList_Size(ldbody);
-        b = (eraLDBODY *)malloc(n * sizeof(eraLDBODY));
-        if (NULL == b) {
-            PyErr_SetString(_erfaError, "malloc failed with LDBODY");
-            return NULL;
-        }
-        for (j=0;j<n;j++) {
-            pyl = PyList_GetItem(ldbody, j);
-            Py_INCREF(pyl);
-            pybm = PyStructSequence_GET_ITEM(pyl, 0);
-            Py_INCREF(pybm);
-            b[j].bm = (double)PyFloat_AsDouble(pybm);
-            Py_DECREF(pybm);
-            Py_DECREF(pyl);
+    n = (int)PyList_Size(ldbody);
+    b = (eraLDBODY *)malloc(n * sizeof(eraLDBODY));
+    if (NULL == b) {
+        PyErr_SetString(_erfaError, "malloc failed with LDBODY");
+        return NULL;
+    }
+    for (j=0;j<n;j++) {
+        pyl = PyList_GetItem(ldbody, j);
+        Py_INCREF(pyl);
+        pybm = PyStructSequence_GET_ITEM(pyl, 0);
+        Py_INCREF(pybm);
+        b[j].bm = (double)PyFloat_AsDouble(pybm);
+        Py_DECREF(pybm);
+        Py_DECREF(pyl);
 
-            Py_INCREF(pyl);
-            pydl = PyStructSequence_GET_ITEM(pyl, 1);
-            Py_INCREF(pydl);
-            b[j].dl = (double)PyFloat_AsDouble(pydl);
-            Py_DECREF(pydl);
-            Py_DECREF(pyl);
+        Py_INCREF(pyl);
+        pydl = PyStructSequence_GET_ITEM(pyl, 1);
+        Py_INCREF(pydl);
+        b[j].dl = (double)PyFloat_AsDouble(pydl);
+        Py_DECREF(pydl);
+        Py_DECREF(pyl);
 
-            Py_INCREF(pyl);
-            pypv = PyStructSequence_GET_ITEM(pyl, 2);
-            Py_INCREF(pypv);
-            
-            for (k=0;k<2;k++) {
-                p = PyStructSequence_GET_ITEM(pypv, k);
-                Py_INCREF(p);
-                for (l=0;l<3;l++) {
-                    a = PyStructSequence_GET_ITEM(p, l);
-                    if (a == NULL) {
-                        PyErr_SetString(_erfaError, "cannot retrieve data from args");
-                        Py_XDECREF(a);
-                        Py_XDECREF(p);
-                        Py_XDECREF(pypv);
-                        return NULL;
-                    }
-                    Py_INCREF(a);
-                    b[j].pv[k][l] = (double)PyFloat_AsDouble(a);
-                    Py_DECREF(a);
+        Py_INCREF(pyl);
+        pypv = PyStructSequence_GET_ITEM(pyl, 2);
+        Py_INCREF(pypv);
+        
+        for (k=0;k<2;k++) {
+            p = PyStructSequence_GET_ITEM(pypv, k);
+            Py_INCREF(p);
+            for (l=0;l<3;l++) {
+                a = PyStructSequence_GET_ITEM(p, l);
+                if (a == NULL) {
+                    PyErr_SetString(_erfaError, "cannot retrieve data from args");
+                    Py_XDECREF(a);
+                    Py_XDECREF(p);
+                    Py_XDECREF(pypv);
+                    return NULL;
                 }
-                Py_DECREF(p);
+                Py_INCREF(a);
+                b[j].pv[k][l] = (double)PyFloat_AsDouble(a);
+                Py_DECREF(a);
             }
-
-            Py_DECREF(pypv);
-            Py_DECREF(pyl);
-            
+            Py_DECREF(p);
         }
+
+        Py_DECREF(pypv);
+        Py_DECREF(pyl);
+        
+    }
     eraAtciqn(rc, dc, pr, pd, px, rv, &astrom, n, b, &ri, &di);
     free(b);
     return Py_BuildValue("dd", ri, di);
@@ -1049,8 +1048,7 @@ _erfa_atoc13(PyObject *self, PyObject *args)
                                  &type, &ob1, &ob2, &utc1, &utc2, &dut1,
                                  &elong, &phi, &hm, &xp, &yp, &phpa, &tc, &rh, &wl))      
         return NULL;
-    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0 ||
-        strcmp("r", type) == 0 || strcmp("h", type) == 0 || strcmp("a", type) == 0) {
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
         j = eraAtoc13(type, ob1, ob2, utc1, utc2, dut1,
                       elong, phi, hm, xp, yp, phpa, tc, rh, wl,
                       &rc, &dc);
@@ -1105,8 +1103,7 @@ _erfa_atoi13(PyObject *self, PyObject *args)
                                  &type, &ob1, &ob2, &utc1, &utc2, &dut1,
                                  &elong, &phi, &hm, &xp, &yp, &phpa, &tc, &rh, &wl))      
         return NULL;
-    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0 ||
-        strcmp("r", type) == 0 || strcmp("h", type) == 0 || strcmp("a", type) == 0) {
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
         j = eraAtoi13(type, ob1, ob2, utc1, utc2, dut1,
                       elong, phi, hm, xp, yp, phpa, tc, rh, wl,
                       &ri, &di);
@@ -1173,8 +1170,7 @@ _erfa_atoiq(PyObject *self, PyObject *args)
                                  &astrom.diurab, &astrom.eral,
                                  &astrom.refa, &astrom.refb))      
         return NULL;
-    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0 ||
-        strcmp("r", type) == 0 || strcmp("h", type) == 0 || strcmp("a", type) == 0) {
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
         eraAtoiq(type, ob1, ob2, &astrom, &ri, &di);
     }
     else {
@@ -1242,56 +1238,56 @@ _erfa_ldn(PyObject *self, PyObject *args)
                                  &sc[0], &sc[1], &sc[2]))
         return NULL;
 
-        n = (int)PyList_Size(ldbody);
-        b = (eraLDBODY *)malloc(n * sizeof(eraLDBODY));
-        if (NULL == b) {
-            PyErr_SetString(_erfaError, "malloc failed with LDBODY");
-            return NULL;
-        }
-        for (j=0;j<n;j++) {
-            pyl = PyList_GetItem(ldbody, j);
-            Py_INCREF(pyl);
-            pybm = PyStructSequence_GET_ITEM(pyl, 0);
-            Py_INCREF(pybm);
-            b[j].bm = (double)PyFloat_AsDouble(pybm);
-            Py_DECREF(pybm);
-            Py_DECREF(pyl);
+    n = (int)PyList_Size(ldbody);
+    b = (eraLDBODY *)malloc(n * sizeof(eraLDBODY));
+    if (NULL == b) {
+        PyErr_SetString(_erfaError, "malloc failed with LDBODY");
+        return NULL;
+    }
+    for (j=0;j<n;j++) {
+        pyl = PyList_GetItem(ldbody, j);
+        Py_INCREF(pyl);
+        pybm = PyStructSequence_GET_ITEM(pyl, 0);
+        Py_INCREF(pybm);
+        b[j].bm = (double)PyFloat_AsDouble(pybm);
+        Py_DECREF(pybm);
+        Py_DECREF(pyl);
 
-            Py_INCREF(pyl);
-            pydl = PyStructSequence_GET_ITEM(pyl, 1);
-            Py_INCREF(pydl);
-            b[j].dl = (double)PyFloat_AsDouble(pydl);
-            Py_DECREF(pydl);
-            Py_DECREF(pyl);
+        Py_INCREF(pyl);
+        pydl = PyStructSequence_GET_ITEM(pyl, 1);
+        Py_INCREF(pydl);
+        b[j].dl = (double)PyFloat_AsDouble(pydl);
+        Py_DECREF(pydl);
+        Py_DECREF(pyl);
 
-            Py_INCREF(pyl);
-            pypv = PyStructSequence_GET_ITEM(pyl, 2);
-            Py_INCREF(pypv);
-            
-            for (k=0;k<2;k++) {
-                p = PyStructSequence_GET_ITEM(pypv, k);
-                Py_INCREF(p);
-                for (l=0;l<3;l++) {
-                    a = PyStructSequence_GET_ITEM(p, l);
-                    if (a == NULL) {
-                        PyErr_SetString(_erfaError, "cannot retrieve data from args");
-                        Py_XDECREF(a);
-                        Py_XDECREF(p);
-                        Py_XDECREF(pypv);
-                        return NULL;
-                    }
-                    Py_INCREF(a);
-                    b[j].pv[k][l] = (double)PyFloat_AsDouble(a);
-                    Py_DECREF(a);
+        Py_INCREF(pyl);
+        pypv = PyStructSequence_GET_ITEM(pyl, 2);
+        Py_INCREF(pypv);
+        
+        for (k=0;k<2;k++) {
+            p = PyStructSequence_GET_ITEM(pypv, k);
+            Py_INCREF(p);
+            for (l=0;l<3;l++) {
+                a = PyStructSequence_GET_ITEM(p, l);
+                if (a == NULL) {
+                    PyErr_SetString(_erfaError, "cannot retrieve data from args");
+                    Py_XDECREF(a);
+                    Py_XDECREF(p);
+                    Py_XDECREF(pypv);
+                    return NULL;
                 }
-                Py_DECREF(p);
+                Py_INCREF(a);
+                b[j].pv[k][l] = (double)PyFloat_AsDouble(a);
+                Py_DECREF(a);
             }
-
-            Py_DECREF(pypv);
-            Py_DECREF(pyl);
-            
+            Py_DECREF(p);
         }
-        eraLdn(n, b, ob, sc, sn);
+
+        Py_DECREF(pypv);
+        Py_DECREF(pyl);
+        
+    }
+    eraLdn(n, b, ob, sc, sn);
     free(b);
     return Py_BuildValue("ddd", sn[0], sn[1], sn[2]);
 }
@@ -2438,8 +2434,8 @@ _erfa_epv00(PyObject *self, PyObject *args)
 {
     double dj1, dj2;
     int status;
-    double pvh[2][3] = {{[0]=0.},{[0]=0.}};
-    double pvb[2][3] = {{[0]=0.},{[0]=0.}};
+    double pvh[2][3]; // = {{0.,0.,0.}{0.,0.,0.}} //{{[0]=0.},{[0]=0.}};
+    double pvb[2][3]; //  = {{0.,0.,0.}{0.,0.,0.}} //{{[0]=0.},{[0]=0.}};
     if (! PyArg_ParseTuple(args, "dd", &dj1, &dj2))
         return NULL;
     status = eraEpv00(dj1, dj2, pvh, pvb);
