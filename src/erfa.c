@@ -55,12 +55,13 @@ void eraA2af(int ndp, double angle, char *sign, int idmsf[4])
 **     case where angle is very nearly 2pi and rounds up to 360 degrees,
 **     by testing for idmsf[0]=360 and setting idmsf[0-3] to zero.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
 /* Hours to degrees * radians to turns */
    const double F = 15.0 / ERFA_D2PI;
+
 
 /* Scale then use days to h,m,s function. */
    eraD2tf(ndp, angle*F, sign, idmsf);
@@ -120,7 +121,7 @@ void eraA2tf(int ndp, double angle, char *sign, int ihmsf[4])
 **     case where angle is very nearly 2pi and rounds up to 24 hours,
 **     by testing for ihmsf[0]=24 and setting ihmsf[0-3] to zero.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -179,12 +180,13 @@ void eraAb(double pnat[3], double v[3], double s, double bm1,
 **  Called:
 **     eraPdp       scalar product of two p-vectors
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int i;
    double pdv, w1, w2, r2, w, p[3], r;
+
 
    pdv = eraPdp(pnat, v);
    w1 = 1.0 + pdv/(1.0 + bm1);
@@ -237,7 +239,7 @@ int eraAf2a(char s, int ideg, int iamin, double asec, double *rad)
 **  3)  If there are multiple errors, the status value reflects only the
 **      first, the smallest taking precedence.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -270,11 +272,12 @@ double eraAnp(double a)
 **  Returned (function value):
 **              double     angle in range 0-2pi
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double w;
+
 
    w = fmod(a, ERFA_D2PI);
    if (w < 0) w += ERFA_D2PI;
@@ -297,11 +300,12 @@ double eraAnpm(double a)
 **  Returned (function value):
 **              double     angle in range +/-pi
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double w;
+
 
    w = fmod(a, ERFA_D2PI);
    if (fabs(w) >= ERFA_DPI) w -= ERFA_DSIGN(ERFA_D2PI, a);
@@ -412,13 +416,14 @@ void eraApcg(double date1, double date2,
 **  Called:
 **     eraApcs      astrometry parameters, ICRS-GCRS, space observer
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
 /* Geocentric observer */
    double pv[2][3] = { { 0.0, 0.0, 0.0 },
                        { 0.0, 0.0, 0.0 } };
+
 
 /* Compute the star-independent astrometry parameters. */
    eraApcs(date1, date2, pv, ebpv, ehp, astrom);
@@ -531,11 +536,12 @@ void eraApcg13(double date1, double date2, eraASTROM *astrom)
 **     eraEpv00     Earth position and velocity
 **     eraApcg      astrometry parameters, ICRS-GCRS, geocenter
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double ehpv[2][3], ebpv[2][3];
+
 
 /* Earth barycentric & heliocentric position/velocity (au, au/d). */
    (void) eraEpv00(date1, date2, ehpv, ebpv);
@@ -659,7 +665,7 @@ void eraApci(double date1, double date2,
 **     eraApcg      astrometry parameters, ICRS-GCRS, geocenter
 **     eraC2ixys    celestial-to-intermediate matrix, given X,Y and s
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -784,11 +790,12 @@ void eraApci13(double date1, double date2,
 **     eraApci      astrometry parameters, ICRS-CIRS
 **     eraEors      equation of the origins, given NPB matrix and s
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double ehpv[2][3], ebpv[2][3], r[3][3], x, y, s;
+
 
 /* Earth barycentric & heliocentric position/velocity (au, au/d). */
    (void) eraEpv00(date1, date2, ehpv, ebpv);
@@ -964,11 +971,12 @@ void eraApco(double date1, double date2,
 **     eraApcs      astrometry parameters, ICRS-GCRS, space observer
 **     eraCr        copy r-matrix
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double sl, cl, r[3][3], pvc[2][3], pv[2][3];
+
 
 /* Longitude with adjustment for TIO locator s'. */
    astrom->along = elong + sp;
@@ -1185,13 +1193,14 @@ int eraApco13(double utc1, double utc2, double dut1,
 **     eraApco      astrometry parameters, ICRS-observed
 **     eraEors      equation of the origins, given NPB matrix and s
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j;
    double tai1, tai2, tt1, tt2, ut11, ut12, ehpv[2][3], ebpv[2][3],
           r[3][3], x, y, s, theta, sp, refa, refb;
+
 
 /* UTC to other time scales. */
    j = eraUtctai(utc1, utc2, &tai1, &tai2);
@@ -1357,7 +1366,7 @@ void eraApcs(double date1, double date2, double pv[2][3],
 **     eraPn        decompose p-vector into modulus and direction
 **     eraIr        initialize r-matrix to identity
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -1369,6 +1378,7 @@ void eraApcs(double date1, double date2, double pv[2][3],
 
    int i;
    double dp, dv, pb[3], vb[3], ph[3], v2, w;
+
 
 /* Time since reference epoch, years (for proper motion calculation). */
    astrom->pmt = ( (date1 - ERFA_DJ00) + date2 ) / ERFA_DJY;
@@ -1515,11 +1525,12 @@ void eraApcs13(double date1, double date2, double pv[2][3],
 **     eraEpv00     Earth position and velocity
 **     eraApcs      astrometry parameters, ICRS-GCRS, space observer
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double ehpv[2][3], ebpv[2][3];
+
 
 /* Earth barycentric & heliocentric position/velocity (au, au/d). */
    (void) eraEpv00(date1, date2, ehpv, ebpv);
@@ -1620,7 +1631,7 @@ void eraAper(double theta, eraASTROM *astrom)
 **     aberration and parallax (unless subsumed into the ICRS <-> GCRS
 **     transformation), and atmospheric refraction.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -1738,7 +1749,7 @@ void eraAper13(double ut11, double ut12, eraASTROM *astrom)
 **     eraAper      astrometry parameters: update ERA
 **     eraEra00     Earth rotation angle, IAU 2000
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -1861,11 +1872,12 @@ void eraApio(double sp, double theta,
 **     eraPvtob     position/velocity of terrestrial station
 **     eraAper      astrometry parameters: update ERA
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double sl, cl, pv[2][3];
+
 
 /* Longitude with adjustment for TIO locator s'. */
    astrom->along = elong + sp;
@@ -2059,12 +2071,13 @@ int eraApio13(double utc1, double utc2, double dut1,
 **     eraRefco     refraction constants for given ambient conditions
 **     eraApio      astrometry parameters, CIRS-observed
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j;
    double tai1, tai2, tt1, tt2, ut11, ut12, sp, theta, refa, refb;
+
 
 /* UTC to other time scales. */
    j = eraUtctai(utc1, utc2, &tai1, &tai2);
@@ -2170,12 +2183,13 @@ void eraAtci13(double rc, double dc,
 **     eraApci13    astrometry parameters, ICRS-CIRS, 2013
 **     eraAtciq     quick ICRS to CIRS
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
 /* Star-independent astrometry parameters */
    eraASTROM astrom;
+
 
 /* The transformation parameters. */
    eraApci13(date1, date2, &astrom, eo);
@@ -2251,11 +2265,12 @@ void eraAtciq(double rc, double dc,
 **     eraC2s       p-vector to spherical
 **     eraAnp       normalize angle into range 0 to 2pi
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double pco[3], pnat[3], ppr[3], pi[3], w;
+
 
 /* Proper motion and parallax, giving BCRS coordinate direction. */
    eraPmpx(rc, dc, pr, pd, px, rv, astrom->pmt, astrom->eb, pco);
@@ -2293,6 +2308,7 @@ void eraAtciqn(double rc, double dc, double pr, double pd,
 **  where many star positions are to be transformed for one date.  The
 **  star-independent parameters can be obtained by calling one of the
 **  functions eraApci[13], eraApcg[13], eraApco[13] or eraApcs[13].
+**
 **
 **  If the only light-deflecting body to be taken into account is the
 **  Sun, the eraAtciq function can be used instead.  If in addition the
@@ -2377,11 +2393,12 @@ void eraAtciqn(double rc, double dc, double pr, double pd,
 **     eraC2s       p-vector to spherical
 **     eraAnp       normalize angle into range 0 to 2pi
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double pco[3], pnat[3], ppr[3], pi[3], w;
+
 
 /* Proper motion and parallax, giving BCRS coordinate direction. */
    eraPmpx(rc, dc, pr, pd, px, rv, astrom->pmt, astrom->eb, pco);
@@ -2466,11 +2483,12 @@ void eraAtciqz(double rc, double dc, eraASTROM *astrom,
 **     eraC2s       p-vector to spherical
 **     eraAnp       normalize angle into range +/- pi
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double pco[3], pnat[3], ppr[3], pi[3], w;
+
 
 /* BCRS coordinate direction (unit vector). */
    eraS2c(rc, dc, pco);
@@ -2641,15 +2659,16 @@ int eraAtco13(double rc, double dc,
 **  Called:
 **     eraApco13    astrometry parameters, ICRS-observed, 2013
 **     eraAtciq     quick ICRS to CIRS
-**     eraAtioq     quick ICRS to observed
+**     eraAtioq     quick CIRS to observed
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j;
    eraASTROM astrom;
    double ri, di;
+
 
 /* Star-independent astrometry parameters. */
    j = eraApco13(utc1, utc2, dut1, elong, phi, hm, xp, yp,
@@ -2742,12 +2761,13 @@ void eraAtic13(double ri, double di, double date1, double date2,
 **     eraApci13    astrometry parameters, ICRS-CIRS, 2013
 **     eraAticq     quick CIRS to ICRS astrometric
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
 /* Star-independent astrometry parameters */
    eraASTROM astrom;
+
 
 /* Star-independent astrometry parameters. */
    eraApci13(date1, date2, &astrom, eo);
@@ -2818,13 +2838,14 @@ void eraAticq(double ri, double di, eraASTROM *astrom,
 **     eraC2s       p-vector to spherical
 **     eraAnp       normalize angle into range +/- pi
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j, i;
    double pi[3], ppr[3], pnat[3], pco[3], w, d[3], before[3], r2, r,
           after[3];
+
 
 /* CIRS RA,Dec to Cartesian. */
    eraS2c(ri, di, pi);
@@ -2991,13 +3012,14 @@ void eraAticqn(double ri, double di, eraASTROM *astrom,
 **     eraC2s       p-vector to spherical
 **     eraAnp       normalize angle into range +/- pi
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j, i;
    double pi[3], ppr[3], pnat[3], pco[3], w, d[3], before[3], r2, r,
           after[3];
+
 
 /* CIRS RA,Dec to Cartesian. */
    eraS2c(ri, di, pi);
@@ -3199,14 +3221,15 @@ int eraAtio13(double ri, double di,
 **
 **  Called:
 **     eraApio13    astrometry parameters, CIRS-observed, 2013
-**     eraAtioq     quick ICRS to observed
+**     eraAtioq     quick CIRS to observed
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j;
    eraASTROM astrom;
+
 
 /* Star-independent astrometry parameters for CIRS->observed. */
    j = eraApio13(utc1, utc2, dut1, elong, phi, hm, xp, yp,
@@ -3320,7 +3343,7 @@ void eraAtioq(double ri, double di, eraASTROM *astrom,
 **     eraC2s       p-vector to spherical
 **     eraAnp       normalize angle into range 0 to 2pi
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -3332,7 +3355,6 @@ void eraAtioq(double ri, double di, eraASTROM *astrom,
           xaet, yaet, zaet, azobs, r, tz, w, del, cosdel,
           xaeo, yaeo, zaeo, zdobs, hmobs, dcobs, raobs;
 
-/*--------------------------------------------------------------------*/
 
 /* CIRS RA,Dec to Cartesian -HA,Dec. */
    eraS2c(ri-astrom->eral, di, v);
@@ -3547,13 +3569,14 @@ int eraAtoc13(const char *type, double ob1, double ob2,
 **     eraAtoiq     quick observed to CIRS
 **     eraAticq     quick CIRS to ICRS
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j;
    eraASTROM astrom;
    double eo, ri, di;
+
 
 /* Star-independent astrometry parameters. */
    j = eraApco13(utc1, utc2, dut1, elong, phi, hm, xp, yp,
@@ -3715,12 +3738,13 @@ int eraAtoi13(const char *type, double ob1, double ob2,
 **     eraApio13    astrometry parameters, CIRS-observed, 2013
 **     eraAtoiq     quick observed to CIRS
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j;
    eraASTROM astrom;
+
 
 /* Star-independent astrometry parameters for CIRS->observed. */
    j = eraApio13(utc1, utc2, dut1, elong, phi, hm, xp, yp,
@@ -3827,7 +3851,7 @@ void eraAtoiq(const char *type,
 **     eraC2s       p-vector to spherical
 **     eraAnp       normalize angle into range 0 to 2pi
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -3836,6 +3860,7 @@ void eraAtoiq(const char *type,
           xmhdo, ymhdo, zmhdo, az, sz, zdo, refa, refb, tz, dref,
           zdt, xaet, yaet, zaet, xmhda, ymhda, zmhda,
           f, xhd, yhd, zhd, xpl, ypl, w, hma;
+
 
 /* Coordinate type. */
    c = (int) type[0];
@@ -3976,7 +4001,7 @@ void eraBi00(double *dpsibi, double *depsbi, double *dra)
 **     2002.  The MHB2000 code itself was obtained on 9th September 2002
 **     from ftp://maia.usno.navy.mil/conv2000/chapter5/IAU2000A.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -3986,6 +4011,7 @@ void eraBi00(double *dpsibi, double *depsbi, double *dra)
 
 /* The ICRS RA of the J2000.0 equinox (Chapront et al., 2002) */
    const double DRA0 = -0.0146 * ERFA_DAS2R;
+
 
 /* Return the results (which are fixed). */
    *dpsibi = DPBIAS;
@@ -4066,7 +4092,7 @@ void eraBp00(double date1, double date2,
 **     n.b. The celestial ephemeris origin (CEO) was renamed "celestial
 **          intermediate origin" (CIO) by IAU 2006 Resolution 2.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -4075,6 +4101,7 @@ void eraBp00(double date1, double date2,
 
    double t, dpsibi, depsbi, dra0, psia77, oma77, chia,
           dpsipr, depspr, psia, oma, rbw[3][3];
+
 
 /* Interval between fundamental epoch J2000.0 and current date (JC). */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJC;
@@ -4177,11 +4204,12 @@ void eraBp06(double date1, double date2,
 **
 **     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double gamb, phib, psib, epsa, rbpw[3][3], rbt[3][3];
+
 
 /* B matrix. */
    eraPfw06(ERFA_DJM0, ERFA_DJM00, &gamb, &phib, &psib, &epsa);
@@ -4235,7 +4263,7 @@ void eraBpn2xy(double rbpn[3][3], double *x, double *y)
 **     n.b. The celestial ephemeris origin (CEO) was renamed "celestial
 **          intermediate origin" (CIO) by IAU 2006 Resolution 2.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -4315,11 +4343,12 @@ void eraC2i00a(double date1, double date2, double rc2i[3][3])
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rbpn[3][3];
+
 
 /* Obtain the celestial-to-true matrix (IAU 2000A). */
    eraPnm00a(date1, date2, rbpn);
@@ -4399,11 +4428,12 @@ void eraC2i00b(double date1, double date2, double rc2i[3][3])
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rbpn[3][3];
+
 
 /* Obtain the celestial-to-true matrix (IAU 2000B). */
    eraPnm00b(date1, date2, rbpn);
@@ -4474,11 +4504,12 @@ void eraC2i06a(double date1, double date2, double rc2i[3][3])
 **     McCarthy, D. D., Petit, G. (eds.), 2004, IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rbpn[3][3], x, y, s;
+
 
 /* Obtain the celestial-to-true matrix (IAU 2006/2000A). */
    eraPnm06a(date1, date2, rbpn);
@@ -4567,11 +4598,12 @@ void eraC2ibpn(double date1, double date2, double rbpn[3][3],
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double x, y;
+
 
 /* Extract the X,Y coordinates. */
    eraBpn2xy(rbpn, &x, &y);
@@ -4648,7 +4680,7 @@ void eraC2ixy(double date1, double date2, double x, double y,
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 
@@ -4707,7 +4739,7 @@ void eraC2ixys(double x, double y, double s, double rc2i[3][3])
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -4752,11 +4784,12 @@ void eraC2s(double p[3], double *theta, double *phi)
 **
 **  3) At either pole, zero theta is returned.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double x, y, z, d2;
+
 
    x  = p[0];
    y  = p[1];
@@ -4844,11 +4877,12 @@ void eraC2t00a(double tta, double ttb, double uta, double utb,
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rc2i[3][3], era, sp, rpom[3][3];
+
 
 /* Form the celestial-to-intermediate matrix for this TT (IAU 2000A). */
    eraC2i00a(tta, ttb, rc2i );
@@ -4942,11 +4976,12 @@ void eraC2t00b(double tta, double ttb, double uta, double utb,
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rc2i[3][3], era, rpom[3][3];
+
 
 /* Form the celestial-to-intermediate matrix for this TT (IAU 2000B). */
    eraC2i00b(tta, ttb, rc2i);
@@ -5036,11 +5071,12 @@ void eraC2t06a(double tta, double ttb, double uta, double utb,
 **     McCarthy, D. D., Petit, G. (eds.), 2004, IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rc2i[3][3], era, sp, rpom[3][3];
+
 
 /* Form the celestial-to-intermediate matrix for this TT. */
    eraC2i06a(tta, ttb, rc2i);
@@ -5113,11 +5149,12 @@ void eraC2tcio(double rc2i[3][3], double era, double rpom[3][3],
 **     McCarthy, D. D., Petit, G. (eds.), 2004, IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double r[3][3];
+
 
 /* Construct the matrix. */
    eraCr(rc2i, r);
@@ -5180,11 +5217,12 @@ void eraC2teqx(double rbpn[3][3], double gst, double rpom[3][3],
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double r[3][3];
+
 
 /* Construct the matrix. */
    eraCr(rbpn, r);
@@ -5278,12 +5316,13 @@ void eraC2tpe(double tta, double ttb, double uta, double utb,
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double epsa, rb[3][3], rp[3][3], rbp[3][3], rn[3][3],
           rbpn[3][3], gmst, ee, sp, rpom[3][3];
+
 
 /* Form the celestial-to-true matrix for this TT. */
    eraPn00(tta, ttb, dpsi, deps, &epsa, rb, rp, rbp, rn, rbpn);
@@ -5386,11 +5425,12 @@ void eraC2txy(double tta, double ttb, double uta, double utb,
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rc2i[3][3], era, sp, rpom[3][3];
+
 
 /* Form the celestial-to-intermediate matrix for this TT. */
    eraC2ixy(tta, ttb, x, y, rc2i);
@@ -5454,7 +5494,7 @@ int eraCal2jd(int iy, int im, int id, double *djm0, double *djm)
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Section 12.92 (p604).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -5467,6 +5507,7 @@ int eraCal2jd(int iy, int im, int id, double *djm0, double *djm)
 /* Month lengths in days */
    static const int mtab[]
                      = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
 
 /* Preset status. */
    j = 0;
@@ -5509,7 +5550,7 @@ void eraCp(double p[3], double c[3])
 **  Returned:
 **     c        double[3]     copy
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -5538,7 +5579,7 @@ void eraCpv(double pv[2][3], double c[2][3])
 **  Called:
 **     eraCp        copy p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -5566,7 +5607,7 @@ void eraCr(double r[3][3], double c[3][3])
 **  Called:
 **     eraCp        copy p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -5648,7 +5689,7 @@ int eraD2dtf(const char *scale, int ndp, double d1, double d2,
 **     eraD2tf      decompose days to hms
 **     eraDat       delta(AT) = TAI-UTC
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -5656,6 +5697,7 @@ int eraD2dtf(const char *scale, int ndp, double d1, double d2,
    char s;
    int iy1, im1, id1, js, iy2, im2, id2, ihmsf1[4], i;
    double a1, b1, fd, dat0, dat12, w, dat24, dleap;
+
 
 /* The two-part JD. */
    a1 = d1;
@@ -5806,12 +5848,13 @@ void eraD2tf(int ndp, double days, char *sign, int ihmsf[4])
 **     case where days is very nearly 1.0 and rounds up to 24 hours,
 **     by testing for ihmsf[0]=24 and setting ihmsf[0-3] to zero.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int nrs, n;
    double rs, rm, rh, a, w, ah, am, as, af;
+
 
 /* Handle sign. */
    *sign = (char) ( ( days >= 0.0 ) ? '+' : '-' );
@@ -5920,6 +5963,7 @@ int eraDat(int iy, int im, int id, double fd, double *deltat )
 **                      -2 = bad month
 **                      -3 = bad day (Note 3)
 **                      -4 = bad fraction (Note 4)
+**                      -5 = internal error (Note 5)
 **
 **  Notes:
 **
@@ -5960,7 +6004,9 @@ int eraDat(int iy, int im, int id, double fd, double *deltat )
 **  5) The status value returned in the case where there are multiple
 **     errors refers to the first error detected.  For example, if the
 **     month and day are 13 and 32 respectively, status -2 (bad month)
-**     will be returned.
+**     will be returned.  The "internal error" status refers to a
+**     case that is impossible but causes some compilers to issue a
+**     warning.
 **
 **  6) In cases where a valid result is not available, zero is returned.
 **
@@ -5975,7 +6021,7 @@ int eraDat(int iy, int im, int id, double fd, double *deltat )
 **  Called:
 **     eraCal2jd    Gregorian calendar to JD
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -6052,7 +6098,7 @@ int eraDat(int iy, int im, int id, double fd, double *deltat )
    };
 
 /* Number of Delta(AT) changes */
-   const int NDAT = sizeof changes / sizeof changes[0];
+   enum { NDAT = (int) (sizeof changes / sizeof changes[0]) };
 
 /* Miscellaneous local variables */
    int j, i, m;
@@ -6084,6 +6130,9 @@ int eraDat(int iy, int im, int id, double fd, double *deltat )
    for (i = NDAT-1; i >=0; i--) {
       if (m >= (12 * changes[i].iyear + changes[i].month)) break;
    }
+
+/* Prevent underflow warnings. */
+   if (i < 0) return -5;
 
 /* Get the Delta(AT). */
    da = changes[i].delat;
@@ -6256,7 +6305,7 @@ double eraDtdb(double date1, double date2,
 **     Simon, J.L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
 **     Francou, G. & Laskar, J., Astron.Astrophys., 282, 663-683 (1994).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -7160,6 +7209,7 @@ double eraDtdb(double date1, double date2,
       {    0.000209e-6,      155.420399434,  1.989815753 }
    };
 
+
 /* Time since J2000.0 in Julian millennia. */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJM;
 
@@ -7331,12 +7381,13 @@ int eraDtf2d(const char *scale, int iy, int im, int id,
 **     eraDat       delta(AT) = TAI-UTC
 **     eraJd2cal    JD to Gregorian calendar
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int js, iy2, im2, id2;
    double dj, w, day, seclim, dat0, dat12, dat24, dleap, time;
+
 
 /* Today's Julian Day Number. */
    js = eraCal2jd(iy, im, id, &dj, &w);
@@ -7404,6 +7455,165 @@ int eraDtf2d(const char *scale, int iy, int im, int id,
 
 }
 
+void eraEceq06(double date1, double date2, double dl, double db,
+               double *dr, double *dd)
+/*
+**  - - - - - - - - - -
+**   e r a E c e q 0 6
+**  - - - - - - - - - -
+**
+**  Transformation from ecliptic coordinates (mean equinox and ecliptic
+**  of date) to ICRS RA,Dec, using the IAU 2006 precession model.
+**
+**  Given:
+**     date1,date2 double TT as a 2-part Julian date (Note 1)
+**     dl,db       double ecliptic longitude and latitude (radians)
+**
+**  Returned:
+**     dr,dd       double ICRS right ascension and declination (radians)
+**
+**  1) The TT date date1+date2 is a Julian Date, apportioned in any
+**     convenient way between the two arguments.  For example,
+**     JD(TT)=2450123.7 could be expressed in any of these ways,
+**     among others:
+**
+**            date1          date2
+**
+**         2450123.7           0.0       (JD method)
+**         2451545.0       -1421.3       (J2000 method)
+**         2400000.5       50123.2       (MJD method)
+**         2450123.5           0.2       (date & time method)
+**
+**     The JD method is the most natural and convenient to use in
+**     cases where the loss of several decimal digits of resolution
+**     is acceptable.  The J2000 method is best matched to the way
+**     the argument is handled internally and will deliver the
+**     optimum resolution.  The MJD method and the date & time methods
+**     are both good compromises between resolution and convenience.
+**
+**  2) No assumptions are made about whether the coordinates represent
+**     starlight and embody astrometric effects such as parallax or
+**     aberration.
+**
+**  3) The transformation is approximately that from ecliptic longitude
+**     and latitude (mean equinox and ecliptic of date) to mean J2000.0
+**     right ascension and declination, with only frame bias (always
+**     less than 25 mas) to disturb this classical picture.
+**
+**  Called:
+**     eraS2c       spherical coordinates to unit vector
+**     eraEcm06     J2000.0 to ecliptic rotation matrix, IAU 2006
+**     eraTrxp      product of transpose of r-matrix and p-vector
+**     eraC2s       unit vector to spherical coordinates
+**     eraAnp       normalize angle into range 0 to 2pi
+**     eraAnpm      normalize angle into range +/- pi
+**
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
+**  Derived, with permission, from the SOFA library.  See notes at end of file.
+*/
+{
+   double rm[3][3], v1[3], v2[3], a, b;
+
+
+/* Spherical to Cartesian. */
+   eraS2c(dl, db, v1);
+
+/* Rotation matrix, ICRS equatorial to ecliptic. */
+   eraEcm06(date1, date2, rm);
+
+/* The transformation from ecliptic to ICRS. */
+   eraTrxp(rm, v1, v2);
+
+/* Cartesian to spherical. */
+   eraC2s(v2, &a, &b);
+
+/* Express in conventional ranges. */
+   *dr = eraAnp(a);
+   *dd = eraAnpm(b);
+
+}
+
+void eraEcm06(double date1, double date2, double rm[3][3])
+/*
+**  - - - - - - - - -
+**   e r a E c m 0 6
+**  - - - - - - - - -
+**
+**  ICRS equatorial to ecliptic rotation matrix, IAU 2006.
+**
+**  Given:
+**     date1,date2  double         TT as a 2-part Julian date (Note 1)
+**
+**  Returned:
+**     rm           double[3][3]   ICRS to ecliptic rotation matrix
+**
+**  Notes:
+**
+**  1) The TT date date1+date2 is a Julian Date, apportioned in any
+**     convenient way between the two arguments.  For example,
+**     JD(TT)=2450123.7 could be expressed in any of these ways,
+**     among others:
+**
+**            date1          date2
+**
+**         2450123.7           0.0       (JD method)
+**         2451545.0       -1421.3       (J2000 method)
+**         2400000.5       50123.2       (MJD method)
+**         2450123.5           0.2       (date & time method)
+**
+**     The JD method is the most natural and convenient to use in
+**     cases where the loss of several decimal digits of resolution
+**     is acceptable.  The J2000 method is best matched to the way
+**     the argument is handled internally and will deliver the
+**     optimum resolution.  The MJD method and the date & time methods
+**     are both good compromises between resolution and convenience.
+**
+**  1) The matrix is in the sense
+**
+**        E_ep = rm x P_ICRS,
+**
+**     where P_ICRS is a vector with respect to ICRS right ascension
+**     and declination axes and E_ep is the same vector with respect to
+**     the (inertial) ecliptic and equinox of date.
+**
+**  2) P_ICRS is a free vector, merely a direction, typically of unit
+**     magnitude, and not bound to any particular spatial origin, such
+**     as the Earth, Sun or SSB.  No assumptions are made about whether
+**     it represents starlight and embodies astrometric effects such as
+**     parallax or aberration.  The transformation is approximately that
+**     between mean J2000.0 right ascension and declination and ecliptic
+**     longitude and latitude, with only frame bias (always less than
+**     25 mas) to disturb this classical picture.
+**
+**  Called:
+**     eraObl06     mean obliquity, IAU 2006
+**     eraPmat06    PB matrix, IAU 2006
+**     eraIr        initialize r-matrix to identity
+**     eraRx        rotate around X-axis
+**     eraRxr       product of two r-matrices
+**
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
+**  Derived, with permission, from the SOFA library.  See notes at end of file.
+*/
+{
+   double ob, bp[3][3], e[3][3];
+
+
+/* Obliquity, IAU 2006. */
+   ob = eraObl06(date1, date2);
+
+/* Precession-bias matrix, IAU 2006. */
+   eraPmat06(date1, date2, bp);
+
+/* Equatorial of date to ecliptic matrix. */
+   eraIr(e);
+   eraRx(ob, e);
+
+/* ICRS to ecliptic coordinates rotation matrix, IAU 2006. */
+   eraRxr(e, bp, rm);
+
+}
+
 double eraEe00(double date1, double date2, double epsa, double dpsi)
 /*
 **  - - - - - - - -
@@ -7464,11 +7674,12 @@ double eraEe00(double date1, double date2, double epsa, double dpsi)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double ee;
+
 
 /* Equation of the equinoxes. */
    ee = dpsi * cos(epsa) + eraEect00(date1, date2);
@@ -7535,11 +7746,12 @@ double eraEe00a(double date1, double date2)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dpsipr, depspr, epsa, dpsi, deps, ee;
+
 
 /* IAU 2000 precession-rate adjustments. */
    eraPr00(date1, date2, &dpsipr, &depspr);
@@ -7621,11 +7833,12 @@ double eraEe00b(double date1, double date2)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dpsipr, depspr, epsa, dpsi, deps, ee;
+
 
 /* IAU 2000 precession-rate adjustments. */
    eraPr00(date1, date2, &dpsipr, &depspr);
@@ -7693,11 +7906,12 @@ double eraEe06a(double date1, double date2)
 **     McCarthy, D. D., Petit, G. (eds.), 2004, IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double gst06a, gmst06, ee;
+
 
 /* Apparent and mean sidereal times. */
    gst06a = eraGst06a(0.0, 0.0, date1, date2);
@@ -7801,7 +8015,7 @@ double eraEect00(double date1, double date2)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -7993,7 +8207,7 @@ int eraEform ( int n, double *a, double *f )
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     p220.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -8084,11 +8298,12 @@ double eraEo06a(double date1, double date2)
 **
 **     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double r[3][3], x, y, s, eo;
+
 
 /* Classical nutation x precession x bias matrix. */
    eraPnm06a(date1, date2, r);
@@ -8139,11 +8354,12 @@ double eraEors(double rnpb[3][3], double s)
 **
 **     Wallace, P. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double x, ax, xs, ys, zs, p, q, eo;
+
 
 /* Evaluate Wallace & Capitaine (2006) expression (16). */
    x = rnpb[2][0];
@@ -8185,7 +8401,7 @@ double eraEpb(double dj1, double dj2)
 **
 **     Lieske, J.H., 1979. Astron.Astrophys., 73, 282.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -8222,7 +8438,7 @@ void eraEpb2jd(double epb, double *djm0, double *djm)
 **
 **     Lieske, J.H., 1979, Astron.Astrophys. 73, 282.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -8259,11 +8475,12 @@ double eraEpj(double dj1, double dj2)
 **
 **     Lieske, J.H., 1979, Astron.Astrophys. 73, 282.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double epj;
+
 
    epj = 2000.0 + ((dj1 - ERFA_DJ00) + dj2) / ERFA_DJY;
 
@@ -8297,7 +8514,7 @@ void eraEpj2jd(double epj, double *djm0, double *djm)
 **
 **     Lieske, J.H., 1979, Astron.Astrophys. 73, 282.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -8402,7 +8619,7 @@ int eraEpv00(double date1, double date2,
 **  5) It is permissible to use the same array for pvh and pvb, which
 **     will receive the barycentric values.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -10843,6 +11060,85 @@ int eraEpv00(double date1, double date2,
 
 }
 
+void eraEqec06(double date1, double date2, double dr, double dd,
+               double *dl, double *db)
+/*
+**  - - - - - - - - - -
+**   e r a E q e c 0 6
+**  - - - - - - - - - -
+**
+**  Transformation from ICRS equatorial coordinates to ecliptic
+**  coordinates (mean equinox and ecliptic of date) using IAU 2006
+**  precession model.
+**
+**  Given:
+**     date1,date2 double TT as a 2-part Julian date (Note 1)
+**     dr,dd       double ICRS right ascension and declination (radians)
+**
+**  Returned:
+**     dl,db       double ecliptic longitude and latitude (radians)
+**
+**  1) The TT date date1+date2 is a Julian Date, apportioned in any
+**     convenient way between the two arguments.  For example,
+**     JD(TT)=2450123.7 could be expressed in any of these ways,
+**     among others:
+**
+**            date1          date2
+**
+**         2450123.7           0.0       (JD method)
+**         2451545.0       -1421.3       (J2000 method)
+**         2400000.5       50123.2       (MJD method)
+**         2450123.5           0.2       (date & time method)
+**
+**     The JD method is the most natural and convenient to use in
+**     cases where the loss of several decimal digits of resolution
+**     is acceptable.  The J2000 method is best matched to the way
+**     the argument is handled internally and will deliver the
+**     optimum resolution.  The MJD method and the date & time methods
+**     are both good compromises between resolution and convenience.
+**
+**  2) No assumptions are made about whether the coordinates represent
+**     starlight and embody astrometric effects such as parallax or
+**     aberration.
+**
+**  3) The transformation is approximately that from mean J2000.0 right
+**     ascension and declination to ecliptic longitude and latitude
+**     (mean equinox and ecliptic of date), with only frame bias (always
+**     less than 25 mas) to disturb this classical picture.
+**
+**  Called:
+**     eraS2c       spherical coordinates to unit vector
+**     eraEcm06     J2000.0 to ecliptic rotation matrix, IAU 2006
+**     eraRxp       product of r-matrix and p-vector
+**     eraC2s       unit vector to spherical coordinates
+**     eraAnp       normalize angle into range 0 to 2pi
+**     eraAnpm      normalize angle into range +/- pi
+**
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
+**  Derived, with permission, from the SOFA library.  See notes at end of file.
+*/
+{
+   double rm[3][3], v1[3], v2[3], a, b;
+
+
+/* Spherical to Cartesian. */
+   eraS2c(dr, dd, v1);
+
+/* Rotation matrix, ICRS equatorial to ecliptic. */
+   eraEcm06(date1, date2, rm);
+
+/* The transformation from ICRS to ecliptic. */
+   eraRxp(rm, v1, v2);
+
+/* Cartesian to spherical. */
+   eraC2s(v2, &a, &b);
+
+/* Express in conventional ranges. */
+   *dl = eraAnp(a);
+   *db = eraAnpm(b);
+
+}
+
 double eraEqeq94(double date1, double date2)
 /*
 **  - - - - - - - - - -
@@ -10894,11 +11190,12 @@ double eraEqeq94(double date1, double date2)
 **     Capitaine, N. & Gontier, A.-M., 1993, Astron. Astrophys., 275,
 **     645-650.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t,  om,  dpsi,  deps,  eps0, ee;
+
 
 /* Interval between fundamental epoch J2000.0 and given date (JC). */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJC;
@@ -10974,11 +11271,12 @@ double eraEra00(double dj1, double dj2)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double d1, d2, t, f, theta;
+
 
 /* Days since fundamental epoch. */
    if (dj1 < dj2) {
@@ -11032,11 +11330,12 @@ double eraFad03(double t)
 **     Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
 **     Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean elongation of the Moon from the Sun (IERS Conventions 2003). */
    a = fmod(          1072260.703692 +
@@ -11083,11 +11382,12 @@ double eraFae03(double t)
 **     Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
 **     Astron.Astrophys.Supp.Ser. 135, 111
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean longitude of Earth (IERS Conventions 2003). */
    a = fmod(1.753470314 + 628.3075849991 * t, ERFA_D2PI);
@@ -11128,11 +11428,12 @@ double eraFaf03(double t)
 **     Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
 **     Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean longitude of the Moon minus that of the ascending node */
 /* (IERS Conventions 2003).                                    */
@@ -11143,6 +11444,7 @@ double eraFaf03(double t)
              t * (          0.00000417 ) ) ) ), ERFA_TURNAS ) * ERFA_DAS2R;
 
    return a;
+
 
 }
 
@@ -11180,11 +11482,12 @@ double eraFaju03(double t)
 **     Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
 **     Astron.Astrophys.Supp.Ser. 135, 111
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean longitude of Jupiter (IERS Conventions 2003). */
    a = fmod(0.599546497 + 52.9690962641 * t, ERFA_D2PI);
@@ -11224,11 +11527,12 @@ double eraFal03(double t)
 **     Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
 **     Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean anomaly of the Moon (IERS Conventions 2003). */
    a = fmod(           485868.249036  +
@@ -11272,11 +11576,12 @@ double eraFalp03(double t)
 **     Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
 **     Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean anomaly of the Sun (IERS Conventions 2003). */
    a = fmod(         1287104.793048 +
@@ -11323,11 +11628,12 @@ double eraFama03(double t)
 **     Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
 **     Astron.Astrophys.Supp.Ser. 135, 111
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean longitude of Mars (IERS Conventions 2003). */
    a = fmod(6.203480913 + 334.0612426700 * t, ERFA_D2PI);
@@ -11370,11 +11676,12 @@ double eraFame03(double t)
 **     Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
 **     Astron.Astrophys.Supp.Ser. 135, 111
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean longitude of Mercury (IERS Conventions 2003). */
    a = fmod(4.402608842 + 2608.7903141574 * t, ERFA_D2PI);
@@ -11414,11 +11721,12 @@ double eraFane03(double t)
 **     Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
 **     Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean longitude of Neptune (IERS Conventions 2003). */
    a = fmod(5.311886287 + 3.8133035638 * t, ERFA_D2PI);
@@ -11458,11 +11766,12 @@ double eraFaom03(double t)
 **     Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
 **     Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean longitude of the Moon's ascending node */
 /* (IERS Conventions 2003).                    */
@@ -11511,11 +11820,12 @@ double eraFapa03(double t)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* General accumulated precession in longitude. */
    a = (0.024381750 + 0.00000538691 * t) * t;
@@ -11558,11 +11868,12 @@ double eraFasa03(double t)
 **     Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
 **     Astron.Astrophys.Supp.Ser. 135, 111
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean longitude of Saturn (IERS Conventions 2003). */
    a = fmod(0.874016757 + 21.3299104960 * t, ERFA_D2PI);
@@ -11602,11 +11913,12 @@ double eraFaur03(double t)
 **     Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
 **     Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean longitude of Uranus (IERS Conventions 2003). */
    a = fmod(5.481293872 + 7.4781598567 * t, ERFA_D2PI);
@@ -11649,11 +11961,12 @@ double eraFave03(double t)
 **     Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
 **     Astron.Astrophys.Supp.Ser. 135, 111
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double a;
+
 
 /* Mean longitude of Venus (IERS Conventions 2003). */
    a = fmod(3.176146697 + 1021.3285546211 * t, ERFA_D2PI);
@@ -11715,12 +12028,13 @@ void eraFk52h(double r5, double d5,
 **
 **     F.Mignard & M.Froeschle, Astron. Astrophys. 354, 732-739 (2000).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int i;
    double pv5[2][3], r5h[3][3], s5h[3], wxp[3], vv[3], pvh[2][3];
+
 
 /* FK5 barycentric position/velocity pv-vector (normalized). */
    eraStarpv(r5, d5, dr5, dd5, px5, rv5, pv5);
@@ -11786,7 +12100,7 @@ void eraFk5hip(double r5h[3][3], double s5h[3])
 **
 **     F.Mignard & M.Froeschle, Astron. Astrophys. 354, 732-739 (2000).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -11795,6 +12109,7 @@ void eraFk5hip(double r5h[3][3], double s5h[3])
 /* FK5 wrt Hipparcos orientation and spin (radians, radians/year) */
    double epx, epy, epz;
    double omx, omy, omz;
+
 
    epx = -19.9e-3 * ERFA_DAS2R;
    epy =  -9.1e-3 * ERFA_DAS2R;
@@ -11890,12 +12205,13 @@ void eraFk5hz(double r5, double d5, double date1, double date2,
 **
 **     F.Mignard & M.Froeschle, 2000, Astron.Astrophys. 354, 732-739.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t, p5e[3], r5h[3][3], s5h[3], vst[3], rst[3][3], p5[3],
           ph[3], w;
+
 
 /* Interval from given date to fundamental epoch J2000.0 (JY). */
    t = - ((date1 - ERFA_DJ00) + date2) / ERFA_DJY;
@@ -11991,7 +12307,7 @@ void eraFw2m(double gamb, double phib, double psi, double eps,
 **
 **     Hilton, J. et al., 2006, Celest.Mech.Dyn.Astron. 94, 351
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -12056,11 +12372,12 @@ void eraFw2xy(double gamb, double phib, double psi, double eps,
 **
 **     Hilton, J. et al., 2006, Celest.Mech.Dyn.Astron. 94, 351
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double r[3][3];
+
 
 /* Form NxPxB matrix. */
    eraFw2m(gamb, phib, psi, eps, r);
@@ -12133,7 +12450,7 @@ void eraG2icrs ( double dl, double db, double *dr, double *dd )
 **     derived from the ESA Hipparcos Space Astrometry Mission.  ESA
 **     Publications Division, Noordwijk, Netherlands.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -12230,12 +12547,13 @@ int eraGc2gd ( int n, double xyz[3],
 **     eraEform     Earth reference ellipsoids
 **     eraGc2gde    geocentric to geodetic transformation, general
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j;
    double a, f;
+
 
 /* Obtain reference ellipsoid parameters. */
    j = eraEform ( n, &a, &f );
@@ -12314,7 +12632,7 @@ int eraGc2gde ( double a, double f, double xyz[3],
 **     coordinates accelerated by Halley's method", J.Geodesy (2006)
 **     79: 689-693
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -12457,12 +12775,13 @@ int eraGd2gc ( int n, double elong, double phi, double height,
 **     eraGd2gce    geodetic to geocentric transformation, general
 **     eraZp        zero p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j;
    double a, f;
+
 
 /* Obtain reference ellipsoid parameters. */
    j = eraEform ( n, &a, &f );
@@ -12536,11 +12855,12 @@ int eraGd2gce ( double a, double f, double elong, double phi,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Section 4.22, p202.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double sp, cp, w, d, ac, as, r;
+
 
 /* Functions of geodetic latitude. */
    sp = sin(phi);
@@ -12631,11 +12951,12 @@ double eraGmst00(double uta, double utb, double tta, double ttb)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t, gmst;
+
 
 /* TT Julian centuries since J2000.0. */
    t = ((tta - ERFA_DJ00) + ttb) / ERFA_DJC;
@@ -12711,11 +13032,12 @@ double eraGmst06(double uta, double utb, double tta, double ttb)
 **     Capitaine, N., Wallace, P.T. & Chapront, J., 2005,
 **     Astron.Astrophys. 432, 355
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t, gmst;
+
 
 /* TT Julian centuries since J2000.0. */
    t = ((tta - ERFA_DJ00) + ttb) / ERFA_DJC;
@@ -12794,7 +13116,7 @@ double eraGmst82(double dj1, double dj2)
 **
 **     Aoki et al., Astron. Astrophys. 105, 359-361 (1982).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -12809,6 +13131,7 @@ double eraGmst82(double dj1, double dj2)
 /* at noon.                                                    */
 
    double d1, d2, t, f, gmst;
+
 
 /* Julian centuries since fundamental epoch. */
    if (dj1 < dj2) {
@@ -12899,11 +13222,12 @@ double eraGst00a(double uta, double utb, double tta, double ttb)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double gmst00, ee00a, gst;
+
 
    gmst00 = eraGmst00(uta, utb, tta, ttb);
    ee00a = eraEe00a(tta, ttb);
@@ -12990,11 +13314,12 @@ double eraGst00b(double uta, double utb)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double gmst00, ee00b, gst;
+
 
    gmst00 = eraGmst00(uta, utb, uta, utb);
    ee00b = eraEe00b(uta, utb);
@@ -13068,11 +13393,12 @@ double eraGst06(double uta, double utb, double tta, double ttb,
 **
 **     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double x, y, s, era, eors, gst;
+
 
 /* Extract CIP coordinates. */
    eraBpn2xy(rnpb, &x, &y);
@@ -13149,11 +13475,12 @@ double eraGst06a(double uta, double utb, double tta, double ttb)
 **
 **     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rnpb[3][3], gst;
+
 
 /* Classical nutation x precession x bias matrix, IAU 2000A. */
    eraPnm06a(tta, ttb, rnpb);
@@ -13227,11 +13554,12 @@ double eraGst94(double uta, double utb)
 **
 **     IAU Resolution C7, Recommendation 3 (1994)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double gmst82, eqeq94, gst;
+
 
    gmst82 = eraGmst82(uta, utb);
    eqeq94 = eraEqeq94(uta, utb);
@@ -13296,12 +13624,13 @@ void eraH2fk5(double rh, double dh,
 **
 **     F.Mignard & M.Froeschle, Astron. Astrophys. 354, 732-739 (2000).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int i;
    double pvh[2][3], r5h[3][3], s5h[3], sh[3], wxp[3], vv[3], pv5[2][3];
+
 
 /* Hipparcos barycentric position/velocity pv-vector (normalized). */
    eraStarpv(rh, dh, drh, ddh, pxh, rvh, pvh);
@@ -13408,13 +13737,14 @@ void eraHfk5z(double rh, double dh, double date1, double date2,
 **
 **     F.Mignard & M.Froeschle, 2000, Astron.Astrophys. 354, 732-739.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t, ph[3], r5h[3][3], s5h[3], sh[3], vst[3],
    rst[3][3], r5ht[3][3], pv5e[2][3], vv[3],
    w, r, v;
+
 
 /* Time interval from fundamental epoch J2000.0 to given date (JY). */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJY;
@@ -13515,7 +13845,7 @@ void eraIcrs2g ( double dr, double dd, double *dl, double *db )
 **     derived from the ESA Hipparcos Space Astrometry Mission.  ESA
 **     Publications Division, Noordwijk, Netherlands.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -13572,7 +13902,7 @@ void eraIr(double r[3][3])
 **  Returned:
 **     r       double[3][3]    r-matrix
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -13640,7 +13970,7 @@ int eraJd2cal(double dj1, double dj2,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Section 12.92 (p604).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -13650,6 +13980,7 @@ int eraJd2cal(double dj1, double dj2,
 
    long jd, l, n, i, k;
    double dj, d1, d2, f1, f2, f, d;
+
 
 /* Verify date is acceptable. */
    dj = dj1 + dj2;
@@ -13745,12 +14076,13 @@ int eraJdcalf(int ndp, double dj1, double dj2, int iymdf[4])
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Section 12.92 (p604).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int j, js;
    double denom, d1, d2, f1, f2, f;
+
 
 /* Denominator of fraction (e.g. 100 for 2 decimal places). */
    if ((ndp >= 0) && (ndp <= 9)) {
@@ -13864,12 +14196,13 @@ void eraLd(double bm, double p[3], double q[3], double e[3],
 **     eraPdp       scalar product of two p-vectors
 **     eraPxp       vector product of two p-vectors
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int i;
    double qpe[3], qdqpe, w, eq[3], peq[3];
+
 
 /* q . (q + e). */
    for (i = 0; i < 3; i++) {
@@ -13971,7 +14304,7 @@ void eraLdn(int n, eraLDBODY b[], double ob[3], double sc[3],
 **     eraPn        decompose p-vector into modulus and direction
 **     eraLd        light deflection by a solar-system body
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -13980,6 +14313,7 @@ void eraLdn(int n, eraLDBODY b[], double ob[3], double sc[3],
 
    int i;
    double  v[3], dt, ev[3], em, e[3];
+
 
 /* Star direction prior to deflection. */
    eraCp(sc, sn);
@@ -14044,13 +14378,633 @@ void eraLdsun(double p[3], double e[3], double em, double p1[3])
 **  Called:
 **     eraLd        light deflection by a solar-system body
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    eraLd(1.0, p, p, e, em, 1e-9, p1);
 
 /* Finished. */
+
+}
+
+void eraLteceq(double epj, double dl, double db, double *dr, double *dd)
+/*
+**  - - - - - - - - - -
+**   e r a L t e c e q
+**  - - - - - - - - - -
+**
+**  Transformation from ecliptic coordinates (mean equinox and ecliptic
+**  of date) to ICRS RA,Dec, using a long-term precession model.
+**
+**  Given:
+**     epj     double     Julian epoch (TT)
+**     dl,db   double     ecliptic longitude and latitude (radians)
+**
+**  Returned:
+**     dr,dd   double     ICRS right ascension and declination (radians)
+**
+**  1) No assumptions are made about whether the coordinates represent
+**     starlight and embody astrometric effects such as parallax or
+**     aberration.
+**
+**  2) The transformation is approximately that from ecliptic longitude
+**     and latitude (mean equinox and ecliptic of date) to mean J2000.0
+**     right ascension and declination, with only frame bias (always
+**     less than 25 mas) to disturb this classical picture.
+**
+**  3) The Vondrak et al. (2011, 2012) 400 millennia precession model
+**     agrees with the IAU 2006 precession at J2000.0 and stays within
+**     100 microarcseconds during the 20th and 21st centuries.  It is
+**     accurate to a few arcseconds throughout the historical period,
+**     worsening to a few tenths of a degree at the end of the
+**     +/- 200,000 year time span.
+**
+**  Called:
+**     eraS2c       spherical coordinates to unit vector
+**     eraLtecm     J2000.0 to ecliptic rotation matrix, long term
+**     eraTrxp      product of transpose of r-matrix and p-vector
+**     eraC2s       unit vector to spherical coordinates
+**     eraAnp       normalize angle into range 0 to 2pi
+**     eraAnpm      normalize angle into range +/- pi
+**
+**  References:
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
+**    expressions, valid for long time intervals, Astron.Astrophys. 534,
+**    A22
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2012, New precession
+**    expressions, valid for long time intervals (Corrigendum),
+**    Astron.Astrophys. 541, C1
+**
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
+**  Derived, with permission, from the SOFA library.  See notes at end of file.
+*/
+{
+   double rm[3][3], v1[3], v2[3], a, b;
+
+
+/* Spherical to Cartesian. */
+   eraS2c(dl, db, v1);
+
+/* Rotation matrix, ICRS equatorial to ecliptic. */
+   eraLtecm(epj, rm);
+
+/* The transformation from ecliptic to ICRS. */
+   eraTrxp(rm, v1, v2);
+
+/* Cartesian to spherical. */
+   eraC2s(v2, &a, &b);
+
+/* Express in conventional ranges. */
+   *dr = eraAnp(a);
+   *dd = eraAnpm(b);
+
+}
+
+void eraLtecm(double epj, double rm[3][3])
+/*
+**  - - - - - - - - -
+**   e r a L t e c m
+**  - - - - - - - - -
+**
+**  ICRS equatorial to ecliptic rotation matrix, long-term.
+**
+**  Given:
+**     epj     double         Julian epoch (TT)
+**
+**  Returned:
+**     rm      double[3][3]   ICRS to ecliptic rotation matrix
+**
+**  Notes:
+**
+**  1) The matrix is in the sense
+**
+**        E_ep = rm x P_ICRS,
+**
+**     where P_ICRS is a vector with respect to ICRS right ascension
+**     and declination axes and E_ep is the same vector with respect to
+**     the (inertial) ecliptic and equinox of epoch epj.
+**
+**  2) P_ICRS is a free vector, merely a direction, typically of unit
+**     magnitude, and not bound to any particular spatial origin, such
+**     as the Earth, Sun or SSB.  No assumptions are made about whether
+**     it represents starlight and embodies astrometric effects such as
+**     parallax or aberration.  The transformation is approximately that
+**     between mean J2000.0 right ascension and declination and ecliptic
+**     longitude and latitude, with only frame bias (always less than
+**     25 mas) to disturb this classical picture.
+**
+**  3) The Vondrak et al. (2011, 2012) 400 millennia precession model
+**     agrees with the IAU 2006 precession at J2000.0 and stays within
+**     100 microarcseconds during the 20th and 21st centuries.  It is
+**     accurate to a few arcseconds throughout the historical period,
+**     worsening to a few tenths of a degree at the end of the
+**     +/- 200,000 year time span.
+**
+**  Called:
+**     eraLtpequ    equator pole, long term
+**     eraLtpecl    ecliptic pole, long term
+**     eraPxp       vector product
+**     eraPn        normalize vector
+**
+**  References:
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
+**    expressions, valid for long time intervals, Astron.Astrophys. 534,
+**    A22
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2012, New precession
+**    expressions, valid for long time intervals (Corrigendum),
+**    Astron.Astrophys. 541, C1
+**
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
+**  Derived, with permission, from the SOFA library.  See notes at end of file.
+*/
+{
+/* Frame bias (IERS Conventions 2010, Eqs. 5.21 and 5.33) */
+   const double dx = -0.016617 * ERFA_DAS2R,
+                de = -0.0068192 * ERFA_DAS2R,
+                dr = -0.0146 * ERFA_DAS2R;
+
+   double p[3], z[3], w[3], s, x[3], y[3];
+
+
+/* Equator pole. */
+   eraLtpequ(epj, p);
+
+/* Ecliptic pole (bottom row of equatorial to ecliptic matrix). */
+   eraLtpecl(epj, z);
+
+/* Equinox (top row of matrix). */
+   eraPxp(p, z, w);
+   eraPn(w, &s, x);
+
+/* Middle row of matrix. */
+   eraPxp(z, x, y);
+
+/* Combine with frame bias. */
+   rm[0][0] =   x[0]    - x[1]*dr + x[2]*dx;
+   rm[0][1] =   x[0]*dr + x[1]    + x[2]*de;
+   rm[0][2] = - x[0]*dx - x[1]*de + x[2];
+   rm[1][0] =   y[0]    - y[1]*dr + y[2]*dx;
+   rm[1][1] =   y[0]*dr + y[1]    + y[2]*de;
+   rm[1][2] = - y[0]*dx - y[1]*de + y[2];
+   rm[2][0] =   z[0]    - z[1]*dr + z[2]*dx;
+   rm[2][1] =   z[0]*dr + z[1]    + z[2]*de;
+   rm[2][2] = - z[0]*dx - z[1]*de + z[2];
+
+}
+
+void eraLteqec(double epj, double dr, double dd, double *dl, double *db)
+/*
+**  - - - - - - - - - -
+**   e r a L t e q e c
+**  - - - - - - - - - -
+**
+**  Transformation from ICRS equatorial coordinates to ecliptic
+**  coordinates (mean equinox and ecliptic of date) using a long-term
+**  precession model.
+**
+**  Given:
+**     epj     double     Julian epoch (TT)
+**     dr,dd   double     ICRS right ascension and declination (radians)
+**
+**  Returned:
+**     dl,db   double     ecliptic longitude and latitude (radians)
+**
+**  1) No assumptions are made about whether the coordinates represent
+**     starlight and embody astrometric effects such as parallax or
+**     aberration.
+**
+**  2) The transformation is approximately that from mean J2000.0 right
+**     ascension and declination to ecliptic longitude and latitude
+**     (mean equinox and ecliptic of date), with only frame bias (always
+**     less than 25 mas) to disturb this classical picture.
+**
+**  3) The Vondrak et al. (2011, 2012) 400 millennia precession model
+**     agrees with the IAU 2006 precession at J2000.0 and stays within
+**     100 microarcseconds during the 20th and 21st centuries.  It is
+**     accurate to a few arcseconds throughout the historical period,
+**     worsening to a few tenths of a degree at the end of the
+**     +/- 200,000 year time span.
+**
+**  Called:
+**     eraS2c       spherical coordinates to unit vector
+**     eraLtecm     J2000.0 to ecliptic rotation matrix, long term
+**     eraRxp       product of r-matrix and p-vector
+**     eraC2s       unit vector to spherical coordinates
+**     eraAnp       normalize angle into range 0 to 2pi
+**     eraAnpm      normalize angle into range +/- pi
+**
+**  References:
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
+**    expressions, valid for long time intervals, Astron.Astrophys. 534,
+**    A22
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2012, New precession
+**    expressions, valid for long time intervals (Corrigendum),
+**    Astron.Astrophys. 541, C1
+**
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
+**  Derived, with permission, from the SOFA library.  See notes at end of file.
+*/
+{
+   double rm[3][3], v1[3], v2[3], a, b;
+
+
+/* Spherical to Cartesian. */
+   eraS2c(dr, dd, v1);
+
+/* Rotation matrix, ICRS equatorial to ecliptic. */
+   eraLtecm(epj, rm);
+
+/* The transformation from ICRS to ecliptic. */
+   eraRxp(rm, v1, v2);
+
+/* Cartesian to spherical. */
+   eraC2s(v2, &a, &b);
+
+/* Express in conventional ranges. */
+   *dl = eraAnp(a);
+   *db = eraAnpm(b);
+
+}
+
+void eraLtp(double epj, double rp[3][3])
+/*
+**  - - - - - - -
+**   e r a L t p
+**  - - - - - - -
+**
+**  Long-term precession matrix.
+**
+**  Given:
+**     epj     double         Julian epoch (TT)
+**
+**  Returned:
+**     rp      double[3][3]   precession matrix, J2000.0 to date
+**
+**  Notes:
+**
+**  1) The matrix is in the sense
+**
+**        P_date = rp x P_J2000,
+**
+**     where P_J2000 is a vector with respect to the J2000.0 mean
+**     equator and equinox and P_date is the same vector with respect to
+**     the equator and equinox of epoch epj.
+**
+**  2) The Vondrak et al. (2011, 2012) 400 millennia precession model
+**     agrees with the IAU 2006 precession at J2000.0 and stays within
+**     100 microarcseconds during the 20th and 21st centuries.  It is
+**     accurate to a few arcseconds throughout the historical period,
+**     worsening to a few tenths of a degree at the end of the
+**     +/- 200,000 year time span.
+**
+**  Called:
+**     eraLtpequ    equator pole, long term
+**     eraLtpecl    ecliptic pole, long term
+**     eraPxp       vector product
+**     eraPn        normalize vector
+**
+**  References:
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
+**    expressions, valid for long time intervals, Astron.Astrophys. 534,
+**    A22
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2012, New precession
+**    expressions, valid for long time intervals (Corrigendum),
+**    Astron.Astrophys. 541, C1
+**
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
+**  Derived, with permission, from the SOFA library.  See notes at end of file.
+*/
+{
+   int i;
+   double peqr[3], pecl[3], v[3], w, eqx[3];
+
+
+/* Equator pole (bottom row of matrix). */
+   eraLtpequ(epj, peqr);
+
+/* Ecliptic pole. */
+   eraLtpecl(epj, pecl);
+
+/* Equinox (top row of matrix). */
+   eraPxp(peqr, pecl, v);
+   eraPn(v, &w, eqx);
+
+/* Middle row of matrix. */
+   eraPxp(peqr, eqx, v);
+
+/* Assemble the matrix. */
+   for ( i = 0; i < 3; i++ ) {
+      rp[0][i] = eqx[i];
+      rp[1][i] = v[i];
+      rp[2][i] = peqr[i];
+   }
+
+}
+
+void eraLtpb(double epj, double rpb[3][3])
+/*
+**  - - - - - - - -
+**   e r a L t p b
+**  - - - - - - - -
+**
+**  Long-term precession matrix, including ICRS frame bias.
+**
+**  Given:
+**     epj     double         Julian epoch (TT)
+**
+**  Returned:
+**     rpb     double[3][3]   precession-bias matrix, J2000.0 to date
+**
+**  Notes:
+**
+**  1) The matrix is in the sense
+**
+**        P_date = rpb x P_ICRS,
+**
+**     where P_ICRS is a vector in the Geocentric Celestial Reference
+**     System, and P_date is the vector with respect to the Celestial
+**     Intermediate Reference System at that date but with nutation
+**     neglected.
+**
+**  2) A first order frame bias formulation is used, of sub-
+**     microarcsecond accuracy compared with a full 3D rotation.
+**
+**  3) The Vondrak et al. (2011, 2012) 400 millennia precession model
+**     agrees with the IAU 2006 precession at J2000.0 and stays within
+**     100 microarcseconds during the 20th and 21st centuries.  It is
+**     accurate to a few arcseconds throughout the historical period,
+**     worsening to a few tenths of a degree at the end of the
+**     +/- 200,000 year time span.
+**
+**  References:
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
+**    expressions, valid for long time intervals, Astron.Astrophys. 534,
+**    A22
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2012, New precession
+**    expressions, valid for long time intervals (Corrigendum),
+**    Astron.Astrophys. 541, C1
+**
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
+**  Derived, with permission, from the SOFA library.  See notes at end of file.
+*/
+{
+/* Frame bias (IERS Conventions 2010, Eqs. 5.21 and 5.33) */
+   const double dx = -0.016617 * ERFA_DAS2R,
+                de = -0.0068192 * ERFA_DAS2R,
+                dr = -0.0146 * ERFA_DAS2R;
+
+   int i;
+   double rp[3][3];
+
+
+/* Precession matrix. */
+   eraLtp(epj, rp);
+
+/* Apply the bias. */
+   for ( i = 0; i < 3; i++ ) {
+      rpb[i][0] =  rp[i][0]    - rp[i][1]*dr + rp[i][2]*dx;
+      rpb[i][1] =  rp[i][0]*dr + rp[i][1]    + rp[i][2]*de;
+      rpb[i][2] = -rp[i][0]*dx - rp[i][1]*de + rp[i][2];
+   }
+
+}
+
+void eraLtpecl(double epj, double vec[3])
+/*
+**  - - - - - - - - - -
+**   e r a L t p e c l
+**  - - - - - - - - - -
+**
+**  Long-term precession of the ecliptic.
+**
+**  Given:
+**     epj     double         Julian epoch (TT)
+**
+**  Returned:
+**     vec     double[3]      ecliptic pole unit vector
+**
+**  Notes:
+**
+**  1) The returned vector is with respect to the J2000.0 mean equator
+**     and equinox.
+**
+**  2) The Vondrak et al. (2011, 2012) 400 millennia precession model
+**     agrees with the IAU 2006 precession at J2000.0 and stays within
+**     100 microarcseconds during the 20th and 21st centuries.  It is
+**     accurate to a few arcseconds throughout the historical period,
+**     worsening to a few tenths of a degree at the end of the
+**     +/- 200,000 year time span.
+**
+**  References:
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
+**    expressions, valid for long time intervals, Astron.Astrophys. 534,
+**    A22
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2012, New precession
+**    expressions, valid for long time intervals (Corrigendum),
+**    Astron.Astrophys. 541, C1
+**
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
+**  Derived, with permission, from the SOFA library.  See notes at end of file.
+*/
+{
+/* Obliquity at J2000.0 (radians). */
+   static const double eps0 = 84381.406 * ERFA_DAS2R;
+
+/* Polynomial coefficients */
+   enum { NPOL = 4 };
+   static const double pqpol[2][NPOL] = {
+      { 5851.607687,
+          -0.1189000,
+          -0.00028913,
+           0.000000101},
+      {-1600.886300,
+           1.1689818,
+          -0.00000020,
+          -0.000000437}
+   };
+
+/* Periodic coefficients */
+   static const double pqper[][5] = {
+      { 708.15,-5486.751211,-684.661560,  667.666730,-5523.863691},
+      {2309.00,  -17.127623,2446.283880,-2354.886252, -549.747450},
+      {1620.00, -617.517403, 399.671049, -428.152441, -310.998056},
+      { 492.20,  413.442940,-356.652376,  376.202861,  421.535876},
+      {1183.00,   78.614193,-186.387003,  184.778874,  -36.776172},
+      { 622.00, -180.732815,-316.800070,  335.321713, -145.278396},
+      { 882.00,  -87.676083, 198.296701, -185.138669,  -34.744450},
+      { 547.00,   46.140315, 101.135679, -120.972830,   22.885731}
+   };
+   static const int NPER = (int) ( sizeof pqper / 5 / sizeof (double) );
+
+/* Miscellaneous */
+   int i;
+   double t, p, q, w, a, s, c;
+
+
+/* Centuries since J2000. */
+   t  = ( epj - 2000.0 ) / 100.0;
+
+/* Initialize P_A and Q_A accumulators. */
+   p = 0.0;
+   q = 0.0;
+
+/* Periodic terms. */
+   w = ERFA_D2PI*t;
+   for ( i = 0; i < NPER; i++ ) {
+      a = w/pqper[i][0];
+      s = sin(a);
+      c = cos(a);
+      p += c*pqper[i][1] + s*pqper[i][3];
+      q += c*pqper[i][2] + s*pqper[i][4];
+   }
+
+/* Polynomial terms. */
+   w = 1.0;
+   for ( i = 0; i < NPOL; i++ ) {
+      p += pqpol[0][i]*w;
+      q += pqpol[1][i]*w;
+      w *= t;
+   }
+
+/* P_A and Q_A (radians). */
+   p *= ERFA_DAS2R;
+   q *= ERFA_DAS2R;
+
+/* Form the ecliptic pole vector. */
+   w = 1.0 - p*p - q*q;
+   w = w < 0.0 ? 0.0 : sqrt(w);
+   s = sin(eps0);
+   c = cos(eps0);
+   vec[0] = p;
+   vec[1] = - q*c - w*s;
+   vec[2] = - q*s + w*c;
+
+}
+
+void eraLtpequ(double epj, double veq[3])
+/*
+**  - - - - - - - - - -
+**   e r a L t p e q u
+**  - - - - - - - - - -
+**
+**  Long-term precession of the equator.
+**
+**  Given:
+**     epj     double         Julian epoch (TT)
+**
+**  Returned:
+**     veq     double[3]      equator pole unit vector
+**
+**  Notes:
+**
+**  1) The returned vector is with respect to the J2000.0 mean equator
+**     and equinox.
+**
+**  2) The Vondrak et al. (2011, 2012) 400 millennia precession model
+**     agrees with the IAU 2006 precession at J2000.0 and stays within
+**     100 microarcseconds during the 20th and 21st centuries.  It is
+**     accurate to a few arcseconds throughout the historical period,
+**     worsening to a few tenths of a degree at the end of the
+**     +/- 200,000 year time span.
+**
+**  References:
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
+**    expressions, valid for long time intervals, Astron.Astrophys. 534,
+**    A22
+**
+**    Vondrak, J., Capitaine, N. and Wallace, P., 2012, New precession
+**    expressions, valid for long time intervals (Corrigendum),
+**    Astron.Astrophys. 541, C1
+**
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
+**  Derived, with permission, from the SOFA library.  See notes at end of file.
+*/
+{
+/* Polynomial coefficients */
+   enum { NPOL = 4 };
+   static const double xypol[2][NPOL] = {
+      {  5453.282155,
+            0.4252841,
+           -0.00037173,
+           -0.000000152},
+      {-73750.930350,
+           -0.7675452,
+           -0.00018725,
+            0.000000231}
+   };
+
+/* Periodic coefficients */
+   static const double xyper[][5] = {
+      { 256.75, -819.940624,75004.344875,81491.287984, 1558.515853},
+      { 708.15,-8444.676815,  624.033993,  787.163481, 7774.939698},
+      { 274.20, 2600.009459, 1251.136893, 1251.296102,-2219.534038},
+      { 241.45, 2755.175630,-1102.212834,-1257.950837,-2523.969396},
+      {2309.00, -167.659835,-2660.664980,-2966.799730,  247.850422},
+      { 492.20,  871.855056,  699.291817,  639.744522, -846.485643},
+      { 396.10,   44.769698,  153.167220,  131.600209,-1393.124055},
+      { 288.90, -512.313065, -950.865637, -445.040117,  368.526116},
+      { 231.10, -819.415595,  499.754645,  584.522874,  749.045012},
+      {1610.00, -538.071099, -145.188210,  -89.756563,  444.704518},
+      { 620.00, -189.793622,  558.116553,  524.429630,  235.934465},
+      { 157.87, -402.922932,  -23.923029,  -13.549067,  374.049623},
+      { 220.30,  179.516345, -165.405086, -210.157124, -171.330180},
+      {1200.00,   -9.814756,    9.344131,  -44.919798,  -22.899655}
+   };
+   static const int NPER = (int) ( sizeof xyper / 5 / sizeof (double) );
+
+/* Miscellaneous */
+   int i;
+   double t, x, y, w, a, s, c;
+
+
+/* Centuries since J2000. */
+   t  = ( epj - 2000.0 ) / 100.0;
+
+/* Initialize X and Y accumulators. */
+   x = 0.0;
+   y = 0.0;
+
+/* Periodic terms. */
+   w = ERFA_D2PI * t;
+   for ( i = 0; i < NPER; i++ ) {
+      a = w / xyper[i][0];
+      s = sin(a);
+      c = cos(a);
+      x += c*xyper[i][1] + s*xyper[i][3];
+      y += c*xyper[i][2] + s*xyper[i][4];
+   }
+
+/* Polynomial terms. */
+   w = 1.0;
+   for ( i = 0; i < NPOL; i++ ) {
+      x += xypol[0][i]*w;
+      y += xypol[1][i]*w;
+      w *= t;
+   }
+
+/* X and Y (direction cosines). */
+   x *= ERFA_DAS2R;
+   y *= ERFA_DAS2R;
+
+/* Form the equator pole vector. */
+   veq[0] = x;
+   veq[1] = y;
+   w = 1.0 - x*x - y*y;
+   veq[2] = w < 0.0 ? 0.0 : sqrt(w);
 
 }
 
@@ -14106,11 +15060,12 @@ void eraNum00a(double date1, double date2, double rmatn[3][3])
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Section 3.222-3 (p114).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dpsi, deps, epsa, rb[3][3], rp[3][3], rbp[3][3], rbpn[3][3];
+
 
 /* Obtain the required matrix (discarding other results). */
    eraPn00a(date1, date2,
@@ -14172,11 +15127,12 @@ void eraNum00b(double date1, double date2, double rmatn[3][3])
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Section 3.222-3 (p114).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dpsi, deps, epsa, rb[3][3], rp[3][3], rbp[3][3], rbpn[3][3];
+
 
 /* Obtain the required matrix (discarding other results). */
    eraPn00b(date1, date2,
@@ -14237,11 +15193,12 @@ void eraNum06a(double date1, double date2, double rmatn[3][3])
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Section 3.222-3 (p114).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double eps, dp, de;
+
 
 /* Mean obliquity. */
    eps = eraObl06(date1, date2);
@@ -14273,6 +15230,7 @@ void eraNumat(double epsa, double dpsi, double deps, double rmatn[3][3])
 **
 **  Notes:
 **
+**
 **  1) The supplied mean obliquity epsa, must be consistent with the
 **     precession-nutation models from which dpsi and deps were obtained.
 **
@@ -14296,7 +15254,7 @@ void eraNumat(double epsa, double dpsi, double deps, double rmatn[3][3])
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Section 3.222-3 (p114).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -14458,7 +15416,7 @@ void eraNut00a(double date1, double date2, double *dpsi, double *deps)
 **     Wallace, P.T., "Software for Implementing the IAU 2000
 **     Resolutions", in IERS Workshop 5.1 (2002)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -16419,7 +17377,7 @@ void eraNut00b(double date1, double date2, double *dpsi, double *deps)
 **     Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
 **     Francou, G., Laskar, J., Astron.Astrophys. 282, 663-683 (1994)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -16696,11 +17654,12 @@ void eraNut06a(double date1, double date2, double *dpsi, double *deps)
 **     Wallace, P.T., "Software for Implementing the IAU 2000
 **     Resolutions", in IERS Workshop 5.1 (2002)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t, fj2, dp, de;
+
 
 /* Interval between fundamental date J2000.0 and given date (JC). */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJC;
@@ -16767,7 +17726,7 @@ void eraNut80(double date1, double date2, double *dpsi, double *deps)
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Section 3.222 (p111).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -17035,11 +17994,12 @@ void eraNutm80(double date1, double date2, double rmatn[3][3])
 **     eraObl80     mean obliquity, IAU 1980
 **     eraNumat     form nutation matrix
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dpsi, deps, epsa;
+
 
 /* Nutation components and mean obliquity. */
    eraNut80(date1, date2, &dpsi, &deps);
@@ -17094,11 +18054,12 @@ double eraObl06(double date1, double date2)
 **
 **     Hilton, J. et al., 2006, Celest.Mech.Dyn.Astron. 94, 351
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t, eps0;
+
 
 /* Interval between fundamental date J2000.0 and given date (JC). */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJC;
@@ -17159,11 +18120,12 @@ double eraObl80(double date1, double date2)
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Expression 3.222-1 (p114).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t, eps0;
+
 
 /* Interval between fundamental epoch J2000.0 and given date (JC). */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJC;
@@ -17298,11 +18260,12 @@ void eraP06e(double date1, double date2,
 **  Called:
 **     eraObl06     mean obliquity, IAU 2006
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t;
+
 
 /* Interval between fundamental date J2000.0 and given date (JC). */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJC;
@@ -17462,7 +18425,7 @@ void eraP2pv(double p[3], double pv[2][3])
 **     eraCp        copy p-vector
 **     eraZp        zero p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -17499,7 +18462,7 @@ void eraP2s(double p[3], double *theta, double *phi, double *r)
 **     eraC2s       p-vector to spherical
 **     eraPm        modulus of p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -17547,11 +18510,12 @@ double eraPap(double a[3], double b[3])
 **     eraPmp       p-vector minus p-vector
 **     eraPdp       scalar product of two p-vectors
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double am, au[3], bm, st, ct, xa, ya, za, eta[3], xi[3], a2b[3], pa;
+
 
 /* Modulus and direction of the a vector. */
    eraPn(a, &am, au);
@@ -17620,11 +18584,12 @@ double eraPas(double al, double ap, double bl, double bp)
 **
 **  2) Zero is returned if the two points are coincident.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dl, x, y, pa;
+
 
    dl = bl - al;
    y = sin(dl) * cos(bp);
@@ -17698,11 +18663,12 @@ void eraPb06(double date1, double date2,
 **     eraPmat06    PB matrix, IAU 2006
 **     eraRz        rotate around Z-axis
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double r[3][3], r31, r32;
+
 
 /* Precession matrix via Fukushima-Williams angles. */
    eraPmat06(date1, date2, r);
@@ -17739,11 +18705,12 @@ double eraPdp(double a[3], double b[3])
 **  Returned (function value):
 **            double        a . b
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double w;
+
 
    w  = a[0] * b[0]
       + a[1] * b[1]
@@ -17826,11 +18793,12 @@ void eraPfw06(double date1, double date2,
 **  Called:
 **     eraObl06     mean obliquity, IAU 2006
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t;
+
 
 /* Interval between fundamental date J2000.0 and given date (JC). */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJC;
@@ -18020,7 +18988,7 @@ int eraPlan94(double date1, double date2, int np, double pv[2][3])
 **              Chapront-Touze, M., Francou, G., and Laskar, J.,
 **              Astron. Astrophys. 282, 663 (1994).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -18337,7 +19305,7 @@ double eraPm(double p[3])
 **  Returned (function value):
 **            double        modulus
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -18395,11 +19363,12 @@ void eraPmat00(double date1, double date2, double rbp[3][3])
 **     24th General Assembly, Manchester, UK.  Resolutions B1.3, B1.6.
 **     (2000)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rb[3][3], rp[3][3];
+
 
 /* Obtain the required matrix (discarding others). */
    eraBp00(date1, date2, rb, rp, rbp);
@@ -18459,11 +19428,12 @@ void eraPmat06(double date1, double date2, double rbp[3][3])
 **
 **     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double gamb, phib, psib, epsa;
+
 
 /* Bias-precession Fukushima-Williams angles. */
    eraPfw06(date1, date2, &gamb, &phib, &psib, &epsa);
@@ -18541,11 +19511,12 @@ void eraPmat76(double date1, double date2, double rmatp[3][3])
 **
 **     Kaplan,G.H., 1981. USNO circular no. 163, pA2.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double zeta, z, theta, wmat[3][3];
+
 
 /* Precession Euler angles, J2000.0 to specified date. */
    eraPrec76(ERFA_DJ00, 0.0, date1, date2, &zeta, &z, &theta);
@@ -18580,7 +19551,7 @@ void eraPmp(double a[3], double b[3], double amb[3])
 **     It is permissible to re-use the same array for any of the
 **     arguments.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -18638,7 +19609,7 @@ void eraPmpx(double rc, double dc, double pr, double pd,
 **     eraPdp       scalar product of two p-vectors
 **     eraPn        decompose p-vector into modulus and direction
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -18650,6 +19621,7 @@ void eraPmpx(double rc, double dc, double pr, double pd,
 
    int i;
    double sr, cr, sd, cd, x, y, z, p[3], dt, pxr, w, pdz, pm[3];
+
 
 /* Spherical coordinates to unit vector (and useful functions). */
    sr = sin(rc);
@@ -18786,7 +19758,7 @@ int eraPmsafe(double ra1, double dec1, double pmr1, double pmd1,
 **     eraSeps      angle between two points
 **     eraStarpm    update star catalog data for space motion
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -18799,6 +19771,7 @@ int eraPmsafe(double ra1, double dec1, double pmr1, double pmd1,
 
    int jpx, j;
    double pm, px1a;
+
 
 /* Proper motion in one year (radians). */
    pm = eraSeps(ra1, dec1, ra1+pmr1, dec1+pmd1);
@@ -18851,11 +19824,12 @@ void eraPn(double p[3], double *r, double u[3])
 **     eraZp        zero p-vector
 **     eraSxp       multiply p-vector by scalar
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double w;
+
 
 /* Obtain the modulus and test for zero. */
    w = eraPm(p);
@@ -18972,11 +19946,12 @@ void eraPn00(double date1, double date2, double dpsi, double deps,
 **     n.b. The celestial ephemeris origin (CEO) was renamed "celestial
 **          intermediate origin" (CIO) by IAU 2006 Resolution 2.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dpsipr, depspr, rbpw[3][3], rnw[3][3];
+
 
 /* IAU 2000 precession-rate adjustments. */
    eraPr00(date1, date2, &dpsipr, &depspr);
@@ -19094,7 +20069,7 @@ void eraPn00a(double date1, double date2,
 **     n.b. The celestial ephemeris origin (CEO) was renamed "celestial
 **          intermediate origin" (CIO) by IAU 2006 Resolution 2.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -19203,7 +20178,7 @@ void eraPn00b(double date1, double date2,
 **     n.b. The celestial ephemeris origin (CEO) was renamed "celestial
 **          intermediate origin" (CIO) by IAU 2006 Resolution 2.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -19310,11 +20285,12 @@ void eraPn06(double date1, double date2, double dpsi, double deps,
 **
 **     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double gamb, phib, psib, eps, r1[3][3], r2[3][3], rt[3][3];
+
 
 /* Bias-precession Fukushima-Williams angles of J2000.0 = frame bias. */
    eraPfw06(ERFA_DJM0, ERFA_DJM00, &gamb, &phib, &psib, &eps);
@@ -19434,7 +20410,7 @@ void eraPn06a(double date1, double date2,
 **
 **     Capitaine, N. & Wallace, P.T., 2006, Astron.Astrophys. 450, 855
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -19501,11 +20477,12 @@ void eraPnm00a(double date1, double date2, double rbpn[3][3])
 **     24th General Assembly, Manchester, UK.  Resolutions B1.3, B1.6.
 **     (2000)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dpsi, deps, epsa, rb[3][3], rp[3][3], rbp[3][3], rn[3][3];
+
 
 /* Obtain the required matrix (discarding other results). */
    eraPn00a(date1, date2, &dpsi, &deps, &epsa, rb, rp, rbp, rn, rbpn);
@@ -19567,11 +20544,12 @@ void eraPnm00b(double date1, double date2, double rbpn[3][3])
 **     24th General Assembly, Manchester, UK.  Resolutions B1.3, B1.6.
 **     (2000)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dpsi, deps, epsa, rb[3][3], rp[3][3], rbp[3][3], rn[3][3];
+
 
 /* Obtain the required matrix (discarding other results). */
    eraPn00b(date1, date2, &dpsi, &deps, &epsa, rb, rp, rbp, rn, rbpn);
@@ -19630,11 +20608,12 @@ void eraPnm06a(double date1, double date2, double rnpb[3][3])
 **
 **     Capitaine, N. & Wallace, P.T., 2006, Astron.Astrophys. 450, 855.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double gamb, phib, psib, epsa, dp, de;
+
 
 /* Fukushima-Williams angles for frame bias and precession. */
    eraPfw06(date1, date2, &gamb, &phib, &psib, &epsa);
@@ -19701,11 +20680,12 @@ void eraPnm80(double date1, double date2, double rmatpn[3][3])
 **     P. Kenneth Seidelmann (ed), University Science Books (1992),
 **     Section 3.3 (p145).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rmatp[3][3], rmatn[3][3];
+
 
 /* Precession matrix, J2000.0 to date. */
    eraPmat76(date1, date2, rmatp);
@@ -19766,7 +20746,7 @@ void eraPom00(double xp, double yp, double sp, double rpom[3][3])
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -19800,7 +20780,7 @@ void eraPpp(double a[3], double b[3], double apb[3])
 **     It is permissible to re-use the same array for any of the
 **     arguments.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -19835,11 +20815,12 @@ void eraPpsp(double a[3], double s, double b[3], double apsb[3])
 **     eraSxp       multiply p-vector by scalar
 **     eraPpp       p-vector plus p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double sb[3];
+
 
 /* s*b. */
    eraSxp(s, b, sb);
@@ -19917,7 +20898,7 @@ void eraPr00(double date1, double date2, double *dpsipr, double *depspr)
 **     Wallace, P.T., "Software for Implementing the IAU 2000
 **     Resolutions", in IERS Workshop 5.1 (2002).
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -19926,6 +20907,7 @@ void eraPr00(double date1, double date2, double *dpsipr, double *depspr)
 /* Precession and obliquity corrections (radians per century) */
    static const double PRECOR = -0.29965 * ERFA_DAS2R,
                        OBLCOR = -0.02524 * ERFA_DAS2R;
+
 
 /* Interval between fundamental epoch J2000.0 and given date (JC). */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJC;
@@ -20004,11 +20986,12 @@ void eraPrec76(double date01, double date02, double date11, double date12,
 **     Lieske, J.H., 1979, Astron.Astrophys. 73, 282, equations
 **     (6) & (7), p283.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t0, t, tas2r, w;
+
 
 /* Interval between fundamental epoch J2000.0 and start date (JC). */
    t0 = ((date01 - ERFA_DJ00) + date02) / ERFA_DJC;
@@ -20048,7 +21031,7 @@ void eraPv2p(double pv[2][3], double p[3])
 **  Called:
 **     eraCp        copy p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -20092,11 +21075,12 @@ void eraPv2s(double pv[2][3],
 **  2) If the position is a pole, theta, td and pd are indeterminate.
 **     In such cases zeroes are returned for all three.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double x, y, z, xd, yd, zd, rxy2, rxy, r2, rtrue, rw, xyp;
+
 
 /* Components of position/velocity vector. */
    x  = pv[0][0];
@@ -20172,11 +21156,12 @@ void eraPvdpv(double a[2][3], double b[2][3], double adb[2])
 **  Called:
 **     eraPdp       scalar product of two p-vectors
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double adbd, addb;
+
 
 /* a . b = constant part of result. */
    adb[0] = eraPdp(a[0], b[0]);
@@ -20212,7 +21197,7 @@ void eraPvm(double pv[2][3], double *r, double *s)
 **  Called:
 **     eraPm        modulus of p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -20248,7 +21233,7 @@ void eraPvmpv(double a[2][3], double b[2][3], double amb[2][3])
 **  Called:
 **     eraPmp       p-vector minus p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -20281,7 +21266,7 @@ void eraPvppv(double a[2][3], double b[2][3], double apb[2][3])
 **  Called:
 **     eraPpp       p-vector plus p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -20385,12 +21370,13 @@ int eraPvstar(double pv[2][3], double *ra, double *dec,
 **
 **     Stumpff, P., 1985, Astron.Astrophys. 144, 232-240.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double r, x[3], vr, ur[3], vt, ut[3], bett, betr, d, w, del,
           usr[3], ust[3], a, rad, decd, rd;
+
 
 /* Isolate the radial component of the velocity (AU/day, inertial). */
    eraPn(pv[0], &r, x);
@@ -20505,7 +21491,7 @@ void eraPvtob(double elong, double phi, double hm,
 **     eraPom00     polar motion matrix
 **     eraTrxp      product of transpose of r-matrix and p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -20513,6 +21499,7 @@ void eraPvtob(double elong, double phi, double hm,
    const double OM = 1.00273781191135448 * ERFA_D2PI / ERFA_DAYSEC;
 
    double xyzm[3], rpm[3][3], xyz[3], x, y, z, s, c;
+
 
 /* Geodetic to geocentric transformation (ERFA_WGS84). */
    (void) eraGd2gc(1, elong, phi, hm, xyzm);
@@ -20570,7 +21557,7 @@ void eraPvu(double dt, double pv[2][3], double upv[2][3])
 **     eraPpsp      p-vector plus scaled p-vector
 **     eraCp        copy p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -20603,7 +21590,7 @@ void eraPvup(double dt, double pv[2][3], double p[3])
 **
 **  2) The time units of dt must match those of the velocity.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -20645,11 +21632,12 @@ void eraPvxpv(double a[2][3], double b[2][3], double axb[2][3])
 **     eraPxp       vector product of two p-vectors
 **     eraPpp       p-vector plus p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double wa[2][3], wb[2][3], axbd[3], adxb[3];
+
 
 /* Make copies of the inputs. */
    eraCpv(a, wa);
@@ -20686,11 +21674,12 @@ void eraPxp(double a[3], double b[3], double axb[3])
 **     It is permissible to re-use the same array for any of the
 **     arguments.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double xa, ya, za, xb, yb, zb;
+
 
    xa = a[0];
    ya = a[1];
@@ -20851,12 +21840,13 @@ void eraRefco(double phpa, double tc, double rh, double wl,
 **
 **     Stone, Ronald C., P.A.S.P. 108, 1051-1058, 1996.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int optic;
    double p, t, r, w, ps, pw, tk, wlsq, gamma, beta;
+
 
 /* Decide whether optical/IR or radio case:  switch at 100 microns. */
    optic = ( wl <= 100.0 );
@@ -20933,7 +21923,7 @@ void eraRm2v(double r[3][3], double w[3])
 **  3) The reference frame rotates clockwise as seen looking along
 **     the rotation vector from the origin.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -20987,7 +21977,7 @@ void eraRv2m(double w[3], double r[3][3])
 **  3) The reference frame rotates clockwise as seen looking along the
 **     rotation vector from the origin.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -21053,11 +22043,12 @@ void eraRx(double phi, double r[3][3])
 **         (                               )
 **         (  0   - sin(phi)   + cos(phi)  )
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double s, c, a10, a11, a12, a20, a21, a22;
+
 
    s = sin(phi);
    c = cos(phi);
@@ -21101,12 +22092,13 @@ void eraRxp(double r[3][3], double p[3], double rp[3])
 **  Called:
 **     eraCp        copy p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double w, wrp[3];
    int i, j;
+
 
 /* Matrix r * vector p. */
    for (j = 0; j < 3; j++) {
@@ -21145,7 +22137,7 @@ void eraRxpv(double r[3][3], double pv[2][3], double rpv[2][3])
 **  Called:
 **     eraRxp       product of r-matrix and p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -21178,12 +22170,13 @@ void eraRxr(double a[3][3], double b[3][3], double atb[3][3])
 **  Called:
 **     eraCr        copy r-matrix
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int i, j, k;
    double w, wm[3][3];
+
 
    for (i = 0; i < 3; i++) {
       for (j = 0; j < 3; j++) {
@@ -21228,11 +22221,12 @@ void eraRy(double theta, double r[3][3])
 **         (                                        )
 **         (  + sin(theta)     0      + cos(theta)  )
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double s, c, a00, a01, a02, a20, a21, a22;
+
 
    s = sin(theta);
    c = cos(theta);
@@ -21283,11 +22277,12 @@ void eraRz(double psi, double r[3][3])
 **         (                                 )
 **         (       0            0         1  )
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double s, c, a00, a01, a02, a10, a11, a12;
+
 
    s = sin(psi);
    c = cos(psi);
@@ -21386,7 +22381,7 @@ double eraS00(double date1, double date2, double x, double y)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -21696,11 +22691,12 @@ double eraS00a(double date1, double date2)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rbpn[3][3], x, y, s;
+
 
 /* Bias-precession-nutation-matrix, IAU 2000A. */
    eraPnm00a(date1, date2, rbpn);
@@ -21784,11 +22780,12 @@ double eraS00b(double date1, double date2)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rbpn[3][3], x, y, s;
+
 
 /* Bias-precession-nutation-matrix, IAU 2000B. */
    eraPnm00b(date1, date2, rbpn);
@@ -21876,7 +22873,7 @@ double eraS06(double date1, double date2, double x, double y)
 **     McCarthy, D.D., Petit, G. (eds.) 2004, IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -22188,11 +23185,12 @@ double eraS06a(double date1, double date2)
 **
 **     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rnpb[3][3], x, y, s;
+
 
 /* Bias-precession-nutation-matrix, IAU 20006/2000A. */
    eraPnm06a(date1, date2, rnpb);
@@ -22222,11 +23220,12 @@ void eraS2c(double theta, double phi, double c[3])
 **  Returned:
 **     c        double[3]    direction cosines
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double cp;
+
 
    cp = cos(phi);
    c[0] = cos(theta) * cp;
@@ -22257,11 +23256,12 @@ void eraS2p(double theta, double phi, double r, double p[3])
 **     eraS2c       spherical coordinates to unit vector
 **     eraSxp       multiply p-vector by scalar
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double u[3];
+
 
    eraS2c(theta, phi, u);
    eraSxp(r, u, p);
@@ -22291,11 +23291,12 @@ void eraS2pv(double theta, double phi, double r,
 **  Returned:
 **     pv       double[2][3]    pv-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double st, ct, sp, cp, rcp, x, y, rpd, w;
+
 
    st = sin(theta);
    ct = cos(theta);
@@ -22340,7 +23341,7 @@ void eraS2xpv(double s1, double s2, double pv[2][3], double spv[2][3])
 **  Called:
 **     eraSxp       multiply p-vector by scalar
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -22381,11 +23382,12 @@ double eraSepp(double a[3], double b[3])
 **     eraPm        modulus of p-vector
 **     eraPdp       scalar product of two p-vectors
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double axb[3], ss, cs, s;
+
 
 /* Sine of angle between the vectors, multiplied by the two moduli. */
    eraPxp(a, b, axb);
@@ -22422,11 +23424,12 @@ double eraSeps(double al, double ap, double bl, double bp)
 **     eraS2c       spherical coordinates to unit vector
 **     eraSepp      angular separation between two p-vectors
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double ac[3], bc[3], s;
+
 
 /* Spherical to Cartesian. */
    eraS2c(al, ap, ac);
@@ -22486,11 +23489,12 @@ double eraSp00(double date1, double date2)
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double t, sp;
+
 
 /* Interval between fundamental epoch J2000.0 and current date (JC). */
    t = ((date1 - ERFA_DJ00) + date2) / ERFA_DJC;
@@ -22608,13 +23612,14 @@ int eraStarpm(double ra1, double dec1,
 **     eraPdp       scalar product of two p-vectors
 **     eraPvstar    space motion pv-vector to star catalog data
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double pv1[2][3], tl1, dt, pv[2][3], r2, rdv, v2, c2mv2, tl2,
           pv2[2][3];
    int j1, j2, j;
+
 
 /* RA,Dec etc. at the "before" epoch to space motion pv-vector. */
    j1 = eraStarpv(ra1, dec1, pmr1, pmd1, px1, rv1, pv1);
@@ -22765,7 +23770,7 @@ int eraStarpv(double ra, double dec,
 **
 **     Stumpff, P., 1985, Astron.Astrophys. 144, 232-240.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -22785,6 +23790,7 @@ int eraStarpv(double ra, double dec,
           d = 0.0, del = 0.0,       /* to prevent */
           odd = 0.0, oddel = 0.0,   /* compiler   */
           od = 0.0, odel = 0.0;     /* warnings   */
+
 
 /* Distance (AU). */
    if (px >= PXMIN) {
@@ -22879,7 +23885,7 @@ void eraSxp(double s, double p[3], double sp[3])
 **  Note:
 **     It is permissible for p and sp to be the same array.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -22912,7 +23918,7 @@ void eraSxpv(double s, double pv[2][3], double spv[2][3])
 **  Called:
 **     eraS2xpv     multiply pv-vector by two scalars
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -22955,13 +23961,14 @@ int eraTaitt(double tai1, double tai2, double *tt1, double *tt2)
 **     Explanatory Supplement to the Astronomical Almanac,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
 
 /* TT minus TAI (days). */
    static const double dtat = ERFA_TTMTAI/ERFA_DAYSEC;
+
 
 /* Result, safeguarding precision. */
    if ( tai1 > tai2 ) {
@@ -23012,11 +24019,12 @@ int eraTaiut1(double tai1, double tai2, double dta,
 **     Explanatory Supplement to the Astronomical Almanac,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dtad;
+
 
 /* Result, safeguarding precision. */
    dtad = dta / ERFA_DAYSEC;
@@ -23089,13 +24097,14 @@ int eraTaiutc(double tai1, double tai2, double *utc1, double *utc2)
 **     Explanatory Supplement to the Astronomical Almanac,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int big1;
    int i, j;
    double a1, a2, u1, u2, g1, g2;
+
 
 /* Put the two parts of the TAI into big-first order. */
    big1 = ( tai1 >= tai2 );
@@ -23184,7 +24193,7 @@ int eraTcbtdb(double tcb1, double tcb2, double *tdb1, double *tdb2)
 **
 **     IAU 2006 Resolution B3
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -23197,6 +24206,7 @@ int eraTcbtdb(double tcb1, double tcb2, double *tdb1, double *tdb2)
    static const double tdb0 = ERFA_TDB0/ERFA_DAYSEC;
 
    double d;
+
 
 /* Result, safeguarding precision. */
    if ( tcb1 > tcb2 ) {
@@ -23246,13 +24256,14 @@ int eraTcgtt(double tcg1, double tcg2, double *tt1, double *tt2)
 **
 **     IAU 2000 Resolution B1.9
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
 
 /* 1977 Jan 1 00:00:32.184 TT, as MJD */
    static const double t77t = ERFA_DJM77 + ERFA_TTMTAI/ERFA_DAYSEC;
+
 
 /* Result, safeguarding precision. */
    if ( tcg1 > tcg2 ) {
@@ -23315,7 +24326,7 @@ int eraTdbtcb(double tdb1, double tdb2, double *tcb1, double *tcb2)
 **
 **     IAU 2006 Resolution B3
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -23331,6 +24342,7 @@ int eraTdbtcb(double tdb1, double tdb2, double *tcb1, double *tcb2)
    static const double elbb = ERFA_ELB/(1.0-ERFA_ELB);
 
    double d, f;
+
 
 /* Result, preserving date format but safeguarding precision. */
    if ( tdb1 > tdb2 ) {
@@ -23395,11 +24407,12 @@ int eraTdbtt(double tdb1, double tdb2, double dtr,
 **
 **     IAU 2006 Resolution 3
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dtrd;
+
 
 /* Result, safeguarding precision. */
    dtrd = dtr / ERFA_DAYSEC;
@@ -23449,7 +24462,7 @@ int eraTf2a(char s, int ihour, int imin, double sec, double *rad)
 **  3)  If there are multiple errors, the status value reflects only the
 **      first, the smallest taking precedence.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -23501,7 +24514,7 @@ int eraTf2d(char s, int ihour, int imin, double sec, double *days)
 **  3)  If there are multiple errors, the status value reflects only the
 **      first, the smallest taking precedence.
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -23540,12 +24553,13 @@ void eraTr(double r[3][3], double rt[3][3])
 **  Called:
 **     eraCr        copy r-matrix
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double wm[3][3];
    int i, j;
+
 
    for (i = 0; i < 3; i++) {
       for (j = 0; j < 3; j++) {
@@ -23580,11 +24594,12 @@ void eraTrxp(double r[3][3], double p[3], double trp[3])
 **     eraTr        transpose r-matrix
 **     eraRxp       product of r-matrix and p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double tr[3][3];
+
 
 /* Transpose of matrix r. */
    eraTr(r, tr);
@@ -23618,11 +24633,12 @@ void eraTrxpv(double r[3][3], double pv[2][3], double trpv[2][3])
 **     eraTr        transpose r-matrix
 **     eraRxpv      product of r-matrix and pv-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double tr[3][3];
+
 
 /* Transpose of matrix r. */
    eraTr(r, tr);
@@ -23667,13 +24683,14 @@ int eraTttai(double tt1, double tt2, double *tai1, double *tai2)
 **     Explanatory Supplement to the Astronomical Almanac,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
 
 /* TT minus TAI (days). */
    static const double dtat = ERFA_TTMTAI/ERFA_DAYSEC;
+
 
 /* Result, safeguarding precision. */
    if ( tt1 > tt2 ) {
@@ -23721,7 +24738,7 @@ int eraTttcg(double tt1, double tt2, double *tcg1, double *tcg2)
 **
 **     IAU 2000 Resolution B1.9
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -23731,6 +24748,7 @@ int eraTttcg(double tt1, double tt2, double *tcg1, double *tcg2)
 
 /* TT to TCG rate */
    static const double elgg = ERFA_ELG/(1.0-ERFA_ELG);
+
 
 /* Result, safeguarding precision. */
    if ( tt1 > tt2 ) {
@@ -23791,11 +24809,12 @@ int eraTttdb(double tt1, double tt2, double dtr,
 **
 **     IAU 2006 Resolution 3
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dtrd;
+
 
 /* Result, safeguarding precision. */
    dtrd = dtr / ERFA_DAYSEC;
@@ -23846,11 +24865,12 @@ int eraTtut1(double tt1, double tt2, double dt,
 **     Explanatory Supplement to the Astronomical Almanac,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dtd;
+
 
 /* Result, safeguarding precision. */
    dtd = dt / ERFA_DAYSEC;
@@ -23902,11 +24922,12 @@ int eraUt1tai(double ut11, double ut12, double dta,
 **     Explanatory Supplement to the Astronomical Almanac,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dtad;
+
 
 /* Result, safeguarding precision. */
    dtad = dta / ERFA_DAYSEC;
@@ -23957,11 +24978,12 @@ int eraUt1tt(double ut11, double ut12, double dt,
 **     Explanatory Supplement to the Astronomical Almanac,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double dtd;
+
 
 /* Result, safeguarding precision. */
    dtd = dt / ERFA_DAYSEC;
@@ -24040,13 +25062,14 @@ int eraUt1utc(double ut11, double ut12, double dut1,
 **     Explanatory Supplement to the Astronomical Almanac,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int big1;
    int i, iy, im, id, js;
    double duts, u1, u2, d1, dats1, d2, fd, dats2, ddats, us1, us2, du;
+
 
 /* UT1-UTC in seconds. */
    duts = dut1;
@@ -24174,13 +25197,14 @@ int eraUtctai(double utc1, double utc2, double *tai1, double *tai2)
 **     Explanatory Supplement to the Astronomical Almanac,
 **     P. Kenneth Seidelmann (ed), University Science Books (1992)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int big1;
    int iy, im, id, j, iyt, imt, idt;
    double u1, u2, fd, dat0, dat12, w, dat24, dlod, dleap, z1, z2, a2;
+
 
 /* Put the two parts of the UTC into big-first order. */
    big1 = ( utc1 >= utc2 );
@@ -24301,12 +25325,13 @@ int eraUtcut1(double utc1, double utc2, double dut1,
 **     eraUtctai    UTC to TAI
 **     eraTaiut1    TAI to UT1
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    int iy, im, id, js, jw;
    double w, dat, dta, tai1, tai2;
+
 
 /* Look up TAI-UTC. */
    if ( eraJd2cal(utc1, utc2, &iy, &im, &id, &w) ) return -1;
@@ -24415,7 +25440,7 @@ void eraXy06(double date1, double date2, double *x, double *y)
 **
 **     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -27093,11 +28118,12 @@ void eraXys00a(double date1, double date2,
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rbpn[3][3];
+
 
 /* Form the bias-precession-nutation matrix, IAU 2000A. */
    eraPnm00a(date1, date2, rbpn);
@@ -27171,11 +28197,12 @@ void eraXys00b(double date1, double date2,
 **     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
 **     IERS Technical Note No. 32, BKG (2004)
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rbpn[3][3];
+
 
 /* Form the bias-precession-nutation matrix, IAU 2000A. */
    eraPnm00b(date1, date2, rbpn);
@@ -27249,11 +28276,12 @@ void eraXys06a(double date1, double date2,
 **
 **     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
    double rbpn[3][3];
+
 
 /* Form the bias-precession-nutation matrix, IAU 2006/2000A. */
    eraPnm06a(date1, date2, rbpn);
@@ -27279,7 +28307,7 @@ void eraZp(double p[3])
 **  Returned:
 **     p        double[3]      p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -27305,7 +28333,7 @@ void eraZpv(double pv[2][3])
 **  Called:
 **     eraZp        zero p-vector
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -27327,7 +28355,7 @@ void eraZr(double r[3][3])
 **  Returned:
 **     r        double[3][3]    r-matrix
 **
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
@@ -27348,7 +28376,7 @@ void eraZr(double r[3][3])
 /*----------------------------------------------------------------------
 **  
 **  
-**  Copyright (C) 2013-2015, NumFOCUS Foundation.
+**  Copyright (C) 2013-2016, NumFOCUS Foundation.
 **  All rights reserved.
 **  
 **  This library is derived, with permission, from the International

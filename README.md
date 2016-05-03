@@ -32,7 +32,7 @@ erfa_python is available from Pypi:
 
     https://pypi.python.org/pypi/erfa_python
 
-and from github:
+or clone from github:
 
     https://github.com/nirinA/erfa_python/
 
@@ -158,6 +158,13 @@ can be found in ``examples/`` directory.
 ----------
 what's new
 ----------
+
+***********
+. 20160503
+***********
+
+- add new routines from SOFA release 12.
+
 
 ***********
 . 20150211

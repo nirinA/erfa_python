@@ -1319,17 +1319,17 @@ class Validate(unittest.TestCase):
         #e,p,h = erfa.gc2gd(0, xyz)
         self.assertRaises(erfa.error, erfa.gc2gd, 0, xyz)
         e,p,h = erfa.gc2gd(1, xyz)
-        self.assertAlmostEqual(e, 0.98279372324732907, places=14)
+        self.assertAlmostEqual(e, 0.9827937232473290680, places=14)
         self.assertAlmostEqual(p, 0.97160184819075459, places=14)
-        self.assertAlmostEqual(h, 331.41724614260599, places=8)
+        self.assertAlmostEqual(h, 331.4172461426059892, places=8)
         e,p,h = erfa.gc2gd(2, xyz)
-        self.assertAlmostEqual(e, 0.98279372324732907, places=14)
+        self.assertAlmostEqual(e, 0.9827937232473290680, places=14)
         self.assertAlmostEqual(p, 0.97160184820607853, places=14)
         self.assertAlmostEqual(h, 331.41731754844348, places=8)
         e,p,h = erfa.gc2gd(3, xyz)
-        self.assertAlmostEqual(e, 0.98279372324732907, places=14)
-        self.assertAlmostEqual(p, 0.97160181811015119, places=14)
-        self.assertAlmostEqual(h, 333.27707261303181, places=8)
+        self.assertAlmostEqual(e, 0.9827937232473290680, places=14)
+        self.assertAlmostEqual(p, 0.9716018181101511937, places=14)
+        self.assertAlmostEqual(h, 333.2770726130318123, places=8)
         #e,p,h = erfa.gc2gd(4, xyz)
         self.assertRaises(erfa.error, erfa.gc2gd, 4, xyz)
 
@@ -2602,6 +2602,107 @@ class Validate(unittest.TestCase):
         dr, dd = erfa.g2icrs(dl, db)
         self.assertAlmostEqual(dr,  5.9338074302227188048671, places=14)
         self.assertAlmostEqual(dd, -1.1784870613579944551541, places=14)
+
+    def test_ltp(self):
+        epj = 1666.666
+        rp = erfa.ltp(epj)
+        self.assertAlmostEqual(rp[0][0], 0.9967044141159213819, places=14)
+        self.assertAlmostEqual(rp[0][1], 0.7437801893193210840e-1, places=14)
+        self.assertAlmostEqual(rp[0][2], 0.3237624409345603401e-1, places=14)
+        self.assertAlmostEqual(rp[1][0], -0.7437802731819618167e-1, places=14)
+        self.assertAlmostEqual(rp[1][1], 0.9972293894454533070, places=14)
+        self.assertAlmostEqual(rp[1][2], -0.1205768842723593346e-2, places=14)
+        self.assertAlmostEqual(rp[2][0], -0.3237622482766575399e-1, places=14)
+        self.assertAlmostEqual(rp[2][1], -0.1206286039697609008e-2, places=14)
+        self.assertAlmostEqual(rp[2][2], 0.9994750246704010914, places=14)
+
+    def test_ltpb(self):
+        epj = 1666.666
+        rpb = erfa.ltpb(epj)
+        self.assertAlmostEqual(rpb[0][0], 0.9967044167723271851, places=14)
+        self.assertAlmostEqual(rpb[0][1], 0.7437794731203340345e-1, places=14)
+        self.assertAlmostEqual(rpb[0][2], 0.3237632684841625547e-1, places=14)
+        self.assertAlmostEqual(rpb[1][0], -0.7437795663437177152e-1, places=14)
+        self.assertAlmostEqual(rpb[1][1], 0.9972293947500013666, places=14)
+        self.assertAlmostEqual(rpb[1][2], -0.1205741865911243235e-2, places=14)
+        self.assertAlmostEqual(rpb[2][0], -0.3237630543224664992e-1, places=14)
+        self.assertAlmostEqual(rpb[2][1], -0.1206316791076485295e-2, places=14)
+        self.assertAlmostEqual(rpb[2][2], 0.9994750220222438819, places=14)
+
+    def test_ltpecl(self):
+        epj = -1500.0
+        vec = erfa.ltpecl(epj)
+        self.assertAlmostEqual(vec[0], 0.4768625676477096525e-3, places=14)
+        self.assertAlmostEqual(vec[1], -0.4052259533091875112, places=14)
+        self.assertAlmostEqual(vec[2], 0.9142164401096448012, places=14)
+
+    def test_ltpequ(self):
+        epj = -2500.0
+        veq = erfa.ltpequ(epj)
+        self.assertAlmostEqual(veq[0], -0.3586652560237326659, places=14)
+        self.assertAlmostEqual(veq[1], -0.1996978910771128475, places=14)
+        self.assertAlmostEqual(veq[2], 0.9118552442250819624, places=14)
+
+    def test_eceq06(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        dl = 5.1
+        db = -0.9
+        dr, dd = erfa.eceq06(date1, date2, dl, db)
+        self.assertAlmostEqual(dr, 5.533459733613627767, places=14)
+        self.assertAlmostEqual(dd, -1.246542932554480576, places=14)
+
+    def test_ecm06(self):
+        date1 = 2456165.5
+        date2 = 0.401182685
+        rm = erfa.ecm06(date1, date2)
+        self.assertAlmostEqual(rm[0][0], 0.9999952427708701137, places=14)
+        self.assertAlmostEqual(rm[0][1], -0.2829062057663042347e-2, places=14)
+        self.assertAlmostEqual(rm[0][2], -0.1229163741100017629e-2, places=14)
+        self.assertAlmostEqual(rm[1][0], 0.3084546876908653562e-2, places=14)
+        self.assertAlmostEqual(rm[1][1], 0.9174891871550392514, places=14)
+        self.assertAlmostEqual(rm[1][2], 0.3977487611849338124, places=14)
+        self.assertAlmostEqual(rm[2][0], 0.2488512951527405928e-5, places=14)
+        self.assertAlmostEqual(rm[2][1], -0.3977506604161195467, places=14)
+        self.assertAlmostEqual(rm[2][2], 0.9174935488232863071, places=14)
+
+    def test_eqec06(self):
+        date1 = 1234.5
+        date2 = 2440000.5
+        dr = 1.234
+        dd = 0.987
+        dl, db = erfa.eqec06(date1, date2, dr, dd)
+        self.assertAlmostEqual(dl, 1.342509918994654619, places=14)
+        self.assertAlmostEqual(db, 0.5926215259704608132, places=14)
+
+    def test_lteceq(self):
+        epj = 2500.0
+        dl = 1.5
+        db = 0.6
+        dr, dd = erfa.lteceq(epj, dl, db)
+        self.assertAlmostEqual(dr, 1.275156021861921167, places=14)
+        self.assertAlmostEqual(dd, 0.9966573543519204791, places=14)
+
+    def test_ltecm(self):
+        epj = -3000.0
+        rm = erfa.ltecm(epj)
+        self.assertAlmostEqual(rm[0][0], 0.3564105644859788825, places=14)
+        self.assertAlmostEqual(rm[0][1], 0.8530575738617682284, places=14)
+        self.assertAlmostEqual(rm[0][2], 0.3811355207795060435, places=14)
+        self.assertAlmostEqual(rm[1][0], -0.9343283469640709942, places=14)
+        self.assertAlmostEqual(rm[1][1], 0.3247830597681745976, places=14)
+        self.assertAlmostEqual(rm[1][2], 0.1467872751535940865, places=14)
+        self.assertAlmostEqual(rm[2][0], 0.1431636191201167793e-2, places=14)
+        self.assertAlmostEqual(rm[2][1], -0.4084222566960599342, places=14)
+        self.assertAlmostEqual(rm[2][2], 0.9127919865189030899, places=14)
+
+    def test_lteqec(self):
+        epj = -1500.0
+        dr = 1.234
+        dd = 0.987
+        dl, db = erfa.lteqec(epj, dr, dd)
+        self.assertAlmostEqual(dl, 0.5039483649047114859, places=14)
+        self.assertAlmostEqual(db, 0.5848534459726224882, places=14)
         
 ## some older version of Python 2.7
 ## failed to use 'support'

@@ -70,6 +70,7 @@ _to_py_astrom(eraASTROM *a)
     return v;
 }
 
+
 static PyStructSequence_Field ASTROM_type_fields[] = {
     {"pmt", "PM time interval (SSB, Julian years)"},
     {"eb", "SSB to observer (vector, au)"},
@@ -627,7 +628,7 @@ _erfa_atciqn(PyObject *self, PyObject *args)
         Py_INCREF(pyl);
         pypv = PyStructSequence_GET_ITEM(pyl, 2);
         Py_INCREF(pypv);
-        
+            
         for (k=0;k<2;k++) {
             p = PyStructSequence_GET_ITEM(pypv, k);
             Py_INCREF(p);
@@ -649,7 +650,6 @@ _erfa_atciqn(PyObject *self, PyObject *args)
 
         Py_DECREF(pypv);
         Py_DECREF(pyl);
-        
     }
     eraAtciqn(rc, dc, pr, pd, px, rv, &astrom, n, b, &ri, &di);
     free(b);
@@ -1048,7 +1048,8 @@ _erfa_atoc13(PyObject *self, PyObject *args)
                                  &type, &ob1, &ob2, &utc1, &utc2, &dut1,
                                  &elong, &phi, &hm, &xp, &yp, &phpa, &tc, &rh, &wl))      
         return NULL;
-    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0 ||
+        strcmp("r", type) == 0 || strcmp("h", type) == 0 || strcmp("a", type) == 0) {
         j = eraAtoc13(type, ob1, ob2, utc1, utc2, dut1,
                       elong, phi, hm, xp, yp, phpa, tc, rh, wl,
                       &rc, &dc);
@@ -1103,7 +1104,8 @@ _erfa_atoi13(PyObject *self, PyObject *args)
                                  &type, &ob1, &ob2, &utc1, &utc2, &dut1,
                                  &elong, &phi, &hm, &xp, &yp, &phpa, &tc, &rh, &wl))      
         return NULL;
-    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0 ||
+        strcmp("r", type) == 0 || strcmp("h", type) == 0 || strcmp("a", type) == 0) {
         j = eraAtoi13(type, ob1, ob2, utc1, utc2, dut1,
                       elong, phi, hm, xp, yp, phpa, tc, rh, wl,
                       &ri, &di);
@@ -1170,7 +1172,8 @@ _erfa_atoiq(PyObject *self, PyObject *args)
                                  &astrom.diurab, &astrom.eral,
                                  &astrom.refa, &astrom.refb))      
         return NULL;
-    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0) {
+    if (strcmp("R", type) == 0 || strcmp("H", type) == 0 || strcmp("A", type) == 0 ||
+        strcmp("r", type) == 0 || strcmp("h", type) == 0 || strcmp("a", type) == 0) {
         eraAtoiq(type, ob1, ob2, &astrom, &ri, &di);
     }
     else {
@@ -1263,7 +1266,7 @@ _erfa_ldn(PyObject *self, PyObject *args)
         Py_INCREF(pyl);
         pypv = PyStructSequence_GET_ITEM(pyl, 2);
         Py_INCREF(pypv);
-        
+            
         for (k=0;k<2;k++) {
             p = PyStructSequence_GET_ITEM(pypv, k);
             Py_INCREF(p);
@@ -2434,8 +2437,8 @@ _erfa_epv00(PyObject *self, PyObject *args)
 {
     double dj1, dj2;
     int status;
-    double pvh[2][3]; // = {{0.,0.,0.}{0.,0.,0.}} //{{[0]=0.},{[0]=0.}};
-    double pvb[2][3]; //  = {{0.,0.,0.}{0.,0.,0.}} //{{[0]=0.},{[0]=0.}};
+    double pvh[2][3] = {{[0]=0.},{[0]=0.}};
+    double pvb[2][3] = {{[0]=0.},{[0]=0.}};
     if (! PyArg_ParseTuple(args, "dd", &dj1, &dj2))
         return NULL;
     status = eraEpv00(dj1, dj2, pvh, pvb);
@@ -6116,6 +6119,238 @@ PyDoc_STRVAR(_erfa_g2icrs_doc,
 "   dr          ICRS right ascension (radians)\n"
 "   dd          ICRS declination (radians)");
 
+static PyObject *
+_erfa_ltp(PyObject *self, PyObject *args)
+{
+    double epj, rp[3][3];
+    if (!PyArg_ParseTuple(args, "d", &epj)) {
+        return NULL;
+    }
+    eraLtp(epj, rp);
+    return Py_BuildValue(
+        "((ddd)(ddd)(ddd))",
+        rp[0][0],rp[0][1],rp[0][2],
+        rp[1][0],rp[1][1],rp[1][2],
+        rp[2][0],rp[2][1],rp[2][2]
+    );
+}
+
+PyDoc_STRVAR(_erfa_ltp_doc,
+"ltp(epj) -> rp\n\n"
+"Long-term precession matrix.\n"
+"Given:\n"
+"   epj          Julian epoch (TT)\n"
+"Returned:\n"
+"   rp           precession matrix, J2000.0 to date");
+
+static PyObject *
+_erfa_ltpb(PyObject *self, PyObject *args)
+{
+    double epj, rpb[3][3];
+    if (!PyArg_ParseTuple(args, "d", &epj)) {
+        return NULL;
+    }
+    eraLtpb(epj, rpb);
+    return Py_BuildValue(
+        "((ddd)(ddd)(ddd))",
+        rpb[0][0],rpb[0][1],rpb[0][2],
+        rpb[1][0],rpb[1][1],rpb[1][2],
+        rpb[2][0],rpb[2][1],rpb[2][2]
+    );
+}
+
+PyDoc_STRVAR(_erfa_ltpb_doc,
+"ltpb(epj) -> rpb\n\n"
+"Long-term precession matrix, including ICRS frame bias.\n"
+"Given:\n"
+"   epj          Julian epoch (TT)\n"
+"Returned:\n"
+"   rpb           precession-bias matrix, J2000.0 to date");
+
+static PyObject *
+_erfa_ltpecl(PyObject *self, PyObject *args)
+{
+    double epj, vec[3];
+    if (!PyArg_ParseTuple(args, "d", &epj)) {
+        return NULL;
+    }
+    eraLtpecl(epj, vec);
+    return Py_BuildValue(
+        "(ddd)",
+        vec[0], vec[1], vec[2]
+    );
+}
+
+PyDoc_STRVAR(_erfa_ltpecl_doc,
+"ltpecl(epj) -> vec\n\n"
+"Long-term precession of the ecliptic.\n"
+"Given:\n"
+"   epj          Julian epoch (TT)\n"
+"Returned:\n"
+"   vec          ecliptic pole unit vector");
+
+static PyObject *
+_erfa_ltpequ(PyObject *self, PyObject *args)
+{
+    double epj, veq[3];
+    if (!PyArg_ParseTuple(args, "d", &epj)) {
+        return NULL;
+    }
+    eraLtpequ(epj, veq);
+    return Py_BuildValue(
+        "(ddd)",
+        veq[0], veq[1], veq[2]
+    );
+}
+
+PyDoc_STRVAR(_erfa_ltpequ_doc,
+"ltpequ(epj) -> vec\n\n"
+"Long-term precession of the equator.\n"
+"Given:\n"
+"   epj          Julian epoch (TT)\n"
+"Returned:\n"
+"   veq          ecliptic pole unit vector");
+
+static PyObject *
+_erfa_eceq06(PyObject *self, PyObject *args)
+{
+    double date1, date2, dr, dd, dl, db;
+    if (!PyArg_ParseTuple(args, "dddd", &date1, &date2, &dl, &db)) {
+        return NULL;
+    }
+    eraEceq06(date1, date2, dl, db, &dr, &dd);
+    return Py_BuildValue("dd", dr, dd);
+}
+
+PyDoc_STRVAR(_erfa_eceq06_doc,
+"eceq06(date1, date2, dl, db) -> (dr, dd)\n\n"
+"Transformation from ecliptic coordinates (mean equinox and ecliptic\n"
+"of date) to ICRS RA,Dec, using the IAU 2006 precession model.\n"
+"Given:\n"
+"   date1,date2 TT as a 2-part Julian date\n"
+"   dl          ecliptic longitude (radians)\n"
+"   db          ecliptic latitude (radians)\n"
+"Returned:\n"
+"   dr          ICRS right ascension (radians)\n"
+"   dd          ICRS declination (radians)");
+
+static PyObject *
+_erfa_ecm06(PyObject *self, PyObject *args)
+{
+    double date1, date2, rm[3][3];
+    if (!PyArg_ParseTuple(args, "dd", &date1, &date2)) {
+        return NULL;
+    }
+    eraEcm06(date1, date2, rm);
+    return Py_BuildValue(
+        "((ddd)(ddd)(ddd))",
+        rm[0][0],rm[0][1],rm[0][2],
+        rm[1][0],rm[1][1],rm[1][2],
+        rm[2][0],rm[2][1],rm[2][2]
+    );
+}
+
+PyDoc_STRVAR(_erfa_ecm06_doc,
+"ecm06(date1, date2) -> rm\n\n"
+"ICRS equatorial to ecliptic rotation matrix, IAU 2006.\n"
+"Given:\n"
+"   date1,date2  TT as a 2-part Julian date\n"
+"Returned:\n"
+"   rm           ICRS to ecliptic rotation matrix");
+
+static PyObject *
+_erfa_eqec06(PyObject *self, PyObject *args)
+{
+    double date1, date2, dr, dd, dl, db;
+    if (!PyArg_ParseTuple(args, "dddd", &date1, &date2, &dr, &dd)) {
+        return NULL;
+    }
+    eraEqec06(date1, date2, dr, dd, &dl, &db);
+    return Py_BuildValue("dd", dl, db);
+}
+
+PyDoc_STRVAR(_erfa_eqec06_doc,
+"eqec06(date1, date2, dr, dd) -> (dl, db)\n\n"
+"Transformation from ICRS equatorial coordinates to ecliptic coordinates\n"
+"(mean equinox and ecliptic of date) using IAU 2006 precession model.\n"
+"Given:\n"
+"   date1,date2 TT as a 2-part Julian date\n"
+"   dr          ICRS right ascension (radians)\n"
+"   dd          ICRS declination (radians)\n"
+"Returned:\n"
+"   dl          ecliptic longitude (radians)\n"
+"   db          ecliptic latitude (radians)");
+
+static PyObject *
+_erfa_lteceq(PyObject *self, PyObject *args)
+{
+    double epj, dr, dd, dl, db;
+    if (!PyArg_ParseTuple(args, "ddd", &epj, &dl, &db)) {
+        return NULL;
+    }
+    eraLteceq(epj, dl, db, &dr, &dd);
+    return Py_BuildValue("dd", dr, dd);
+}
+
+PyDoc_STRVAR(_erfa_lteceq_doc,
+"lteceq(epj, dl, db) -> (dr, dd)\n\n"
+"Transformation from ecliptic coordinates (mean equinox and ecliptic\n"
+"of date) to ICRS RA,Dec, using a long-term precession model.\n"
+"Given:\n"
+"   epj         Julian epoch (TT)\n"
+"   dl          ecliptic longitude (radians)\n"
+"   db          ecliptic latitude (radians)\n"
+"Returned:\n"
+"   dr          ICRS right ascension (radians)\n"
+"   dd          ICRS declination (radians)");
+
+static PyObject *
+_erfa_ltecm(PyObject *self, PyObject *args)
+{
+    double epj, rm[3][3];
+    if (!PyArg_ParseTuple(args, "d", &epj)) {
+        return NULL;
+    }
+    eraLtecm(epj, rm);
+    return Py_BuildValue(
+        "((ddd)(ddd)(ddd))",
+        rm[0][0],rm[0][1],rm[0][2],
+        rm[1][0],rm[1][1],rm[1][2],
+        rm[2][0],rm[2][1],rm[2][2]
+    );
+}
+
+PyDoc_STRVAR(_erfa_ltecm_doc,
+"ltecm(epj) -> rm\n\n"
+"ICRS equatorial to ecliptic rotation matrix, long-term.\n"
+"Given:\n"
+"   epj          Julian epoch (TT)\n"
+"Returned:\n"
+"   rm           ICRS to ecliptic rotation matrix");
+
+static PyObject *
+_erfa_lteqec(PyObject *self, PyObject *args)
+{
+    double epj, dr, dd, dl, db;
+    if (!PyArg_ParseTuple(args, "ddd", &epj, &dr, &dd)) {
+        return NULL;
+    }
+    eraLteqec(epj, dr, dd, &dl, &db);
+    return Py_BuildValue("dd", dl, db);
+}
+
+PyDoc_STRVAR(_erfa_lteqec_doc,
+"lteqec(epj, dr, dd) -> (dl, db)\n\n"
+"Transformation from ICRS equatorial coordinates to ecliptic coordinates\n"
+"(mean equinox and ecliptic of date) using a long-term precession model.\n"
+"Given:\n"
+"   epj         Julian epoch (TT)\n"
+"   dr          ICRS right ascension (radians)\n"
+"   dd          ICRS declination (radians)\n"
+"Returned:\n"
+"   dl          ecliptic longitude (radians)\n"
+"   db          ecliptic latitude (radians)");
+
 
 static PyMethodDef _erfa_methods[] = {
     {"ab", _erfa_ab, METH_VARARGS, _erfa_ab_doc},
@@ -6333,6 +6568,16 @@ static PyMethodDef _erfa_methods[] = {
     {"trxpv", _erfa_trxpv, METH_VARARGS, _erfa_trxpv_doc},
     {"icrs2g", _erfa_icrs2g, METH_VARARGS, _erfa_icrs2g_doc},
     {"g2icrs", _erfa_g2icrs, METH_VARARGS, _erfa_g2icrs_doc},
+    {"ltp", _erfa_ltp, METH_VARARGS, _erfa_ltp_doc},
+    {"ltpb", _erfa_ltpb, METH_VARARGS, _erfa_ltpb_doc},
+    {"ltpecl", _erfa_ltpecl, METH_VARARGS, _erfa_ltpecl_doc},
+    {"ltpequ", _erfa_ltpequ, METH_VARARGS, _erfa_ltpequ_doc},
+    {"eceq06", _erfa_eceq06, METH_VARARGS, _erfa_eceq06_doc},
+    {"ecm06", _erfa_ecm06, METH_VARARGS, _erfa_ecm06_doc},
+    {"eqec06", _erfa_eqec06, METH_VARARGS, _erfa_eqec06_doc},
+    {"lteceq", _erfa_lteceq, METH_VARARGS, _erfa_lteceq_doc},
+    {"ltecm", _erfa_ltecm, METH_VARARGS, _erfa_ltecm_doc},
+    {"lteqec", _erfa_lteqec, METH_VARARGS, _erfa_lteqec_doc},
     {NULL,		NULL}		/* sentinel */
 };
 
