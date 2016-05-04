@@ -29,7 +29,7 @@ moduleerfa = Extension('_erfa',
                        sources = sources)
 
 setup (name = 'erfa_python',
-       version = '2016.05.03',
+       version = '2016.05.04',
        description = 'Python wrapper for ERFA library',
        url = 'https://github.com/nirinA/erfa_python',
        author = 'nirinA raseliarison',

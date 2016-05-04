@@ -6,120 +6,121 @@ ERFA: notes and references
 a2af
 ------
 
-Given:
-lution (Note 1)
-e in radians
+  Decompose radians into degrees, arcminutes, arcseconds, fraction.
 
-or '-'
-ees, arcminutes, arcseconds, fraction
+  Given:
+     ndp     int     resolution (Note 1)
+     angle   double  angle in radians
 
-se days to hms
+  Returned:
+     sign    char    '+' or '-'
+     idmsf   int[4]  degrees, arcminutes, arcseconds, fraction
 
-interpreted as follows:
-on
-0
-0
-0
-0
-0
-0
-0
-0
-1
-0.1
-0.01
-0.001
-0.000...
- useful value for ndp is determined by the
-ormat of doubles on the target platform, and
-ing idmsf[3].  On a typical platform, for
- available floating-point precision might
-.  However, the practical limit is typically
-pacity of a 32-bit int, or ndp=4 if int is
+  Called:
+     eraD2tf      decompose days to hms
 
-f angle may exceed 2pi.  In cases where it
-o the caller to test for and handle the
-very nearly 2pi and rounds up to 360 degrees,
-[0]=360 and setting idmsf[0-3] to zero.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Notes:
+
+  1) The argument ndp is interpreted as follows:
+
+     ndp         resolution
+      :      ...0000 00 00
+     -7         1000 00 00
+     -6          100 00 00
+     -5           10 00 00
+     -4            1 00 00
+     -3            0 10 00
+     -2            0 01 00
+     -1            0 00 10
+      0            0 00 01
+      1            0 00 00.1
+      2            0 00 00.01
+      3            0 00 00.001
+      :            0 00 00.000...
+
+  2) The largest positive useful value for ndp is determined by the
+     size of angle, the format of doubles on the target platform, and
+     the risk of overflowing idmsf[3].  On a typical platform, for
+     angle up to 2pi, the available floating-point precision might
+     correspond to ndp=12.  However, the practical limit is typically
+     ndp=9, set by the capacity of a 32-bit int, or ndp=4 if int is
+     only 16 bits.
+
+  3) The absolute value of angle may exceed 2pi.  In cases where it
+     does not, it is up to the caller to test for and handle the
+     case where angle is very nearly 2pi and rounds up to 360 degrees,
+     by testing for idmsf[0]=360 and setting idmsf[0-3] to zero.
+
+
 
 ------
 a2tf
 ------
 
-Given:
-lution (Note 1)
-e in radians
+  Decompose radians into hours, minutes, seconds, fraction.
 
-or '-'
-s, minutes, seconds, fraction
+  Given:
+     ndp     int     resolution (Note 1)
+     angle   double  angle in radians
 
-se days to hms
+  Returned:
+     sign    char    '+' or '-'
+     ihmsf   int[4]  hours, minutes, seconds, fraction
 
-interpreted as follows:
-on
-0
-0
-0
-0
-0
-0
-0
-0
-1
-0.1
-0.01
-0.001
-0.000...
- useful value for ndp is determined by the
-ormat of doubles on the target platform, and
-ing ihmsf[3].  On a typical platform, for
- available floating-point precision might
-.  However, the practical limit is typically
-pacity of a 32-bit int, or ndp=4 if int is
+  Called:
+     eraD2tf      decompose days to hms
 
-f angle may exceed 2pi.  In cases where it
-o the caller to test for and handle the
-very nearly 2pi and rounds up to 24 hours,
-[0]=24 and setting ihmsf[0-3] to zero.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Notes:
+
+  1) The argument ndp is interpreted as follows:
+
+     ndp         resolution
+      :      ...0000 00 00
+     -7         1000 00 00
+     -6          100 00 00
+     -5           10 00 00
+     -4            1 00 00
+     -3            0 10 00
+     -2            0 01 00
+     -1            0 00 10
+      0            0 00 01
+      1            0 00 00.1
+      2            0 00 00.01
+      3            0 00 00.001
+      :            0 00 00.000...
+
+  2) The largest positive useful value for ndp is determined by the
+     size of angle, the format of doubles on the target platform, and
+     the risk of overflowing ihmsf[3].  On a typical platform, for
+     angle up to 2pi, the available floating-point precision might
+     correspond to ndp=12.  However, the practical limit is typically
+     ndp=9, set by the capacity of a 32-bit int, or ndp=4 if int is
+     only 16 bits.
+
+  3) The absolute value of angle may exceed 2pi.  In cases where it
+     does not, it is up to the caller to test for and handle the
+     case where angle is very nearly 2pi and rounds up to 24 hours,
+     by testing for ihmsf[0]=24 and setting ihmsf[0-3] to zero.
+
+
 
 ------
 ab
 ------
 
-Given:
-atural direction to the source (unit vector)
-bserver barycentric velocity in units of c
-istance between the Sun and the observer (au)
-qrt(1-|v|^2): reciprocal of Lorenz factor
+  Apply aberration to transform natural direction into proper
+  direction.
 
-roper direction to source (unit vector)
+  Given:
+    pnat    double[3]   natural direction to the source (unit vector)
+    v       double[3]   observer barycentric velocity in units of c
+    s       double      distance between the Sun and the observer (au)
+    bm1     double      sqrt(1-|v|^2): reciprocal of Lorenz factor
 
-ed on Expr. (7.40) in the Explanatory
-Seidelmann 2013), but with the following
+  Returned:
+    ppr     double[3]   proper direction to source (unit vector)
 
-han approximate normalization is applied.
- potential term from Expr. (7) in
- added, taking into account only the Sun's
-is has a maximum effect of about
-d.
- the maximum accuracy will be limited by the
-For example, if the ERFA eraEpv00 function is
-o 5 microarcseconds could occur.
-
-nn, P. K. (eds), Explanatory Supplement to
-anac, 3rd ed., University Science Books
-
-"A practical relativistic model for micro-
- in space", Astr. J. 125, 1580-1597 (2003).
-
-product of two p-vectors
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The algorithm is based on Expr. (7.40) in the Explanatory
      Supplement (Urban & Seidelmann 2013), but with the following
@@ -145,142 +146,110 @@ Notes:
      Klioner, Sergei A., "A practical relativistic model for micro-
      arcsecond astrometry in space", Astr. J. 125, 1580-1597 (2003).
 
-
-References:
-
-     Urban, S. & Seidelmann, P. K. (eds), Explanatory Supplement to
-     the Astronomical Almanac, 3rd ed., University Science Books
-     (2013).
-
-     Klioner, Sergei A., "A practical relativistic model for micro-
-     arcsecond astrometry in space", Astr. J. 125, 1580-1597 (2003).
-
   Called:
      eraPdp       scalar product of two p-vectors
+
+
 
 ------
 af2a
 ------
 
-Given:
-gn:  '-' = negative, otherwise positive
-grees
-cminutes
-cseconds
+  Convert degrees, arcminutes, arcseconds to radians.
 
-gle in radians
-e):
-atus:  0 = OK
-       1 = ideg outside range 0-359
-       2 = iamin outside range 0-59
-       3 = asec outside range 0-59.999...
+  Given:
+     s         char    sign:  '-' = negative, otherwise positive
+     ideg      int     degrees
+     iamin     int     arcminutes
+     asec      double  arcseconds
 
-ted even if any of the range checks fail.
-n and/or asec produce a warning status, but
-is used in the conversion.
-le errors, the status value reflects only the
- taking precedence.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     rad       double  angle in radians
+
+  Returned (function value):
+               int     status:  0 = OK
+                                1 = ideg outside range 0-359
+                                2 = iamin outside range 0-59
+                                3 = asec outside range 0-59.999...
+
+  Notes:
+
+  1)  The result is computed even if any of the range checks fail.
+
+  2)  Negative ideg, iamin and/or asec produce a warning status, but
+      the absolute value is used in the conversion.
+
+  3)  If there are multiple errors, the status value reflects only the
+      first, the smallest taking precedence.
+
+
 
 ------
 anp
 ------
 
-Given:
-angle (radians)
-e):
-angle in range 0-2pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Normalize angle into the range 0 <= a < 2pi.
+
+  Given:
+     a        double     angle (radians)
+
+  Returned (function value):
+              double     angle in range 0-2pi
+
+
 
 ------
 anpm
 ------
 
-Given:
-angle (radians)
-e):
-angle in range +/-pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Normalize angle into the range -pi <= a < +pi.
+
+  Given:
+     a        double     angle (radians)
+
+  Returned (function value):
+              double     angle in range +/-pi
+
+
 
 ------
 apcg
 ------
 
-Given:
-TDB as a 2-part...
-...Julian Date (Note 1)
-Earth barycentric pos/vel (au, au/day)
-Earth heliocentric position (au)
+  For a geocentric observer, prepare star-independent astrometry
+  parameters for transformations between ICRS and GCRS coordinates.
+  The Earth ephemeris is supplied by the caller.
 
-star-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
+  The parameters produced by this function are required in the
+  parallax, light deflection and aberration parts of the astrometric
+  transformation chain.
 
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-uld be expressed in any of these ways, among
+  Given:
+     date1  double       TDB as a 2-part...
+     date2  double       ...Julian Date (Note 1)
+     ebpv   double[2][3] Earth barycentric pos/vel (au, au/day)
+     ehp    double[3]    Earth heliocentric position (au)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  For most
- function the choice will not be at all
+  Returned:
+     astrom eraASTROM*   star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       unchanged
+      xpl    double       unchanged
+      ypl    double       unchanged
+      sphi   double       unchanged
+      cphi   double       unchanged
+      diurab double       unchanged
+      eral   double       unchanged
+      refa   double       unchanged
+      refb   double       unchanged
 
-ad of TDB without any significant impact on
-
-with respect to BCRS axes.
-al functions that inserts into the astrom
-endent parameters needed for the chain of
-mations ICRS <-> GCRS <-> CIRS <-> observed.
-s support different classes of observer and
-sformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ing in "13" use contemporary ERFA models to
-ephemerides.  The others accept ephemerides
-er.
-rom ICRS to GCRS covers space motion,
-ection, and aberration.  From GCRS to CIRS
- and precession-nutation.  From CIRS to
-nt of Earth rotation, polar motion, diurnal
-lax (unless subsumed into the ICRS <-> GCRS
- atmospheric refraction.
-e astrom produced by this function is used by
-cq*.
-
-try parameters, ICRS-GCRS, space observer
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TDB date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -338,85 +307,48 @@ Notes:
   4) The context structure astrom produced by this function is used by
      eraAtciq* and eraAticq*.
 
+  Called:
+     eraApcs      astrometry parameters, ICRS-GCRS, space observer
+
+
 
 ------
 apcg13
 ------
 
-Given:
-B as a 2-part...
-.Julian Date (Note 1)
+  For a geocentric observer, prepare star-independent astrometry
+  parameters for transformations between ICRS and GCRS coordinates.
+  The caller supplies the date, and ERFA models are used to predict
+  the Earth ephemeris.
 
-ar-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
+  The parameters produced by this function are required in the
+  parallax, light deflection and aberration parts of the astrometric
+  transformation chain.
 
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-uld be expressed in any of these ways, among
+  Given:
+     date1  double     TDB as a 2-part...
+     date2  double     ...Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  For most
- function the choice will not be at all
+  Returned:
+     astrom eraASTROM* star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       unchanged
+      xpl    double       unchanged
+      ypl    double       unchanged
+      sphi   double       unchanged
+      cphi   double       unchanged
+      diurab double       unchanged
+      eral   double       unchanged
+      refa   double       unchanged
+      refb   double       unchanged
 
-ad of TDB without any significant impact on
-
-with respect to BCRS axes.
-aller wishes to supply his own Earth
-ion eraApcg can be used instead of the present
-
-al functions that inserts into the astrom
-endent parameters needed for the chain of
-mations ICRS <-> GCRS <-> CIRS <-> observed.
-s support different classes of observer and
-sformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ing in "13" use contemporary ERFA models to
-ephemerides.  The others accept ephemerides
-er.
-rom ICRS to GCRS covers space motion,
-ection, and aberration.  From GCRS to CIRS
- and precession-nutation.  From CIRS to
-nt of Earth rotation, polar motion, diurnal
-lax (unless subsumed into the ICRS <-> GCRS
- atmospheric refraction.
-e astrom produced by this function is used by
-cq*.
-
-osition and velocity
-try parameters, ICRS-GCRS, geocenter
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TDB date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -478,90 +410,53 @@ Notes:
   5) The context structure astrom produced by this function is used by
      eraAtciq* and eraAticq*.
 
+  Called:
+     eraEpv00     Earth position and velocity
+     eraApcg      astrometry parameters, ICRS-GCRS, geocenter
+
+
 
 ------
 apci
 ------
 
-Given:
-TDB as a 2-part...
-...Julian Date (Note 1)
-Earth barycentric position/velocity (au, au/day)
-Earth heliocentric position (au)
-CIP X,Y (components of unit vector)
-the CIO locator s (radians)
+  For a terrestrial observer, prepare star-independent astrometry
+  parameters for transformations between ICRS and geocentric CIRS
+  coordinates.  The Earth ephemeris and CIP/CIO are supplied by the
+  caller.
 
-star-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
+  The parameters produced by this function are required in the
+  parallax, light deflection, aberration, and bias-precession-nutation
+  parts of the astrometric transformation chain.
 
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-uld be expressed in any of these ways, among
+  Given:
+     date1  double       TDB as a 2-part...
+     date2  double       ...Julian Date (Note 1)
+     ebpv   double[2][3] Earth barycentric position/velocity (au, au/day)
+     ehp    double[3]    Earth heliocentric position (au)
+     x,y    double       CIP X,Y (components of unit vector)
+     s      double       the CIO locator s (radians)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  For most
- function the choice will not be at all
+  Returned:
+     astrom eraASTROM*   star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       unchanged
+      xpl    double       unchanged
+      ypl    double       unchanged
+      sphi   double       unchanged
+      cphi   double       unchanged
+      diurab double       unchanged
+      eral   double       unchanged
+      refa   double       unchanged
+      refb   double       unchanged
 
-ad of TDB without any significant impact on
-
-with respect to BCRS axes.
-aller does not wish to provide the Earth
-O, the function eraApci13 can be used instead
-ion.  This computes the required quantities
-ctions.
-al functions that inserts into the astrom
-endent parameters needed for the chain of
-mations ICRS <-> GCRS <-> CIRS <-> observed.
-s support different classes of observer and
-sformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ing in "13" use contemporary ERFA models to
-ephemerides.  The others accept ephemerides
-er.
-rom ICRS to GCRS covers space motion,
-ection, and aberration.  From GCRS to CIRS
- and precession-nutation.  From CIRS to
-nt of Earth rotation, polar motion, diurnal
-lax (unless subsumed into the ICRS <-> GCRS
- atmospheric refraction.
-e astrom produced by this function is used by
-cq*.
-
-try parameters, ICRS-GCRS, geocenter
-al-to-intermediate matrix, given X,Y and s
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TDB date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -624,90 +519,50 @@ Notes:
   5) The context structure astrom produced by this function is used by
      eraAtciq* and eraAticq*.
 
+  Called:
+     eraApcg      astrometry parameters, ICRS-GCRS, geocenter
+     eraC2ixys    celestial-to-intermediate matrix, given X,Y and s
+
+
 
 ------
 apci13
 ------
 
-Given:
-DB as a 2-part...
-..Julian Date (Note 1)
+  For a terrestrial observer, prepare star-independent astrometry
+  parameters for transformations between ICRS and geocentric CIRS
+  coordinates.  The caller supplies the date, and ERFA models are used
+  to predict the Earth ephemeris and CIP/CIO.
 
-tar-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
-quation of the origins (ERA-GST)
+  The parameters produced by this function are required in the
+  parallax, light deflection, aberration, and bias-precession-nutation
+  parts of the astrometric transformation chain.
 
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-uld be expressed in any of these ways, among
+  Given:
+     date1  double      TDB as a 2-part...
+     date2  double      ...Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  For most
- function the choice will not be at all
+  Returned:
+     astrom eraASTROM*  star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       unchanged
+      xpl    double       unchanged
+      ypl    double       unchanged
+      sphi   double       unchanged
+      cphi   double       unchanged
+      diurab double       unchanged
+      eral   double       unchanged
+      refa   double       unchanged
+      refb   double       unchanged
+     eo     double*     equation of the origins (ERA-GST)
 
-ad of TDB without any significant impact on
-
-with respect to BCRS axes.
-aller wishes to supply his own Earth
-O, the function eraApci can be used instead
-ion.
-al functions that inserts into the astrom
-endent parameters needed for the chain of
-mations ICRS <-> GCRS <-> CIRS <-> observed.
-s support different classes of observer and
-sformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ing in "13" use contemporary ERFA models to
-ephemerides.  The others accept ephemerides
-er.
-rom ICRS to GCRS covers space motion,
-ection, and aberration.  From GCRS to CIRS
- and precession-nutation.  From CIRS to
-nt of Earth rotation, polar motion, diurnal
-lax (unless subsumed into the ICRS <-> GCRS
- atmospheric refraction.
-e astrom produced by this function is used by
-cq*.
-
-osition and velocity
-al NPB matrix, IAU 2006/2000A
- CIP X,Y coordinates from NPB matrix
- locator s, given X,Y, IAU 2006
-try parameters, ICRS-CIRS
-n of the origins, given NPB matrix and s
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TDB date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -769,125 +624,62 @@ Notes:
   5) The context structure astrom produced by this function is used by
      eraAtciq* and eraAticq*.
 
+  Called:
+     eraEpv00     Earth position and velocity
+     eraPnm06a    classical NPB matrix, IAU 2006/2000A
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+     eraS06       the CIO locator s, given X,Y, IAU 2006
+     eraApci      astrometry parameters, ICRS-CIRS
+     eraEors      equation of the origins, given NPB matrix and s
+
+
 
 ------
 apco
 ------
 
-Given:
-TDB as a 2-part...
-...Julian Date (Note 1)
-Earth barycentric PV (au, au/day, Note 2)
-Earth heliocentric P (au, Note 2)
-CIP X,Y (components of unit vector)
-the CIO locator s (radians)
-Earth rotation angle (radians)
-longitude (radians, east +ve, Note 3)
-latitude (geodetic, radians, Note 3)
-height above ellipsoid (m, geodetic, Note 3)
-polar motion coordinates (radians, Note 4)
-the TIO locator s' (radians, Note 4)
-refraction constant A (radians, Note 5)
-refraction constant B (radians, Note 5)
+  For a terrestrial observer, prepare star-independent astrometry
+  parameters for transformations between ICRS and observed
+  coordinates.  The caller supplies the Earth ephemeris, the Earth
+  rotation information and the refraction constants as well as the
+  site coordinates.
 
-star-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
+  Given:
+     date1  double       TDB as a 2-part...
+     date2  double       ...Julian Date (Note 1)
+     ebpv   double[2][3] Earth barycentric PV (au, au/day, Note 2)
+     ehp    double[3]    Earth heliocentric P (au, Note 2)
+     x,y    double       CIP X,Y (components of unit vector)
+     s      double       the CIO locator s (radians)
+     theta  double       Earth rotation angle (radians)
+     elong  double       longitude (radians, east +ve, Note 3)
+     phi    double       latitude (geodetic, radians, Note 3)
+     hm     double       height above ellipsoid (m, geodetic, Note 3)
+     xp,yp  double       polar motion coordinates (radians, Note 4)
+     sp     double       the TIO locator s' (radians, Note 4)
+     refa   double       refraction constant A (radians, Note 5)
+     refb   double       refraction constant B (radians, Note 5)
 
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-uld be expressed in any of these ways, among
+  Returned:
+     astrom eraASTROM*   star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  For most
- function the choice will not be at all
-
-ad of TDB without any significant impact on
-
-and all the astrom vectors, are with respect
-
-rdinates are with respect to the ERFA_WGS84
-  TAKE CARE WITH THE LONGITUDE SIGN
-gitude required by the present function is
-ast-positive, in accordance with geographical
-
-ordinates (in radians) of the Celestial
-th respect to the International Terrestrial
-e IERS Conventions), measured along the
-eg west respectively.  sp is the TIO locator
-h positions the Terrestrial Intermediate
-r.  For many applications, xp, yp and
-be set to zero.
-r motion is stored in a form rotated onto the
-
-ants refa and refb are for use in a
-3(Z) model, where Z is the observed
-ith distance and dZ is the amount of
-
-ake great care with units, as even unlikely
-parameters are accepted and processed in
-models used.
-aller does not wish to provide the Earth
- rotation information and refraction
-ion eraApco13 can be used instead of the
-his starts from UTC and weather readings etc.
-e values using other ERFA functions.
-al functions that inserts into the astrom
-endent parameters needed for the chain of
-mations ICRS <-> GCRS <-> CIRS <-> observed.
-s support different classes of observer and
-sformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ing in "13" use contemporary ERFA models to
-ephemerides.  The others accept ephemerides
-er.
-rom ICRS to GCRS covers space motion,
-ection, and aberration.  From GCRS to CIRS
- and precession-nutation.  From CIRS to
-nt of Earth rotation, polar motion, diurnal
-lax (unless subsumed into the ICRS <-> GCRS
- atmospheric refraction.
-e astrom produced by this function is used by
-eraAtciq* and eraAticq*.
-
-try parameters: update ERA
-al-to-intermediate matrix, given X,Y and s
-n/velocity of terrestrial station
- of transpose of r-matrix and pv-vector
-try parameters, ICRS-GCRS, space observer
-matrix
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TDB date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -978,140 +770,69 @@ Notes:
   9) The context structure astrom produced by this function is used by
      eraAtioq, eraAtoiq, eraAtciq* and eraAticq*.
 
+  Called:
+     eraAper      astrometry parameters: update ERA
+     eraC2ixys    celestial-to-intermediate matrix, given X,Y and s
+     eraPvtob     position/velocity of terrestrial station
+     eraTrxpv     product of transpose of r-matrix and pv-vector
+     eraApcs      astrometry parameters, ICRS-GCRS, space observer
+     eraCr        copy r-matrix
+
+
 
 ------
 apco13
 ------
 
-Given:
-C as a 2-part...
-.quasi Julian Date (Notes 1,2)
-1-UTC (seconds, Note 3)
-ngitude (radians, east +ve, Note 4)
-titude (geodetic, radians, Note 4)
-ight above ellipsoid (m, geodetic, Notes 4,6)
-lar motion coordinates (radians, Note 5)
-essure at the observer (hPa = mB, Note 6)
-bient temperature at the observer (deg C)
-lative humidity at the observer (range 0-1)
-velength (micrometers, Note 7)
+  For a terrestrial observer, prepare star-independent astrometry
+  parameters for transformations between ICRS and observed
+  coordinates.  The caller supplies UTC, site coordinates, ambient air
+  conditions and observing wavelength, and ERFA models are used to
+  obtain the Earth ephemeris, CIP/CIO and refraction constants.
 
-ar-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
-uation of the origins (ERA-GST)
-e):
-atus: +1 = dubious year (Note 2)
-       0 = OK
-      -1 = unacceptable date
+  The parameters produced by this function are required in the
+  parallax, light deflection, aberration, and bias-precession-nutation
+  parts of the ICRS/CIRS transformations.
 
-Julian Date (see Note 2), apportioned in any
-een the two arguments, for example where utc1
-umber and utc2 is the fraction of a day.
-unambiguously represent UTC during a leap
-al measures are taken.  The convention in the
- that the JD day represents UTC days whether
-, 86400 or 86401 SI seconds.
- use the function eraDtf2d to convert from
-ime of day into 2-part quasi Julian Date, as
-eap-second-ambiguity convention just
+  Given:
+     utc1   double     UTC as a 2-part...
+     utc2   double     ...quasi Julian Date (Notes 1,2)
+     dut1   double     UT1-UTC (seconds, Note 3)
+     elong  double     longitude (radians, east +ve, Note 4)
+     phi    double     latitude (geodetic, radians, Note 4)
+     hm     double     height above ellipsoid (m, geodetic, Notes 4,6)
+     xp,yp  double     polar motion coordinates (radians, Note 5)
+     phpa   double     pressure at the observer (hPa = mB, Note 6)
+     tc     double     ambient temperature at the observer (deg C)
+     rh     double     relative humidity at the observer (range 0-1)
+     wl     double     wavelength (micrometers, Note 7)
 
-"dubious year" flags UTCs that predate the
- time scale or that are too far in the
-d.  See eraDat for further details.
-d in IERS bulletins.  It increases by exactly
-nd of each positive UTC leap second,
- to keep UT1-UTC within +/- 0.9s.  n.b. This
-eview, and in the future UT1-UTC may grow
- limit.
-ordinates are with respect to the ERFA_WGS84
-.  TAKE CARE WITH THE LONGITUDE SIGN:  the
-by the present function is east-positive
-, in accordance with geographical convention.
-,yp can be obtained from IERS bulletins.  The
-dinates (in radians) of the Celestial
-ith respect to the International Terrestrial
-ee IERS Conventions 2003), measured along the
-deg west respectively.  For many
-d yp can be set to zero.
-ar motion is stored in a form rotated onto
+  Returned:
+     astrom eraASTROM* star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
+     eo     double*    equation of the origins (ERA-GST)
 
-bove the ellipsoid of the observing station
-nown but phpa, the pressure in hPa (=mB), is
-ate estimate of hm can be obtained from the
+  Returned (function value):
+            int        status: +1 = dubious year (Note 2)
+                                0 = OK
+                               -1 = unacceptable date
 
-tsl * log ( phpa / 1013.25 );
-proximate sea-level air temperature in K
-Quantities, C.W.Allen, 3rd edition, section
- the pressure phpa is not known, it can be
-height of the observing station, hm, as
-
-5 * exp ( -hm / ( 29.3 * tsl ) );
- the refraction is nearly proportional to
-at an accurate phpa value is important for
-
-cifies the observing wavelength in
-ransition from optical to radio is assumed to
-eters (about 3000 GHz).
-take great care with units, as even unlikely
- parameters are accepted and processed in
- models used.
-caller wishes to supply his own Earth
-tation information and refraction constants,
-o can be used instead of the present function.
-ral functions that inserts into the astrom
-pendent parameters needed for the chain of
-rmations ICRS <-> GCRS <-> CIRS <-> observed.
-ns support different classes of observer and
-nsformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ding in "13" use contemporary ERFA models to
- ephemerides.  The others accept ephemerides
-ler.
-from ICRS to GCRS covers space motion,
-lection, and aberration.  From GCRS to CIRS
-s and precession-nutation.  From CIRS to
-unt of Earth rotation, polar motion, diurnal
-llax (unless subsumed into the ICRS <-> GCRS
-d atmospheric refraction.
-re astrom produced by this function is used
-iq, eraAtciq* and eraAticq*.
-
-TAI
-TT
-UT1
-osition and velocity
-al NPB matrix, IAU 2006/2000A
- CIP X,Y coordinates from NPB matrix
- locator s, given X,Y, IAU 2006
-otation angle, IAU 2000
- locator s', IERS 2000
-ion constants for given ambient conditions
-try parameters, ICRS-observed
-n of the origins, given NPB matrix and s
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1)  utc1+utc2 is quasi Julian Date (see Note 2), apportioned in any
       convenient way between the two arguments, for example where utc1
@@ -1213,100 +934,62 @@ Notes:
   11) The context structure astrom produced by this function is used
       by eraAtioq, eraAtoiq, eraAtciq* and eraAticq*.
 
+  Called:
+     eraUtctai    UTC to TAI
+     eraTaitt     TAI to TT
+     eraUtcut1    UTC to UT1
+     eraEpv00     Earth position and velocity
+     eraPnm06a    classical NPB matrix, IAU 2006/2000A
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+     eraS06       the CIO locator s, given X,Y, IAU 2006
+     eraEra00     Earth rotation angle, IAU 2000
+     eraSp00      the TIO locator s', IERS 2000
+     eraRefco     refraction constants for given ambient conditions
+     eraApco      astrometry parameters, ICRS-observed
+     eraEors      equation of the origins, given NPB matrix and s
+
+
 
 ------
 apcs
 ------
 
-Given:
-TDB as a 2-part...
-...Julian Date (Note 1)
-observer's geocentric pos/vel (m, m/s)
-Earth barycentric PV (au, au/day)
-Earth heliocentric P (au)
+  For an observer whose geocentric position and velocity are known,
+  prepare star-independent astrometry parameters for transformations
+  between ICRS and GCRS.  The Earth ephemeris is supplied by the
+  caller.
 
-star-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
+  The parameters produced by this function are required in the space
+  motion, parallax, light deflection and aberration parts of the
+  astrometric transformation chain.
 
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-uld be expressed in any of these ways, among
+  Given:
+     date1  double       TDB as a 2-part...
+     date2  double       ...Julian Date (Note 1)
+     pv     double[2][3] observer's geocentric pos/vel (m, m/s)
+     ebpv   double[2][3] Earth barycentric PV (au, au/day)
+     ehp    double[3]    Earth heliocentric P (au)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  For most
- function the choice will not be at all
+  Returned:
+     astrom eraASTROM*   star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       unchanged
+      xpl    double       unchanged
+      ypl    double       unchanged
+      sphi   double       unchanged
+      cphi   double       unchanged
+      diurab double       unchanged
+      eral   double       unchanged
+      refa   double       unchanged
+      refb   double       unchanged
 
-ad of TDB without any significant impact on
-
-with respect to BCRS axes.
-rguments for (i) the observer's geocentric
-y and (ii) the Earth ephemeris is done for
-eocentric, terrestrial and Earth orbit cases.
-cations it maybe more convenient to specify
-tion and velocity and to supply the
-and velocity information directly instead of
-Earth.  However, note the different units:
-ocentric vectors, au and au/day for the
-ycentric vectors.
-aller does not wish to provide the Earth
-ion eraApcs13 can be used instead of the
-his computes the Earth ephemeris using the
-00.
-al functions that inserts into the astrom
-endent parameters needed for the chain of
-mations ICRS <-> GCRS <-> CIRS <-> observed.
-s support different classes of observer and
-sformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ing in "13" use contemporary ERFA models to
-ephemerides.  The others accept ephemerides
-er.
-rom ICRS to GCRS covers space motion,
-ection, and aberration.  From GCRS to CIRS
- and precession-nutation.  From CIRS to
-nt of Earth rotation, polar motion, diurnal
-lax (unless subsumed into the ICRS <-> GCRS
- atmospheric refraction.
-e astrom produced by this function is used by
-cq*.
-
-vector
- of p-vector
-se p-vector into modulus and direction
-ize r-matrix to identity
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TDB date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -1379,91 +1062,51 @@ Notes:
   6) The context structure astrom produced by this function is used by
      eraAtciq* and eraAticq*.
 
+  Called:
+     eraCp        copy p-vector
+     eraPm        modulus of p-vector
+     eraPn        decompose p-vector into modulus and direction
+     eraIr        initialize r-matrix to identity
+
+
 
 ------
 apcs13
 ------
 
-Given:
-TDB as a 2-part...
-...Julian Date (Note 1)
-observer's geocentric pos/vel (Note 3)
+  For an observer whose geocentric position and velocity are known,
+  prepare star-independent astrometry parameters for transformations
+  between ICRS and GCRS.  The Earth ephemeris is from ERFA models.
 
-star-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
+  The parameters produced by this function are required in the space
+  motion, parallax, light deflection and aberration parts of the
+  astrometric transformation chain.
 
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-uld be expressed in any of these ways, among
+  Given:
+     date1  double       TDB as a 2-part...
+     date2  double       ...Julian Date (Note 1)
+     pv     double[2][3] observer's geocentric pos/vel (Note 3)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  For most
- function the choice will not be at all
+  Returned:
+     astrom eraASTROM*   star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       unchanged
+      xpl    double       unchanged
+      ypl    double       unchanged
+      sphi   double       unchanged
+      cphi   double       unchanged
+      diurab double       unchanged
+      eral   double       unchanged
+      refa   double       unchanged
+      refb   double       unchanged
 
-ad of TDB without any significant impact on
-
-with respect to BCRS axes.
-ion and velocity pv are geocentric but with
-, and in units of m and m/s.  No assumptions
-mity to the Earth, and the function can be
-applications as well as Earth orbit and
-
-aller wishes to supply his own Earth
-ion eraApcs can be used instead of the present
-
-al functions that inserts into the astrom
-endent parameters needed for the chain of
-mations ICRS <-> GCRS <-> CIRS <-> observed.
-s support different classes of observer and
-sformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ing in "13" use contemporary ERFA models to
-ephemerides.  The others accept ephemerides
-er.
-rom ICRS to GCRS covers space motion,
-ection, and aberration.  From GCRS to CIRS
- and precession-nutation.  From CIRS to
-nt of Earth rotation, polar motion, diurnal
-lax (unless subsumed into the ICRS <-> GCRS
- atmospheric refraction.
-e astrom produced by this function is used by
-cq*.
-
-osition and velocity
-try parameters, ICRS-GCRS, space observer
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TDB date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -1531,173 +1174,149 @@ Notes:
   6) The context structure astrom produced by this function is used by
      eraAtciq* and eraAticq*.
 
+  Called:
+     eraEpv00     Earth position and velocity
+     eraApcs      astrometry parameters, ICRS-GCRS, space observer
+
+
 
 ------
 aper
 ------
 
-Given:
-Earth rotation angle (radians, Note 2)
-star-independent astrometry parameters:
- not used
- not used
- not used
- not used
- not used
- not used
- not used
- longitude + s' (radians)
- not used
- not used
- not used
- not used
- not used
- not used
- not used
- not used
+  In the star-independent astrometry parameters, update only the
+  Earth rotation angle, supplied by the caller explicitly.
 
-star-independent astrometry parameters:
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- "local" Earth rotation angle (radians)
- unchanged
- unchanged
+  Given:
+     theta   double      Earth rotation angle (radians, Note 2)
+     astrom  eraASTROM*  star-independent astrometry parameters:
+      pmt    double       not used
+      eb     double[3]    not used
+      eh     double[3]    not used
+      em     double       not used
+      v      double[3]    not used
+      bm1    double       not used
+      bpn    double[3][3] not used
+      along  double       longitude + s' (radians)
+      xpl    double       not used
+      ypl    double       not used
+      sphi   double       not used
+      cphi   double       not used
+      diurab double       not used
+      eral   double       not used
+      refa   double       not used
+      refb   double       not used
 
- to enable sidereal-tracking applications to
-putation of the bulk of the astrometry
-e Earth rotation is updated.
-d as equinox based positions, such as
- apparent (RA,Dec), the supplied theta can be
-idereal time rather than Earth rotation
+  Returned:
+     astrom  eraASTROM*  star-independent astrometry parameters:
+      pmt    double       unchanged
+      eb     double[3]    unchanged
+      eh     double[3]    unchanged
+      em     double       unchanged
+      v      double[3]    unchanged
+      bm1    double       unchanged
+      bpn    double[3][3] unchanged
+      along  double       unchanged
+      xpl    double       unchanged
+      ypl    double       unchanged
+      sphi   double       unchanged
+      cphi   double       unchanged
+      diurab double       unchanged
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       unchanged
+      refb   double       unchanged
 
-13 can be used instead of the present
- from UT1 rather than ERA itself.
-al functions that inserts into the astrom
-endent parameters needed for the chain of
-mations ICRS <-> GCRS <-> CIRS <-> observed.
-s support different classes of observer and
-sformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ing in "13" use contemporary ERFA models to
-ephemerides.  The others accept ephemerides
-er.
-rom ICRS to GCRS covers space motion,
-ection, and aberration.  From GCRS to CIRS
- and precession-nutation.  From CIRS to
-nt of Earth rotation, polar motion, diurnal
-lax (unless subsumed into the ICRS <-> GCRS
- atmospheric refraction.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Notes:
+
+  1) This function exists to enable sidereal-tracking applications to
+     avoid wasteful recomputation of the bulk of the astrometry
+     parameters:  only the Earth rotation is updated.
+
+  2) For targets expressed as equinox based positions, such as
+     classical geocentric apparent (RA,Dec), the supplied theta can be
+     Greenwich apparent sidereal time rather than Earth rotation
+     angle.
+
+  3) The function eraAper13 can be used instead of the present
+     function, and starts from UT1 rather than ERA itself.
+
+  4) This is one of several functions that inserts into the astrom
+     structure star-independent parameters needed for the chain of
+     astrometric transformations ICRS <-> GCRS <-> CIRS <-> observed.
+
+     The various functions support different classes of observer and
+     portions of the transformation chain:
+
+          functions         observer        transformation
+
+       eraApcg eraApcg13    geocentric      ICRS <-> GCRS
+       eraApci eraApci13    terrestrial     ICRS <-> CIRS
+       eraApco eraApco13    terrestrial     ICRS <-> observed
+       eraApcs eraApcs13    space           ICRS <-> GCRS
+       eraAper eraAper13    terrestrial     update Earth rotation
+       eraApio eraApio13    terrestrial     CIRS <-> observed
+
+     Those with names ending in "13" use contemporary ERFA models to
+     compute the various ephemerides.  The others accept ephemerides
+     supplied by the caller.
+
+     The transformation from ICRS to GCRS covers space motion,
+     parallax, light deflection, and aberration.  From GCRS to CIRS
+     comprises frame bias and precession-nutation.  From CIRS to
+     observed takes account of Earth rotation, polar motion, diurnal
+     aberration and parallax (unless subsumed into the ICRS <-> GCRS
+     transformation), and atmospheric refraction.
+
+
 
 ------
 aper13
 ------
 
-Given:
-UT1 as a 2-part...
-...Julian Date (Note 1)
-star-independent astrometry parameters:
- not used
- not used
- not used
- not used
- not used
- not used
- not used
- longitude + s' (radians)
- not used
- not used
- not used
- not used
- not used
- not used
- not used
- not used
+  In the star-independent astrometry parameters, update only the
+  Earth rotation angle.  The caller provides UT1, (n.b. not UTC).
 
-star-independent astrometry parameters:
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- "local" Earth rotation angle (radians)
- unchanged
- unchanged
+  Given:
+     ut11    double      UT1 as a 2-part...
+     ut12    double      ...Julian Date (Note 1)
+     astrom  eraASTROM*  star-independent astrometry parameters:
+      pmt    double       not used
+      eb     double[3]    not used
+      eh     double[3]    not used
+      em     double       not used
+      v      double[3]    not used
+      bm1    double       not used
+      bpn    double[3][3] not used
+      along  double       longitude + s' (radians)
+      xpl    double       not used
+      ypl    double       not used
+      sphi   double       not used
+      cphi   double       not used
+      diurab double       not used
+      eral   double       not used
+      refa   double       not used
+      refb   double       not used
 
-ot UTC) ut11+ut12 is a Julian Date,
-onvenient way between the arguments ut11 and
-JD(UT1)=2450123.7 could be expressed in any
- others:
-  ut12
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 and MJD methods are good compromises
-nd convenience.  The date & time method is
-algorithm used:  maximum precision is
-t11 argument is for 0hrs UT1 on the day in
-2 argument lies in the range 0 to 1, or vice
+  Returned:
+     astrom  eraASTROM*  star-independent astrometry parameters:
+      pmt    double       unchanged
+      eb     double[3]    unchanged
+      eh     double[3]    unchanged
+      em     double       unchanged
+      v      double[3]    unchanged
+      bm1    double       unchanged
+      bpn    double[3][3] unchanged
+      along  double       unchanged
+      xpl    double       unchanged
+      ypl    double       unchanged
+      sphi   double       unchanged
+      cphi   double       unchanged
+      diurab double       unchanged
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       unchanged
+      refb   double       unchanged
 
- to provide the Earth rotation angle itself,
- can be used instead.  One use of this
-titute Greenwich apparent sidereal time and
-quinox based transformations directly.
-al functions that inserts into the astrom
-endent parameters needed for the chain of
-mations ICRS <-> GCRS <-> CIRS <-> observed.
-s support different classes of observer and
-sformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ing in "13" use contemporary ERFA models to
-ephemerides.  The others accept ephemerides
-er.
-rom ICRS to GCRS covers space motion,
-ection, and aberration.  From GCRS to CIRS
- and precession-nutation.  From CIRS to
-nt of Earth rotation, polar motion, diurnal
-lax (unless subsumed into the ICRS <-> GCRS
- atmospheric refraction.
-
-try parameters: update ERA
-otation angle, IAU 2000
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The UT1 date (n.b. not UTC) ut11+ut12 is a Julian Date,
      apportioned in any convenient way between the arguments ut11 and
@@ -1752,95 +1371,51 @@ Notes:
      aberration and parallax (unless subsumed into the ICRS <-> GCRS
      transformation), and atmospheric refraction.
 
+  Called:
+     eraAper      astrometry parameters: update ERA
+     eraEra00     Earth rotation angle, IAU 2000
+
+
 
 ------
 apio
 ------
 
-Given:
-he TIO locator s' (radians, Note 1)
-arth rotation angle (radians)
-ongitude (radians, east +ve, Note 2)
-eodetic latitude (radians, Note 2)
-eight above ellipsoid (m, geodetic Note 2)
-olar motion coordinates (radians, Note 3)
-efraction constant A (radians, Note 4)
-efraction constant B (radians, Note 4)
+  For a terrestrial observer, prepare star-independent astrometry
+  parameters for transformations between CIRS and observed
+  coordinates.  The caller supplies the Earth orientation information
+  and the refraction constants as well as the site coordinates.
 
-tar-independent astrometry parameters:
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
+  Given:
+     sp     double      the TIO locator s' (radians, Note 1)
+     theta  double      Earth rotation angle (radians)
+     elong  double      longitude (radians, east +ve, Note 2)
+     phi    double      geodetic latitude (radians, Note 2)
+     hm     double      height above ellipsoid (m, geodetic Note 2)
+     xp,yp  double      polar motion coordinates (radians, Note 3)
+     refa   double      refraction constant A (radians, Note 4)
+     refb   double      refraction constant B (radians, Note 4)
 
-s', is a tiny quantity needed only by the
-tions.  It can either be set to zero or
-ERFA function eraSp00.
-rdinates are with respect to the ERFA_WGS84
-  TAKE CARE WITH THE LONGITUDE SIGN:  the
-y the present function is east-positive
- in accordance with geographical convention.
-yp can be obtained from IERS bulletins.  The
-inates (in radians) of the Celestial
-th respect to the International Terrestrial
-e IERS Conventions 2003), measured along the
-eg west respectively.  For many applications,
- to zero.
-r motion is stored in a form rotated onto the
+  Returned:
+     astrom eraASTROM*  star-independent astrometry parameters:
+      pmt    double       unchanged
+      eb     double[3]    unchanged
+      eh     double[3]    unchanged
+      em     double       unchanged
+      v      double[3]    unchanged
+      bm1    double       unchanged
+      bpn    double[3][3] unchanged
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
 
-ants refa and refb are for use in a
-3(Z) model, where Z is the observed
-ith distance and dZ is the amount of
-
-ake great care with units, as even unlikely
-parameters are accepted and processed in
-models used.
-aller does not wish to provide the Earth
- and refraction constants, the function
-d instead of the present function.  This
-weather readings etc. and computes suitable
-RFA functions.
-al functions that inserts into the astrom
-endent parameters needed for the chain of
-mations ICRS <-> GCRS <-> CIRS <-> observed.
-s support different classes of observer and
-sformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ing in "13" use contemporary ERFA models to
-ephemerides.  The others accept ephemerides
-er.
-rom ICRS to GCRS covers space motion,
-ection, and aberration.  From GCRS to CIRS
- and precession-nutation.  From CIRS to
-nt of Earth rotation, polar motion, diurnal
-lax (unless subsumed into the ICRS <-> GCRS
- atmospheric refraction.
-e astrom produced by this function is used by
-q.
-
-n/velocity of terrestrial station
-try parameters: update ERA
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) sp, the TIO locator s', is a tiny quantity needed only by the
      most precise applications.  It can either be set to zero or
@@ -1906,134 +1481,59 @@ Notes:
   8) The context structure astrom produced by this function is used by
      eraAtioq and eraAtoiq.
 
+  Called:
+     eraPvtob     position/velocity of terrestrial station
+     eraAper      astrometry parameters: update ERA
+
+
 
 ------
 apio13
 ------
 
-Given:
-TC as a 2-part...
-..quasi Julian Date (Notes 1,2)
-T1-UTC (seconds)
-ongitude (radians, east +ve, Note 3)
-eodetic latitude (radians, Note 3)
-eight above ellipsoid (m, geodetic Notes 4,6)
-olar motion coordinates (radians, Note 5)
-ressure at the observer (hPa = mB, Note 6)
-mbient temperature at the observer (deg C)
-elative humidity at the observer (range 0-1)
-avelength (micrometers, Note 7)
+  For a terrestrial observer, prepare star-independent astrometry
+  parameters for transformations between CIRS and observed
+  coordinates.  The caller supplies UTC, site coordinates, ambient air
+  conditions and observing wavelength.
 
-tar-independent astrometry parameters:
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- unchanged
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
-e):
-tatus: +1 = dubious year (Note 2)
-        0 = OK
-       -1 = unacceptable date
+  Given:
+     utc1   double      UTC as a 2-part...
+     utc2   double      ...quasi Julian Date (Notes 1,2)
+     dut1   double      UT1-UTC (seconds)
+     elong  double      longitude (radians, east +ve, Note 3)
+     phi    double      geodetic latitude (radians, Note 3)
+     hm     double      height above ellipsoid (m, geodetic Notes 4,6)
+     xp,yp  double      polar motion coordinates (radians, Note 5)
+     phpa   double      pressure at the observer (hPa = mB, Note 6)
+     tc     double      ambient temperature at the observer (deg C)
+     rh     double      relative humidity at the observer (range 0-1)
+     wl     double      wavelength (micrometers, Note 7)
 
-Julian Date (see Note 2), apportioned in any
-een the two arguments, for example where utc1
-umber and utc2 is the fraction of a day.
-unambiguously represent UTC during a leap
-al measures are taken.  The convention in the
- that the JD day represents UTC days whether
-, 86400 or 86401 SI seconds.
- use the function eraDtf2d to convert from
-ime of day into 2-part quasi Julian Date, as
-eap-second-ambiguity convention just
+  Returned:
+     astrom eraASTROM*  star-independent astrometry parameters:
+      pmt    double       unchanged
+      eb     double[3]    unchanged
+      eh     double[3]    unchanged
+      em     double       unchanged
+      v      double[3]    unchanged
+      bm1    double       unchanged
+      bpn    double[3][3] unchanged
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
 
-"dubious year" flags UTCs that predate the
- time scale or that are too far in the future
- eraDat for further details.
-d in IERS bulletins.  It increases by exactly
-nd of each positive UTC leap second,
- to keep UT1-UTC within +/- 0.9s.  n.b. This
-eview, and in the future UT1-UTC may grow
- limit.
-ordinates are with respect to the ERFA_WGS84
-.  TAKE CARE WITH THE LONGITUDE SIGN:  the
-by the present function is east-positive
-, in accordance with geographical convention.
-,yp can be obtained from IERS bulletins.  The
-dinates (in radians) of the Celestial
-ith respect to the International Terrestrial
-ee IERS Conventions 2003), measured along the
-deg west respectively.  For many applications,
-t to zero.
-ar motion is stored in a form rotated onto
+  Returned (function value):
+            int         status: +1 = dubious year (Note 2)
+                                 0 = OK
+                                -1 = unacceptable date
 
-bove the ellipsoid of the observing station
-nown but phpa, the pressure in hPa (=mB), is
-ate estimate of hm can be obtained from the
-
-tsl * log ( phpa / 1013.25 );
-proximate sea-level air temperature in K
-Quantities, C.W.Allen, 3rd edition, section
- the pressure phpa is not known, it can be
-height of the observing station, hm, as
-
-5 * exp ( -hm / ( 29.3 * tsl ) );
- the refraction is nearly proportional to the
-n accurate phpa value is important for
-
-cifies the observing wavelength in
-ransition from optical to radio is assumed to
-eters (about 3000 GHz).
-take great care with units, as even unlikely
- parameters are accepted and processed in
- models used.
-caller wishes to supply his own Earth
-n and refraction constants, the function
-instead of the present function.
-ral functions that inserts into the astrom
-pendent parameters needed for the chain of
-rmations ICRS <-> GCRS <-> CIRS <-> observed.
-ns support different classes of observer and
-nsformation chain:
-   observer        transformation
-   geocentric      ICRS <-> GCRS
-   terrestrial     ICRS <-> CIRS
-   terrestrial     ICRS <-> observed
-   space           ICRS <-> GCRS
-   terrestrial     update Earth rotation
-   terrestrial     CIRS <-> observed
-ding in "13" use contemporary ERFA models to
- ephemerides.  The others accept ephemerides
-ler.
-from ICRS to GCRS covers space motion,
-lection, and aberration.  From GCRS to CIRS
-s and precession-nutation.  From CIRS to
-unt of Earth rotation, polar motion, diurnal
-llax (unless subsumed into the ICRS <-> GCRS
-d atmospheric refraction.
-re astrom produced by this function is used
-Atoiq.
-
-TAI
-TT
-UT1
- locator s', IERS 2000
-otation angle, IAU 2000
-ion constants for given ambient conditions
-try parameters, CIRS-observed
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1)  utc1+utc2 is quasi Julian Date (see Note 2), apportioned in any
       convenient way between the two arguments, for example where utc1
@@ -2135,68 +1635,38 @@ Notes:
   11) The context structure astrom produced by this function is used
       by eraAtioq and eraAtoiq.
 
+  Called:
+     eraUtctai    UTC to TAI
+     eraTaitt     TAI to TT
+     eraUtcut1    UTC to UT1
+     eraSp00      the TIO locator s', IERS 2000
+     eraEra00     Earth rotation angle, IAU 2000
+     eraRefco     refraction constants for given ambient conditions
+     eraApio      astrometry parameters, CIRS-observed
+
+
 
 ------
 atci13
 ------
 
-Given:
- right ascension at J2000.0 (radians, Note 1)
- declination at J2000.0 (radians, Note 1)
-roper motion (radians/year; Note 2)
-proper motion (radians/year)
-llax (arcsec)
-al velocity (km/s, +ve if receding)
-as a 2-part...
-ulian Date (Note 3)
+  Transform ICRS star data, epoch J2000.0, to CIRS.
 
- geocentric RA,Dec (radians)
-tion of the origins (ERA-GST, Note 5)
+  Given:
+     rc     double   ICRS right ascension at J2000.0 (radians, Note 1)
+     dc     double   ICRS declination at J2000.0 (radians, Note 1)
+     pr     double   RA proper motion (radians/year; Note 2)
+     pd     double   Dec proper motion (radians/year)
+     px     double   parallax (arcsec)
+     rv     double   radial velocity (km/s, +ve if receding)
+     date1  double   TDB as a 2-part...
+     date2  double   ...Julian Date (Note 3)
 
-ch other than J2000.0 (for example from the
-hich has an epoch of J1991.25) will require a
-eraPmsafe before use.
- RA is dRA/dt rather than cos(Dec)*dRA/dt.
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ould be expressed in any of these ways, among
+  Returned:
+     ri,di  double*  CIRS geocentric RA,Dec (radians)
+     eo     double*  equation of the origins (ERA-GST, Note 5)
 
-  date2
-     0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  For most
- function the choice will not be at all
-
-ad of TDB without any significant impact on
-
-cy is better than 1 milliarcsecond, limited
-sion-nutation model that is used, namely
-y close to solar system bodies, additional
-ral milliarcseconds can occur because of
-ection;  however, the Sun's contribution is
-to first order.  The accuracy limitations of
-aEpv00 (used to compute Earth position and
-bute aberration errors of up to
-Light deflection at the Sun's limb is
- mas level.
-ation to (equinox based) apparent place be
- (CIO based) intermediate place, subtract the
-ins from the returned right ascension:
-raAnp function can then be applied, as
-e result in the conventional 0-2pi range.)
-
-try parameters, ICRS-CIRS, 2013
-CRS to CIRS
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) Star data for an epoch other than J2000.0 (for example from the
      Hipparcos catalog, which has an epoch of J1991.25) will require a
@@ -2245,52 +1715,55 @@ Notes:
      RA = RI - EO. (The eraAnp function can then be applied, as
      required, to keep the result in the conventional 0-2pi range.)
 
+  Called:
+     eraApci13    astrometry parameters, ICRS-CIRS, 2013
+     eraAtciq     quick ICRS to CIRS
+
+
 
 ------
 atciq
 ------
 
-Given:
-RS RA,Dec at J2000.0 (radians)
- proper motion (radians/year; Note 3)
-c proper motion (radians/year)
-rallax (arcsec)
-dial velocity (km/s, +ve if receding)
-ar-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
+  Quick ICRS, epoch J2000.0, to CIRS transformation, given precomputed
+  star-independent astrometry parameters.
 
-RS RA,Dec (radians)
+  Use of this function is appropriate when efficiency is important and
+  where many star positions are to be transformed for one date.  The
+  star-independent parameters can be obtained by calling one of the
+  functions eraApci[13], eraApcg[13], eraApco[13] or eraApcs[13].
 
-with respect to BCRS axes.
-ch other than J2000.0 (for example from the
-hich has an epoch of J1991.25) will require a
-eraPmsafe before use.
- RA is dRA/dt rather than cos(Dec)*dRA/dt.
+  If the parallax and proper motions are zero the eraAtciqz function
+  can be used instead.
 
-motion and parallax
-eflection by the Sun
- aberration
- of r-matrix and pv-vector
-r to spherical
-ze angle into range 0 to 2pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Given:
+     rc,dc  double     ICRS RA,Dec at J2000.0 (radians)
+     pr     double     RA proper motion (radians/year; Note 3)
+     pd     double     Dec proper motion (radians/year)
+     px     double     parallax (arcsec)
+     rv     double     radial velocity (km/s, +ve if receding)
+     astrom eraASTROM* star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
+
+  Returned:
+     ri,di   double    CIRS RA,Dec (radians)
+
+  Notes:
 
   1) All the vectors are with respect to BCRS axes.
 
@@ -2300,79 +1773,68 @@ Notes:
 
   3) The proper motion in RA is dRA/dt rather than cos(Dec)*dRA/dt.
 
+  Called:
+     eraPmpx      proper motion and parallax
+     eraLdsun     light deflection by the Sun
+     eraAb        stellar aberration
+     eraRxp       product of r-matrix and pv-vector
+     eraC2s       p-vector to spherical
+     eraAnp       normalize angle into range 0 to 2pi
+
+
 
 ------
 atciqn
 ------
 
-Given:
-ICRS RA,Dec at J2000.0 (radians)
-RA proper motion (radians/year; Note 3)
-Dec proper motion (radians/year)
-parallax (arcsec)
-radial velocity (km/s, +ve if receding)
-star-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
- number of bodies (Note 3)
-data for each of the n bodies (Notes 3,4):
-  mass of the body (solar masses, Note 5)
-  deflection limiter (Note 6)
-  barycentric PV of the body (au, au/day)
+  Quick ICRS, epoch J2000.0, to CIRS transformation, given precomputed
+  star-independent astrometry parameters plus a list of light-
+  deflecting bodies.
 
-RS RA,Dec (radians)
+  Use of this function is appropriate when efficiency is important and
+  where many star positions are to be transformed for one date.  The
+  star-independent parameters can be obtained by calling one of the
+  functions eraApci[13], eraApcg[13], eraApco[13] or eraApcs[13].
 
-ch other than J2000.0 (for example from the
-hich has an epoch of J1991.25) will require a
-eraPmsafe before use.
- RA is dRA/dt rather than cos(Dec)*dRA/dt.
-s n entries, one for each body to be
-0, no gravitational light deflection will be
-r the Sun.
-include an entry for the Sun as well as for
-body to be taken into account.  The entries
-er in which the light passes the body.
-b struct for body i, the mass parameter
-ired, be adjusted in order to allow for such
-e field.
-er parameter b[i].dl is phi^2/2, where phi is
-on (in radians) between star and body at
-plied.  As phi shrinks below the chosen
-ction is artificially reduced, reaching zero
-le values suitable for a terrestrial
-ith masses, are as follows:
-m        b[i].dl
-         6e-6
-5435     3e-9
-8574     3e-10
-dation of the contents of the b array is
-ed masses must be greater than zero, the
-y vectors must be right, and the deflection
- zero.
 
-motion and parallax
-eflection by n bodies
- aberration
- of r-matrix and pv-vector
-r to spherical
-ze angle into range 0 to 2pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  If the only light-deflecting body to be taken into account is the
+  Sun, the eraAtciq function can be used instead.  If in addition the
+  parallax and proper motions are zero, the eraAtciqz function can be
+  used.
+
+  Given:
+     rc,dc  double       ICRS RA,Dec at J2000.0 (radians)
+     pr     double       RA proper motion (radians/year; Note 3)
+     pd     double       Dec proper motion (radians/year)
+     px     double       parallax (arcsec)
+     rv     double       radial velocity (km/s, +ve if receding)
+     astrom eraASTROM*   star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
+      n     int           number of bodies (Note 3)
+      b     eraLDBODY[n] data for each of the n bodies (Notes 3,4):
+       bm    double        mass of the body (solar masses, Note 5)
+       dl    double        deflection limiter (Note 6)
+       pv    [2][3]        barycentric PV of the body (au, au/day)
+
+  Returned:
+     ri,di   double    CIRS RA,Dec (radians)
+
+  Notes:
 
   1) Star data for an epoch other than J2000.0 (for example from the
      Hipparcos catalog, which has an epoch of J1991.25) will require a
@@ -2410,51 +1872,60 @@ Notes:
      position and velocity vectors must be right, and the deflection
      limiter greater than zero.
 
+  Called:
+     eraPmpx      proper motion and parallax
+     eraLdn       light deflection by n bodies
+     eraAb        stellar aberration
+     eraRxp       product of r-matrix and pv-vector
+     eraC2s       p-vector to spherical
+     eraAnp       normalize angle into range 0 to 2pi
+
+
 
 ------
 atciqz
 ------
 
-Given:
-RS astrometric RA,Dec (radians)
-ar-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
+  Quick ICRS to CIRS transformation, given precomputed star-
+  independent astrometry parameters, and assuming zero parallax and
+  proper motion.
 
-RS RA,Dec (radians)
+  Use of this function is appropriate when efficiency is important and
+  where many star positions are to be transformed for one date.  The
+  star-independent parameters can be obtained by calling one of the
+  functions eraApci[13], eraApcg[13], eraApco[13] or eraApcs[13].
 
-with respect to BCRS axes.
+  The corresponding function for the case of non-zero parallax and
+  proper motion is eraAtciq.
 
-nn, P. K. (eds), Explanatory Supplement to
-anac, 3rd ed., University Science Books
+  Given:
+     rc,dc  double     ICRS astrometric RA,Dec (radians)
+     astrom eraASTROM* star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
 
-"A practical relativistic model for micro-
- in space", Astr. J. 125, 1580-1597 (2003).
+  Returned:
+     ri,di  double     CIRS RA,Dec (radians)
 
-al coordinates to unit vector
-eflection due to Sun
- aberration
- of r-matrix and p-vector
-r to spherical
-ze angle into range +/- pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
 
-References:
+     All the vectors are with respect to BCRS axes.
+
+  References:
 
      Urban, S. & Seidelmann, P. K. (eds), Explanatory Supplement to
      the Astronomical Almanac, 3rd ed., University Science Books
@@ -2471,122 +1942,50 @@ References:
      eraC2s       p-vector to spherical
      eraAnp       normalize angle into range +/- pi
 
+
+
 ------
 atco13
 ------
 
-Given:
- right ascension at J2000.0 (radians, Note 1)
-roper motion (radians/year; Note 2)
-proper motion (radians/year)
-llax (arcsec)
-al velocity (km/s, +ve if receding)
-as a 2-part...
-uasi Julian Date (Notes 3-4)
-UTC (seconds, Note 5)
-itude (radians, east +ve, Note 6)
-tude (geodetic, radians, Note 6)
-ht above ellipsoid (m, geodetic, Notes 6,8)
-r motion coordinates (radians, Note 7)
-sure at the observer (hPa = mB, Note 8)
-ent temperature at the observer (deg C)
-tive humidity at the observer (range 0-1)
-length (micrometers, Note 9)
+  ICRS RA,Dec to observed place.  The caller supplies UTC, site
+  coordinates, ambient air conditions and observing wavelength.
 
-rved azimuth (radians: N=0,E=90)
-rved zenith distance (radians)
-rved hour angle (radians)
-rved declination (radians)
-rved right ascension (CIO-based, radians)
-tion of the origins (ERA-GST)
-e):
-us: +1 = dubious year (Note 4)
-     0 = OK
-    -1 = unacceptable date
+  ERFA models are used for the Earth ephemeris, bias-precession-
+  nutation, Earth orientation and refraction.
 
-och other than J2000.0 (for example from the
-which has an epoch of J1991.25) will require
-to eraPmsafe before use.
-n RA is dRA/dt rather than cos(Dec)*dRA/dt.
-Julian Date (see Note 2), apportioned in any
-een the two arguments, for example where utc1
-umber and utc2 is the fraction of a day.
-unambiguously represent UTC during a leap
-al measures are taken.  The convention in the
- that the JD day represents UTC days whether
-, 86400 or 86401 SI seconds.
- use the function eraDtf2d to convert from
-ime of day into 2-part quasi Julian Date, as
-eap-second-ambiguity convention just
+  Given:
+     rc,dc  double   ICRS right ascension at J2000.0 (radians, Note 1)
+     pr     double   RA proper motion (radians/year; Note 2)
+     pd     double   Dec proper motion (radians/year)
+     px     double   parallax (arcsec)
+     rv     double   radial velocity (km/s, +ve if receding)
+     utc1   double   UTC as a 2-part...
+     utc2   double   ...quasi Julian Date (Notes 3-4)
+     dut1   double   UT1-UTC (seconds, Note 5)
+     elong  double   longitude (radians, east +ve, Note 6)
+     phi    double   latitude (geodetic, radians, Note 6)
+     hm     double   height above ellipsoid (m, geodetic, Notes 6,8)
+     xp,yp  double   polar motion coordinates (radians, Note 7)
+     phpa   double   pressure at the observer (hPa = mB, Note 8)
+     tc     double   ambient temperature at the observer (deg C)
+     rh     double   relative humidity at the observer (range 0-1)
+     wl     double   wavelength (micrometers, Note 9)
 
-"dubious year" flags UTCs that predate the
- time scale or that are too far in the
-d.  See eraDat for further details.
-d in IERS bulletins.  It increases by exactly
-nd of each positive UTC leap second,
- to keep UT1-UTC within +/- 0.9s.  n.b. This
-eview, and in the future UT1-UTC may grow
- limit.
-ordinates are with respect to the ERFA_WGS84
-.  TAKE CARE WITH THE LONGITUDE SIGN:  the
-by the present function is east-positive
-, in accordance with geographical convention.
-,yp can be obtained from IERS bulletins.  The
-dinates (in radians) of the Celestial
-ith respect to the International Terrestrial
-ee IERS Conventions 2003), measured along the
-deg west respectively.  For many
-d yp can be set to zero.
-bove the ellipsoid of the observing station
-nown but phpa, the pressure in hPa (=mB),
-equate estimate of hm can be obtained from
+  Returned:
+     aob    double*  observed azimuth (radians: N=0,E=90)
+     zob    double*  observed zenith distance (radians)
+     hob    double*  observed hour angle (radians)
+     dob    double*  observed declination (radians)
+     rob    double*  observed right ascension (CIO-based, radians)
+     eo     double*  equation of the origins (ERA-GST)
 
-tsl * log ( phpa / 1013.25 );
-proximate sea-level air temperature in K
-Quantities, C.W.Allen, 3rd edition, section
- the pressure phpa is not known, it can be
-height of the observing station, hm, as
+  Returned (function value):
+            int      status: +1 = dubious year (Note 4)
+                              0 = OK
+                             -1 = unacceptable date
 
-5 * exp ( -hm / ( 29.3 * tsl ) );
- the refraction is nearly proportional to
-at an accurate phpa value is important for
-
-cifies the observing wavelength in
-ransition from optical to radio is assumed to
-eters (about 3000 GHz).
- result is limited by the corrections for
-se a simple A*tan(z) + B*tan^3(z) model.
-rological parameters are known accurately and
-local effects, the predicted observed
-be within 0.05 arcsec (optical) or 1 arcsec
-h distance of less than 70 degrees, better
-ical or radio) at 85 degrees and better
-ical) or 30 arcmin (radio) at the horizon.
- the complementary functions eraAtco13 and
-consistent to better than 1 microarcsecond
-ial sphere.  With refraction included,
-ff at high zenith distances, but is still
-csec at 85 degrees.
-ans the position that would be seen by a
-y aligned theodolite.  (Zenith distance is
-titude in order to reflect the fact that no
-or depression of the horizon.)  This is
-rved HA,Dec via the standard rotation, using
-de (corrected for polar motion), while the
-are related simply through the Earth rotation
-longitude.  "Observed" RA,Dec or HA,Dec thus
-that would be seen by a perfect equatorial
- aligned to the Earth's axis of rotation.
-take great care with units, as even unlikely
- parameters are accepted and processed in
- models used.
-
-try parameters, ICRS-observed, 2013
-CRS to CIRS
-IRS to observed
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1)  Star data for an epoch other than J2000.0 (for example from the
       Hipparcos catalog, which has an epoch of J1991.25) will require
@@ -2683,64 +2082,29 @@ Notes:
       values of the input parameters are accepted and processed in
       accordance with the models used.
 
+  Called:
+     eraApco13    astrometry parameters, ICRS-observed, 2013
+     eraAtciq     quick ICRS to CIRS
+     eraAtioq     quick CIRS to observed
+
+
 
 ------
 atic13
 ------
 
-Given:
-geocentric RA,Dec (radians)
-s a 2-part...
-lian Date (Note 1)
+  Transform star RA,Dec from geocentric CIRS to ICRS astrometric.
 
-astrometric RA,Dec (radians)
-ion of the origins (ERA-GST, Note 4)
+  Given:
+     ri,di  double  CIRS geocentric RA,Dec (radians)
+     date1  double  TDB as a 2-part...
+     date2  double  ...Julian Date (Note 1)
 
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-uld be expressed in any of these ways, among
+  Returned:
+     rc,dc  double  ICRS astrometric RA,Dec (radians)
+     eo     double  equation of the origins (ERA-GST, Note 4)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  For most
- function the choice will not be at all
-
-ad of TDB without any significant impact on
-
- are used for the aberration and light
-ns so that the functions eraAtic13 (or
-i13 (or eraAtciq) are accurate inverses;
-the Sun's disk the discrepancy is only about
-
-cy is better than 1 milliarcsecond, limited
-sion-nutation model that is used, namely
-y close to solar system bodies, additional
-ral milliarcseconds can occur because of
-ection;  however, the Sun's contribution is
-to first order.  The accuracy limitations of
-aEpv00 (used to compute Earth position and
-bute aberration errors of up to
-Light deflection at the Sun's limb is
- mas level.
-ation to (equinox based) J2000.0 mean place
-han (CIO based) ICRS coordinates, subtract the
-ins from the returned right ascension:
-eraAnp function can then be applied, as
-e result in the conventional 0-2pi range.)
-
-try parameters, ICRS-CIRS, 2013
-IRS to ICRS astrometric
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TDB date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -2789,51 +2153,49 @@ Notes:
      RA = RI - EO.  (The eraAnp function can then be applied, as
      required, to keep the result in the conventional 0-2pi range.)
 
+  Called:
+     eraApci13    astrometry parameters, ICRS-CIRS, 2013
+     eraAticq     quick CIRS to ICRS astrometric
+
+
 
 ------
 aticq
 ------
 
-Given:
-RS RA,Dec (radians)
-ar-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
+  Quick CIRS RA,Dec to ICRS astrometric place, given the star-
+  independent astrometry parameters.
 
-RS astrometric RA,Dec (radians)
+  Use of this function is appropriate when efficiency is important and
+  where many star positions are all to be transformed for one date.
+  The star-independent astrometry parameters can be obtained by
+  calling one of the functions eraApci[13], eraApcg[13], eraApco[13]
+  or eraApcs[13].
 
-n into account in the light deflection
+  Given:
+     ri,di  double     CIRS RA,Dec (radians)
+     astrom eraASTROM* star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
 
- are used for the aberration and light
-ns so that the functions eraAtic13 (or
-i13 (or eraAtciq) are accurate inverses;
-the Sun's disk the discrepancy is only about
+  Returned:
+     rc,dc  double     ICRS astrometric RA,Dec (radians)
 
-
-al coordinates to unit vector
- of transpose of r-matrix and p-vector
-vector
- aberration
-eflection by the Sun
-r to spherical
-ze angle into range +/- pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) Only the Sun is taken into account in the light deflection
      correction.
@@ -2844,78 +2206,60 @@ Notes:
      even at the edge of the Sun's disk the discrepancy is only about
      1 nanoarcsecond.
 
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraTrxp      product of transpose of r-matrix and p-vector
+     eraZp        zero p-vector
+     eraAb        stellar aberration
+     eraLdsun     light deflection by the Sun
+     eraC2s       p-vector to spherical
+     eraAnp       normalize angle into range +/- pi
+
+
 
 ------
 aticqn
 ------
 
-Given:
-IRS RA,Dec (radians)
-tar-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
- number of bodies (Note 3)
-data for each of the n bodies (Notes 3,4):
- mass of the body (solar masses, Note 5)
- deflection limiter (Note 6)
- barycentric PV of the body (au, au/day)
+  Quick CIRS to ICRS astrometric place transformation, given the star-
+  independent astrometry parameters plus a list of light-deflecting
+  bodies.
 
-RS astrometric RA,Dec (radians)
+  Use of this function is appropriate when efficiency is important and
+  where many star positions are all to be transformed for one date.
+  The star-independent astrometry parameters can be obtained by
+  calling one of the functions eraApci[13], eraApcg[13], eraApco[13]
+  or eraApcs[13].
 
- are used for the aberration and light
-ns so that the functions eraAticqn and
-te inverses; even at the edge of the Sun's
- is only about 1 nanoarcsecond.
-flecting body to be taken into account is the
-nction can be used instead.
-s n entries, one for each body to be
-0, no gravitational light deflection will be
-r the Sun.
-include an entry for the Sun as well as for
-body to be taken into account.  The entries
-er in which the light passes the body.
-b struct for body i, the mass parameter
-ired, be adjusted in order to allow for such
-e field.
-er parameter b[i].dl is phi^2/2, where phi is
-on (in radians) between star and body at
-plied.  As phi shrinks below the chosen
-ction is artificially reduced, reaching zero
-le values suitable for a terrestrial
-ith masses, are as follows:
-m        b[i].dl
-         6e-6
-5435     3e-9
-8574     3e-10
-dation of the contents of the b array is
-ed masses must be greater than zero, the
-y vectors must be right, and the deflection
- zero.
+  Given:
+     ri,di  double      CIRS RA,Dec (radians)
+     astrom eraASTROM*  star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
+      n     int           number of bodies (Note 3)
+      b     eraLDBODY[n] data for each of the n bodies (Notes 3,4):
+       bm    double       mass of the body (solar masses, Note 5)
+       dl    double       deflection limiter (Note 6)
+       pv    [2][3]       barycentric PV of the body (au, au/day)
 
-al coordinates to unit vector
- of transpose of r-matrix and p-vector
-vector
- aberration
-eflection by n bodies
-r to spherical
-ze angle into range +/- pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned:
+     rc,dc  double     ICRS astrometric RA,Dec (radians)
+
+  Notes:
 
   1) Iterative techniques are used for the aberration and light
      deflection corrections so that the functions eraAticqn and
@@ -2955,112 +2299,52 @@ Notes:
      position and velocity vectors must be right, and the deflection
      limiter greater than zero.
 
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraTrxp      product of transpose of r-matrix and p-vector
+     eraZp        zero p-vector
+     eraAb        stellar aberration
+     eraLdn       light deflection by n bodies
+     eraC2s       p-vector to spherical
+     eraAnp       normalize angle into range +/- pi
+
+
 
 ------
 atio13
 ------
 
-Given:
- right ascension (CIO-based, radians)
- declination (radians)
-as a 2-part...
-uasi Julian Date (Notes 1,2)
-UTC (seconds, Note 3)
-itude (radians, east +ve, Note 4)
-etic latitude (radians, Note 4)
-ht above ellipsoid (m, geodetic Notes 4,6)
-r motion coordinates (radians, Note 5)
-sure at the observer (hPa = mB, Note 6)
-ent temperature at the observer (deg C)
-tive humidity at the observer (range 0-1)
-length (micrometers, Note 7)
+  CIRS RA,Dec to observed place.  The caller supplies UTC, site
+  coordinates, ambient air conditions and observing wavelength.
 
-rved azimuth (radians: N=0,E=90)
-rved zenith distance (radians)
-rved hour angle (radians)
-rved declination (radians)
-rved right ascension (CIO-based, radians)
-e):
-us: +1 = dubious year (Note 2)
-     0 = OK
-    -1 = unacceptable date
+  Given:
+     ri     double   CIRS right ascension (CIO-based, radians)
+     di     double   CIRS declination (radians)
+     utc1   double   UTC as a 2-part...
+     utc2   double   ...quasi Julian Date (Notes 1,2)
+     dut1   double   UT1-UTC (seconds, Note 3)
+     elong  double   longitude (radians, east +ve, Note 4)
+     phi    double   geodetic latitude (radians, Note 4)
+     hm     double   height above ellipsoid (m, geodetic Notes 4,6)
+     xp,yp  double   polar motion coordinates (radians, Note 5)
+     phpa   double   pressure at the observer (hPa = mB, Note 6)
+     tc     double   ambient temperature at the observer (deg C)
+     rh     double   relative humidity at the observer (range 0-1)
+     wl     double   wavelength (micrometers, Note 7)
 
-Julian Date (see Note 2), apportioned in any
-een the two arguments, for example where utc1
-umber and utc2 is the fraction of a day.
-unambiguously represent UTC during a leap
-al measures are taken.  The convention in the
- that the JD day represents UTC days whether
-, 86400 or 86401 SI seconds.
- use the function eraDtf2d to convert from
-ime of day into 2-part quasi Julian Date, as
-eap-second-ambiguity convention just
+  Returned:
+     aob    double*  observed azimuth (radians: N=0,E=90)
+     zob    double*  observed zenith distance (radians)
+     hob    double*  observed hour angle (radians)
+     dob    double*  observed declination (radians)
+     rob    double*  observed right ascension (CIO-based, radians)
 
-"dubious year" flags UTCs that predate the
- time scale or that are too far in the
-d.  See eraDat for further details.
-d in IERS bulletins.  It increases by exactly
-nd of each positive UTC leap second,
- to keep UT1-UTC within +/- 0.9s.  n.b. This
-eview, and in the future UT1-UTC may grow
- limit.
-ordinates are with respect to the ERFA_WGS84
-.  TAKE CARE WITH THE LONGITUDE SIGN:  the
-by the present function is east-positive
-, in accordance with geographical convention.
-,yp can be obtained from IERS bulletins.  The
-dinates (in radians) of the Celestial
-ith respect to the International Terrestrial
-ee IERS Conventions 2003), measured along the
-deg west respectively.  For many
-d yp can be set to zero.
-bove the ellipsoid of the observing station
-nown but phpa, the pressure in hPa (=mB), is
-ate estimate of hm can be obtained from the
+  Returned (function value):
+            int      status: +1 = dubious year (Note 2)
+                              0 = OK
+                             -1 = unacceptable date
 
-tsl * log ( phpa / 1013.25 );
-proximate sea-level air temperature in K
-Quantities, C.W.Allen, 3rd edition, section
- the pressure phpa is not known, it can be
-height of the observing station, hm, as
-
-5 * exp ( -hm / ( 29.3 * tsl ) );
- the refraction is nearly proportional to
-at an accurate phpa value is important for
-
-cifies the observing wavelength in
-ransition from optical to radio is assumed to
-eters (about 3000 GHz).
-ans the position that would be seen by a
-y aligned theodolite.  (Zenith distance is
-titude in order to reflect the fact that no
-or depression of the horizon.)  This is
-rved HA,Dec via the standard rotation, using
-de (corrected for polar motion), while the
-are related simply through the Earth rotation
-longitude.  "Observed" RA,Dec or HA,Dec thus
-that would be seen by a perfect equatorial
- aligned to the Earth's axis of rotation.
- result is limited by the corrections for
-se a simple A*tan(z) + B*tan^3(z) model.
-rological parameters are known accurately and
-local effects, the predicted astrometric
-be within 0.05 arcsec (optical) or 1 arcsec
-h distance of less than 70 degrees, better
-ical or radio) at 85 degrees and better
-ical) or 30 arcmin (radio) at the horizon.
-unctions eraAtio13 and eraAtoi13 are self-
-r than 1 microarcsecond all over the
-
-take great care with units, as even unlikely
- parameters are accepted and processed in
- models used.
-
-try parameters, CIRS-observed, 2013
-IRS to observed
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1)  utc1+utc2 is quasi Julian Date (see Note 2), apportioned in any
       convenient way between the two arguments, for example where utc1
@@ -3149,83 +2433,52 @@ Notes:
       values of the input parameters are accepted and processed in
       accordance with the models used.
 
+  Called:
+     eraApio13    astrometry parameters, CIRS-observed, 2013
+     eraAtioq     quick CIRS to observed
+
+
 
 ------
 atioq
 ------
 
-Given:
-RS right ascension
-RS declination
-ar-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
+  Quick CIRS to observed place transformation.
 
-served azimuth (radians: N=0,E=90)
-served zenith distance (radians)
-served hour angle (radians)
-served declination (radians)
-served right ascension (CIO-based, radians)
+  Use of this function is appropriate when efficiency is important and
+  where many star positions are all to be transformed for one date.
+  The star-independent astrometry parameters can be obtained by
+  calling eraApio[13] or eraApco[13].
 
-s zenith distance rather than altitude in
- fact that no allowance is made for
-rizon.
-result is limited by the corrections for
-e a simple A*tan(z) + B*tan^3(z) model.
-ological parameters are known accurately and
-ocal effects, the predicted observed
-e within 0.05 arcsec (optical) or 1 arcsec
- distance of less than 70 degrees, better
-cal or radio) at 85 degrees and better
-cal) or 30 arcmin (radio) at the horizon.
-the complementary functions eraAtioq and
-nsistent to better than 1 microarcsecond all
-phere.  With refraction included, consistency
-nith distances, but is still better than
-grees.
-ake great care with units, as even unlikely
-parameters are accepted and processed in
-models used.
-btained from a star catalog mean place by
-otion, parallax, the Sun's gravitational lens
-ation and precession-nutation.  For star
-S, these effects can be applied by means of
- functions.  Starting from classical "mean
-tional transformations will be needed first.
-ns the position that would be seen by a
- aligned theodolite.  This is obtained from
-llowing for Earth orientation and diurnal
- from equator to horizon coordinates, and
-efraction.  The HA,Dec is obtained by
-quatorial coordinates, and is the position
-y a perfect equatorial with its polar axis
-'s axis of rotation.  Finally, the RA is
-ing the HA from the local ERA.
- CIRS-to-observed-place parameters in ASTROM
- eraApio[13] or eraApco[13].  If nothing has
-y except the time, eraAper[13] may be used to
-e adjustment to the astrom structure.
+  Given:
+     ri     double     CIRS right ascension
+     di     double     CIRS declination
+     astrom eraASTROM* star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
 
-al coordinates to unit vector
-r to spherical
-ze angle into range 0 to 2pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned:
+     aob    double*    observed azimuth (radians: N=0,E=90)
+     zob    double*    observed zenith distance (radians)
+     hob    double*    observed hour angle (radians)
+     dob    double*    observed declination (radians)
+     rob    double*    observed right ascension (CIO-based, radians)
+
+  Notes:
 
   1) This function returns zenith distance rather than altitude in
      order to reflect the fact that no allowance is made for
@@ -3272,118 +2525,46 @@ Notes:
      changed significantly except the time, eraAper[13] may be used to
      perform the requisite adjustment to the astrom structure.
 
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraC2s       p-vector to spherical
+     eraAnp       normalize angle into range 0 to 2pi
+
+
 
 ------
 atoc13
 ------
 
-Given:
- of coordinates - "R", "H" or "A" (Notes 1,2)
-rved Az, HA or RA (radians; Az is N=0,E=90)
-rved ZD or Dec (radians)
-as a 2-part...
-uasi Julian Date (Notes 3,4)
-UTC (seconds, Note 5)
-itude (radians, east +ve, Note 6)
-etic latitude (radians, Note 6)
-ht above ellipsoid (m, geodetic Notes 6,8)
-r motion coordinates (radians, Note 7)
-sure at the observer (hPa = mB, Note 8)
-ent temperature at the observer (deg C)
-tive humidity at the observer (range 0-1)
-length (micrometers, Note 9)
+  Observed place at a groundbased site to to ICRS astrometric RA,Dec.
+  The caller supplies UTC, site coordinates, ambient air conditions
+  and observing wavelength.
 
- astrometric RA,Dec (radians)
-e):
-us: +1 = dubious year (Note 4)
-     0 = OK
-    -1 = unacceptable date
+  Given:
+     type   char[]   type of coordinates - "R", "H" or "A" (Notes 1,2)
+     ob1    double   observed Az, HA or RA (radians; Az is N=0,E=90)
+     ob2    double   observed ZD or Dec (radians)
+     utc1   double   UTC as a 2-part...
+     utc2   double   ...quasi Julian Date (Notes 3,4)
+     dut1   double   UT1-UTC (seconds, Note 5)
+     elong  double   longitude (radians, east +ve, Note 6)
+     phi    double   geodetic latitude (radians, Note 6)
+     hm     double   height above ellipsoid (m, geodetic Notes 6,8)
+     xp,yp  double   polar motion coordinates (radians, Note 7)
+     phpa   double   pressure at the observer (hPa = mB, Note 8)
+     tc     double   ambient temperature at the observer (deg C)
+     rh     double   relative humidity at the observer (range 0-1)
+     wl     double   wavelength (micrometers, Note 9)
 
-ans the position that would be seen by a
-y aligned theodolite.  (Zenith distance is
-titude in order to reflect the fact that no
-or depression of the horizon.)  This is
-rved HA,Dec via the standard rotation, using
-de (corrected for polar motion), while the
-are related simply through the Earth rotation
-longitude.  "Observed" RA,Dec or HA,Dec thus
-that would be seen by a perfect equatorial
- aligned to the Earth's axis of rotation.
-acter of the type argument is significant.
-s that ob1 and ob2 are the observed right
-nation;  "H" or "h" indicates that they are
-e) and declination;  anything else ("A" or
- indicates that ob1 and ob2 are azimuth
-0 deg) and zenith distance.
-Julian Date (see Note 2), apportioned in any
-een the two arguments, for example where utc1
-umber and utc2 is the fraction of a day.
-unambiguously represent UTC during a leap
-al measures are taken.  The convention in the
- that the JD day represents UTC days whether
-, 86400 or 86401 SI seconds.
- use the function eraDtf2d to convert from
-ime of day into 2-part quasi Julian Date, as
-eap-second-ambiguity convention just
+  Returned:
+     rc,dc  double   ICRS astrometric RA,Dec (radians)
 
-"dubious year" flags UTCs that predate the
- time scale or that are too far in the
-d.  See eraDat for further details.
-d in IERS bulletins.  It increases by exactly
-nd of each positive UTC leap second,
- to keep UT1-UTC within +/- 0.9s.  n.b. This
-eview, and in the future UT1-UTC may grow
- limit.
-ordinates are with respect to the ERFA_WGS84
-.  TAKE CARE WITH THE LONGITUDE SIGN:  the
-by the present function is east-positive
-, in accordance with geographical convention.
-,yp can be obtained from IERS bulletins.  The
-dinates (in radians) of the Celestial
-ith respect to the International Terrestrial
-ee IERS Conventions 2003), measured along the
-deg west respectively.  For many
-d yp can be set to zero.
-bove the ellipsoid of the observing station
-nown but phpa, the pressure in hPa (=mB), is
-ate estimate of hm can be obtained from the
+  Returned (function value):
+            int      status: +1 = dubious year (Note 4)
+                              0 = OK
+                             -1 = unacceptable date
 
-tsl * log ( phpa / 1013.25 );
-proximate sea-level air temperature in K
-Quantities, C.W.Allen, 3rd edition, section
- the pressure phpa is not known, it can be
-height of the observing station, hm, as
-
-5 * exp ( -hm / ( 29.3 * tsl ) );
- the refraction is nearly proportional to
-at an accurate phpa value is important for
-
-cifies the observing wavelength in
-ransition from optical to radio is assumed to
-eters (about 3000 GHz).
- result is limited by the corrections for
-se a simple A*tan(z) + B*tan^3(z) model.
-rological parameters are known accurately and
-local effects, the predicted astrometric
-be within 0.05 arcsec (optical) or 1 arcsec
-h distance of less than 70 degrees, better
-ical or radio) at 85 degrees and better
-ical) or 30 arcmin (radio) at the horizon.
- the complementary functions eraAtco13 and
-consistent to better than 1 microarcsecond
-ial sphere.  With refraction included,
-ff at high zenith distances, but is still
-csec at 85 degrees.
-take great care with units, as even unlikely
- parameters are accepted and processed in
- models used.
-
-try parameters, ICRS-observed
-bserved to CIRS
-IRS to ICRS
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1)  "Observed" Az,ZD means the position that would be seen by a
       perfect geodetically aligned theodolite.  (Zenith distance is
@@ -3481,118 +2662,46 @@ Notes:
       values of the input parameters are accepted and processed in
       accordance with the models used.
 
+  Called:
+     eraApco13    astrometry parameters, ICRS-observed
+     eraAtoiq     quick observed to CIRS
+     eraAticq     quick CIRS to ICRS
+
+
 
 ------
 atoi13
 ------
 
-Given:
- of coordinates - "R", "H" or "A" (Notes 1,2)
-rved Az, HA or RA (radians; Az is N=0,E=90)
-rved ZD or Dec (radians)
-as a 2-part...
-uasi Julian Date (Notes 3,4)
-UTC (seconds, Note 5)
-itude (radians, east +ve, Note 6)
-etic latitude (radians, Note 6)
-ht above the ellipsoid (meters, Notes 6,8)
-r motion coordinates (radians, Note 7)
-sure at the observer (hPa = mB, Note 8)
-ent temperature at the observer (deg C)
-tive humidity at the observer (range 0-1)
-length (micrometers, Note 9)
+  Observed place to CIRS.  The caller supplies UTC, site coordinates,
+  ambient air conditions and observing wavelength.
 
- right ascension (CIO-based, radians)
- declination (radians)
-e):
-us: +1 = dubious year (Note 2)
-     0 = OK
-    -1 = unacceptable date
+  Given:
+     type   char[]   type of coordinates - "R", "H" or "A" (Notes 1,2)
+     ob1    double   observed Az, HA or RA (radians; Az is N=0,E=90)
+     ob2    double   observed ZD or Dec (radians)
+     utc1   double   UTC as a 2-part...
+     utc2   double   ...quasi Julian Date (Notes 3,4)
+     dut1   double   UT1-UTC (seconds, Note 5)
+     elong  double   longitude (radians, east +ve, Note 6)
+     phi    double   geodetic latitude (radians, Note 6)
+     hm     double   height above the ellipsoid (meters, Notes 6,8)
+     xp,yp  double   polar motion coordinates (radians, Note 7)
+     phpa   double   pressure at the observer (hPa = mB, Note 8)
+     tc     double   ambient temperature at the observer (deg C)
+     rh     double   relative humidity at the observer (range 0-1)
+     wl     double   wavelength (micrometers, Note 9)
 
-ans the position that would be seen by a
-y aligned theodolite.  (Zenith distance is
-titude in order to reflect the fact that no
-or depression of the horizon.)  This is
-rved HA,Dec via the standard rotation, using
-de (corrected for polar motion), while the
-are related simply through the Earth rotation
-longitude.  "Observed" RA,Dec or HA,Dec thus
-that would be seen by a perfect equatorial
- aligned to the Earth's axis of rotation.
-acter of the type argument is significant.
-s that ob1 and ob2 are the observed right
-nation;  "H" or "h" indicates that they are
-e) and declination;  anything else ("A" or
- indicates that ob1 and ob2 are azimuth
-0 deg) and zenith distance.
-Julian Date (see Note 2), apportioned in any
-een the two arguments, for example where utc1
-umber and utc2 is the fraction of a day.
-unambiguously represent UTC during a leap
-al measures are taken.  The convention in the
- that the JD day represents UTC days whether
-, 86400 or 86401 SI seconds.
- use the function eraDtf2d to convert from
-ime of day into 2-part quasi Julian Date, as
-eap-second-ambiguity convention just
+  Returned:
+     ri     double*  CIRS right ascension (CIO-based, radians)
+     di     double*  CIRS declination (radians)
 
-"dubious year" flags UTCs that predate the
- time scale or that are too far in the
-d.  See eraDat for further details.
-d in IERS bulletins.  It increases by exactly
-nd of each positive UTC leap second,
- to keep UT1-UTC within +/- 0.9s.  n.b. This
-eview, and in the future UT1-UTC may grow
- limit.
-ordinates are with respect to the ERFA_WGS84
-.  TAKE CARE WITH THE LONGITUDE SIGN:  the
-by the present function is east-positive
-, in accordance with geographical convention.
-,yp can be obtained from IERS bulletins.  The
-dinates (in radians) of the Celestial
-ith respect to the International Terrestrial
-ee IERS Conventions 2003), measured along the
-deg west respectively.  For many
-d yp can be set to zero.
-bove the ellipsoid of the observing station
-nown but phpa, the pressure in hPa (=mB), is
-ate estimate of hm can be obtained from the
+  Returned (function value):
+            int      status: +1 = dubious year (Note 2)
+                              0 = OK
+                             -1 = unacceptable date
 
-tsl * log ( phpa / 1013.25 );
-proximate sea-level air temperature in K
-Quantities, C.W.Allen, 3rd edition, section
- the pressure phpa is not known, it can be
-height of the observing station, hm, as
-
-5 * exp ( -hm / ( 29.3 * tsl ) );
- the refraction is nearly proportional to
-at an accurate phpa value is important for
-
-cifies the observing wavelength in
-ransition from optical to radio is assumed to
-eters (about 3000 GHz).
- result is limited by the corrections for
-se a simple A*tan(z) + B*tan^3(z) model.
-rological parameters are known accurately and
-local effects, the predicted astrometric
-be within 0.05 arcsec (optical) or 1 arcsec
-h distance of less than 70 degrees, better
-ical or radio) at 85 degrees and better
-ical) or 30 arcmin (radio) at the horizon.
- the complementary functions eraAtio13 and
-consistent to better than 1 microarcsecond
-ial sphere.  With refraction included,
-ff at high zenith distances, but is still
-csec at 85 degrees.
-take great care with units, as even unlikely
- parameters are accepted and processed in
- models used.
-
-try parameters, CIRS-observed, 2013
-bserved to CIRS
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1)  "Observed" Az,ZD means the position that would be seen by a
       perfect geodetically aligned theodolite.  (Zenith distance is
@@ -3690,77 +2799,51 @@ Notes:
       values of the input parameters are accepted and processed in
       accordance with the models used.
 
+  Called:
+     eraApio13    astrometry parameters, CIRS-observed, 2013
+     eraAtoiq     quick observed to CIRS
+
+
 
 ------
 atoiq
 ------
 
-Given:
-pe of coordinates: "R", "H" or "A" (Note 1)
-served Az, HA or RA (radians; Az is N=0,E=90)
-served ZD or Dec (radians)
-ar-independent astrometry parameters:
- PM time interval (SSB, Julian years)
- SSB to observer (vector, au)
- Sun to observer (unit vector)
- distance from Sun to observer (au)
- barycentric observer velocity (vector, c)
- sqrt(1-|v|^2): reciprocal of Lorenz factor
- bias-precession-nutation matrix
- longitude + s' (radians)
- polar motion xp wrt local meridian (radians)
- polar motion yp wrt local meridian (radians)
- sine of geodetic latitude
- cosine of geodetic latitude
- magnitude of diurnal aberration vector
- "local" Earth rotation angle (radians)
- refraction constant A (radians)
- refraction constant B (radians)
+  Quick observed place to CIRS, given the star-independent astrometry
+  parameters.
 
-RS right ascension (CIO-based, radians)
-RS declination (radians)
+  Use of this function is appropriate when efficiency is important and
+  where many star positions are all to be transformed for one date.
+  The star-independent astrometry parameters can be obtained by
+  calling eraApio[13] or eraApco[13].
 
-ns the position that would be seen by a
- aligned theodolite.  This is related to
-via the standard rotation, using the geodetic
-for polar motion), while the observed HA and
-y through the Earth rotation angle and the
-served" RA,Dec or HA,Dec thus means the
-be seen by a perfect equatorial with its
-o the Earth's axis of rotation.  By removing
-ace the effects of atmospheric refraction and
-the CIRS RA,Dec is obtained.
-cter of the type argument is significant.
- that ob1 and ob2 are the observed right
-ation;  "H" or "h" indicates that they are
-) and declination;  anything else ("A" or
-indicates that ob1 and ob2 are azimuth (north
-nd zenith distance.  (Zenith distance is used
- in order to reflect the fact that no
-r depression of the horizon.)
-result is limited by the corrections for
-e a simple A*tan(z) + B*tan^3(z) model.
-ological parameters are known accurately and
-ocal effects, the predicted observed
-e within 0.05 arcsec (optical) or 1 arcsec
- distance of less than 70 degrees, better
-cal or radio) at 85 degrees and better than
-or 30 arcmin (radio) at the horizon.
-the complementary functions eraAtioq and
-nsistent to better than 1 microarcsecond all
-phere.  With refraction included, consistency
-nith distances, but is still better than
-grees.
-ake great care with units, as even unlikely
-parameters are accepted and processed in
-models used.
+  Given:
+     type   char[]     type of coordinates: "R", "H" or "A" (Note 1)
+     ob1    double     observed Az, HA or RA (radians; Az is N=0,E=90)
+     ob2    double     observed ZD or Dec (radians)
+     astrom eraASTROM* star-independent astrometry parameters:
+      pmt    double       PM time interval (SSB, Julian years)
+      eb     double[3]    SSB to observer (vector, au)
+      eh     double[3]    Sun to observer (unit vector)
+      em     double       distance from Sun to observer (au)
+      v      double[3]    barycentric observer velocity (vector, c)
+      bm1    double       sqrt(1-|v|^2): reciprocal of Lorenz factor
+      bpn    double[3][3] bias-precession-nutation matrix
+      along  double       longitude + s' (radians)
+      xpl    double       polar motion xp wrt local meridian (radians)
+      ypl    double       polar motion yp wrt local meridian (radians)
+      sphi   double       sine of geodetic latitude
+      cphi   double       cosine of geodetic latitude
+      diurab double       magnitude of diurnal aberration vector
+      eral   double       "local" Earth rotation angle (radians)
+      refa   double       refraction constant A (radians)
+      refb   double       refraction constant B (radians)
 
-al coordinates to unit vector
-r to spherical
-ze angle into range 0 to 2pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned:
+     ri     double*    CIRS right ascension (CIO-based, radians)
+     di     double*    CIRS declination (radians)
+
+  Notes:
 
   1) "Observed" Az,El means the position that would be seen by a
      perfect geodetically aligned theodolite.  This is related to
@@ -3801,13 +2884,25 @@ Notes:
      values of the input parameters are accepted and processed in
      accordance with the models used.
 
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraC2s       p-vector to spherical
+     eraAnp       normalize angle into range 0 to 2pi
+
+
 
 ------
 bi00
 ------
 
+  Frame bias components of IAU 2000 precession-nutation models (part
+  of MHB2000 with additions).
 
-Notes:
+  Returned:
+     dpsibi,depsbi  double  longitude and obliquity corrections
+     dra            double  the ICRS RA of the J2000.0 mean equinox
+
+  Notes:
 
   1) The frame bias corrections in longitude and obliquity (radians)
      are required in order to correct for the offset between the GCRS
@@ -3824,8 +2919,7 @@ Notes:
      2000A nutation model, formally adopted by the IAU General
      Assembly in 2000, namely MHB2000 (Mathews et al. 2002).
 
-
-References:
+  References:
 
      Chapront, J., Chapront-Touze, M. & Francou, G., Astron.
      Astrophys., 387, 700, 2002.
@@ -3836,60 +2930,23 @@ References:
      2002.  The MHB2000 code itself was obtained on 9th September 2002
      from ftp://maia.usno.navy.mil/conv2000/chapter5/IAU2000A.
 
+
+
 ------
 bp00
 ------
 
-Given:
-        TT as a 2-part Julian Date (Note 1)
+  Frame bias and precession, IAU 2000.
 
-3][3]   frame bias matrix (Note 2)
-3][3]   precession matrix (Note 3)
-3][3]   bias-precession matrix (Note 4)
+  Given:
+     date1,date2  double         TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rb           double[3][3]   frame bias matrix (Note 2)
+     rp           double[3][3]   precession matrix (Note 3)
+     rbp          double[3][3]   bias-precession matrix (Note 4)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-orms vectors from GCRS to mean J2000.0 by
-
-orms vectors from J2000.0 mean equator and
-tor and equinox of date by applying
-
-forms vectors from GCRS to mean equator and
-pplying frame bias then precession.  It is
-
- re-use the same array in the returned
-ys are filled in the order given.
-
-ias components, IAU 2000
-0 precession adjustments
-ize r-matrix to identity
-around X-axis
-around Y-axis
-around Z-axis
-matrix
- of two r-matrices
-
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154 (2003)
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -3924,54 +2981,41 @@ Notes:
   5) It is permissible to re-use the same array in the returned
      arguments.  The arrays are filled in the order given.
 
+  Called:
+     eraBi00      frame bias components, IAU 2000
+     eraPr00      IAU 2000 precession adjustments
+     eraIr        initialize r-matrix to identity
+     eraRx        rotate around X-axis
+     eraRy        rotate around Y-axis
+     eraRz        rotate around Z-axis
+     eraCr        copy r-matrix
+     eraRxr       product of two r-matrices
+
+  Reference:
+     "Expressions for the Celestial Intermediate Pole and Celestial
+     Ephemeris Origin consistent with the IAU 2000A precession-
+     nutation model", Astron.Astrophys. 400, 1145-1154 (2003)
+
+     n.b. The celestial ephemeris origin (CEO) was renamed "celestial
+          intermediate origin" (CIO) by IAU 2006 Resolution 2.
+
+
 
 ------
 bp06
 ------
 
-Given:
-        TT as a 2-part Julian Date (Note 1)
+  Frame bias and precession, IAU 2006.
 
-3][3]   frame bias matrix (Note 2)
-3][3]   precession matrix (Note 3)
-3][3]   bias-precession matrix (Note 4)
+  Given:
+     date1,date2  double         TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rb           double[3][3]   frame bias matrix (Note 2)
+     rp           double[3][3]   precession matrix (Note 3)
+     rbp          double[3][3]   bias-precession matrix (Note 4)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-orms vectors from GCRS to mean J2000.0 by
-
-orms vectors from mean J2000.0 to mean of
-cession.
-forms vectors from GCRS to mean of date by
-then precession.  It is the product rp x rb.
- re-use the same array in the returned
-ys are filled in the order given.
-
-ecession F-W angles, IAU 2006
-les to r-matrix
-ix, IAU 2006
-se r-matrix
- of two r-matrices
-matrix
-
-ace, P.T., 2006, Astron.Astrophys. 450, 855
-taine, N., 2006, Astron.Astrophys. 459, 981
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -4004,86 +3048,70 @@ Notes:
   5) It is permissible to re-use the same array in the returned
      arguments.  The arrays are filled in the order given.
 
+  Called:
+     eraPfw06     bias-precession F-W angles, IAU 2006
+     eraFw2m      F-W angles to r-matrix
+     eraPmat06    PB matrix, IAU 2006
+     eraTr        transpose r-matrix
+     eraRxr       product of two r-matrices
+     eraCr        copy r-matrix
 
-References:
+  References:
 
      Capitaine, N. & Wallace, P.T., 2006, Astron.Astrophys. 450, 855
 
      Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 
+
+
 ------
 bpn2xy
 ------
 
-Given:
-3]  celestial-to-true matrix (Note 1)
+  Extract from the bias-precession-nutation matrix the X,Y coordinates
+  of the Celestial Intermediate Pole.
 
-    Celestial Intermediate Pole (Note 2)
+  Given:
+     rbpn      double[3][3]  celestial-to-true matrix (Note 1)
 
-sforms vectors from GCRS to true equator (and
-ate, and therefore the Celestial Intermediate
-the bottom row of the matrix.
-e components of the Celestial Intermediate
-the Geocentric Celestial Reference System.
+  Returned:
+     x,y       double        Celestial Intermediate Pole (Note 2)
 
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154
+  Notes:
 
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  1) The matrix rbpn transforms vectors from GCRS to true equator (and
+     CIO or equinox) of date, and therefore the Celestial Intermediate
+     Pole unit vector is the bottom row of the matrix.
+
+  2) The arguments x,y are components of the Celestial Intermediate
+     Pole unit vector in the Geocentric Celestial Reference System.
+
+  Reference:
+
+     "Expressions for the Celestial Intermediate Pole and Celestial
+     Ephemeris Origin consistent with the IAU 2000A precession-
+     nutation model", Astron.Astrophys. 400, 1145-1154
+     (2003)
+
+     n.b. The celestial ephemeris origin (CEO) was renamed "celestial
+          intermediate origin" (CIO) by IAU 2006 Resolution 2.
+
+
 
 ------
 c2i00a
 ------
 
-Given:
-     TT as a 2-part Julian Date (Note 1)
+  Form the celestial-to-intermediate matrix for a given date using the
+  IAU 2000A precession-nutation model.
 
-][3] celestial-to-intermediate matrix (Note 2)
+  Given:
+     date1,date2 double       TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rc2i        double[3][3] celestial-to-intermediate matrix (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-he first stage in the transformation from
-rial coordinates:
-R_3(ERA) * rc2i * [CRS]
-[CRS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), ERA is the Earth
-POM is the polar motion matrix.
-ly less accurate result (about 1 mas), can be
-stead the eraC2i00b function.
-
-al NPB matrix, IAU 2000A
-al-to-intermediate matrix, given NPB matrix
-
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154
-
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -4119,8 +3147,11 @@ Notes:
   3) A faster, but slightly less accurate result (about 1 mas), can be
      obtained by using instead the eraC2i00b function.
 
+  Called:
+     eraPnm00a    classical NPB matrix, IAU 2000A
+     eraC2ibpn    celestial-to-intermediate matrix, given NPB matrix
 
-References:
+  References:
 
      "Expressions for the Celestial Intermediate Pole and Celestial
      Ephemeris Origin consistent with the IAU 2000A precession-
@@ -4133,55 +3164,22 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 c2i00b
 ------
 
-Given:
-     TT as a 2-part Julian Date (Note 1)
+  Form the celestial-to-intermediate matrix for a given date using the
+  IAU 2000B precession-nutation model.
 
-][3] celestial-to-intermediate matrix (Note 2)
+  Given:
+     date1,date2 double       TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rc2i        double[3][3] celestial-to-intermediate matrix (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-he first stage in the transformation from
-rial coordinates:
-R_3(ERA) * rc2i * [CRS]
-[CRS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), ERA is the Earth
-POM is the polar motion matrix.
- is faster, but slightly less accurate (about
-C2i00a function.
-
-al NPB matrix, IAU 2000B
-al-to-intermediate matrix, given NPB matrix
-
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154
-
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -4217,8 +3215,11 @@ Notes:
   3) The present function is faster, but slightly less accurate (about
      1 mas), than the eraC2i00a function.
 
+  Called:
+     eraPnm00b    classical NPB matrix, IAU 2000B
+     eraC2ibpn    celestial-to-intermediate matrix, given NPB matrix
 
-References:
+  References:
 
      "Expressions for the Celestial Intermediate Pole and Celestial
      Ephemeris Origin consistent with the IAU 2000A precession-
@@ -4231,49 +3232,22 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 c2i06a
 ------
 
-Given:
-     TT as a 2-part Julian Date (Note 1)
+  Form the celestial-to-intermediate matrix for a given date using the
+  IAU 2006 precession and IAU 2000A nutation models.
 
-][3] celestial-to-intermediate matrix (Note 2)
+  Given:
+     date1,date2 double       TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rc2i        double[3][3] celestial-to-intermediate matrix (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-he first stage in the transformation from
-rial coordinates:
-R_3(ERA) * rc2i * [CRS]
-[CRS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), ERA is the Earth
-POM is the polar motion matrix.
-
-al NPB matrix, IAU 2006/2000A
- CIP X,Y coordinates from NPB matrix
- locator s, given X,Y, IAU 2006
-al-to-intermediate matrix, given X,Y and s
-
-it, G. (eds.), 2004, IERS Conventions (2003),
-No. 32, BKG
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -4306,63 +3280,34 @@ Notes:
      Reference System (see IERS Conventions 2003), ERA is the Earth
      Rotation Angle and RPOM is the polar motion matrix.
 
+  Called:
+     eraPnm06a    classical NPB matrix, IAU 2006/2000A
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+     eraS06       the CIO locator s, given X,Y, IAU 2006
+     eraC2ixys    celestial-to-intermediate matrix, given X,Y and s
 
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), 2004, IERS Conventions (2003),
      IERS Technical Note No. 32, BKG
+
+
 
 ------
 c2ibpn
 ------
 
-Given:
-     TT as a 2-part Julian Date (Note 1)
-][3] celestial-to-true matrix (Note 2)
+  Form the celestial-to-intermediate matrix for a given date given
+  the bias-precession-nutation matrix.  IAU 2000.
 
-][3] celestial-to-intermediate matrix (Note 3)
+  Given:
+     date1,date2 double       TT as a 2-part Julian Date (Note 1)
+     rbpn        double[3][3] celestial-to-true matrix (Note 2)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rc2i        double[3][3] celestial-to-intermediate matrix (Note 3)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-sforms vectors from GCRS to true equator (and
-ate.  Only the CIP (bottom row) is used.
-he first stage in the transformation from
-rial coordinates:
-3(ERA) * rc2i * [CRS]
-RS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), ERA is the Earth
-POM is the polar motion matrix.
-es not include "00", This function is in fact
-2000 models.
-
- CIP X,Y coordinates from NPB matrix
-al-to-intermediate matrix, given X,Y
-
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154 (2003)
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -4401,8 +3346,11 @@ Notes:
   4) Although its name does not include "00", This function is in fact
      specific to the IAU 2000 models.
 
+  Called:
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+     eraC2ixy     celestial-to-intermediate matrix, given X,Y
 
-References:
+  References:
      "Expressions for the Celestial Intermediate Pole and Celestial
      Ephemeris Origin consistent with the IAU 2000A precession-
      nutation model", Astron.Astrophys. 400, 1145-1154 (2003)
@@ -4413,52 +3361,23 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 c2ixy
 ------
 
-Given:
-     TT as a 2-part Julian Date (Note 1)
-     Celestial Intermediate Pole (Note 2)
+  Form the celestial to intermediate-frame-of-date matrix for a given
+  date when the CIP X,Y coordinates are known.  IAU 2000.
 
-][3] celestial-to-intermediate matrix (Note 3)
+  Given:
+     date1,date2 double       TT as a 2-part Julian Date (Note 1)
+     x,y         double       Celestial Intermediate Pole (Note 2)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rc2i        double[3][3] celestial-to-intermediate matrix (Note 3)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-ediate Pole coordinates are the x,y components
-n the Geocentric Celestial Reference System.
-he first stage in the transformation from
-rial coordinates:
-3(ERA) * rc2i * [CRS]
-RS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), ERA is the Earth
-POM is the polar motion matrix.
-es not include "00", This function is in fact
-2000 models.
-
-al-to-intermediate matrix, given X,Y and s
- locator s, given X,Y, IAU 2000A
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -4497,40 +3416,32 @@ Notes:
   4) Although its name does not include "00", This function is in fact
      specific to the IAU 2000 models.
 
+  Called:
+     eraC2ixys    celestial-to-intermediate matrix, given X,Y and s
+     eraS00       the CIO locator s, given X,Y, IAU 2000A
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 c2ixys
 ------
 
-Given:
-    Celestial Intermediate Pole (Note 1)
-    the CIO locator s (Note 2)
+  Form the celestial to intermediate-frame-of-date matrix given the CIP
+  X,Y and the CIO locator s.
 
-]   celestial-to-intermediate matrix (Note 3)
+  Given:
+     x,y      double         Celestial Intermediate Pole (Note 1)
+     s        double         the CIO locator s (Note 2)
 
-ediate Pole coordinates are the x,y
-it vector in the Geocentric Celestial
+  Returned:
+     rc2i     double[3][3]   celestial-to-intermediate matrix (Note 3)
 
-n radians) positions the Celestial
-on the equator of the CIP.
-he first stage in the transformation from
-rial coordinates:
-3(ERA) * rc2i * [CRS]
-RS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), ERA is the Earth
-POM is the polar motion matrix.
-
-ize r-matrix to identity
-around Z-axis
-around Y-axis
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The Celestial Intermediate Pole coordinates are the x,y
      components of the unit vector in the Geocentric Celestial
@@ -4551,78 +3462,57 @@ Notes:
      Reference System (see IERS Conventions 2003), ERA is the Earth
      Rotation Angle and RPOM is the polar motion matrix.
 
+  Called:
+     eraIr        initialize r-matrix to identity
+     eraRz        rotate around Z-axis
+     eraRy        rotate around Y-axis
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 c2s
 ------
 
-Given:
-p-vector
+  P-vector to spherical coordinates.
 
-longitude angle (radians)
-latitude angle (radians)
+  Given:
+     p      double[3]    p-vector
 
-e any magnitude; only its direction is used.
-heta and phi are returned.
- theta is returned.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     theta  double       longitude angle (radians)
+     phi    double       latitude angle (radians)
+
+  Notes:
+
+  1) The vector p can have any magnitude; only its direction is used.
+
+  2) If p is null, zero theta and phi are returned.
+
+  3) At either pole, zero theta is returned.
+
+
 
 ------
 c2t00a
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
-    UT1 as a 2-part Julian Date (Note 1)
-    coordinates of the pole (radians, Note 2)
+  Form the celestial to terrestrial matrix given the date, the UT1 and
+  the polar motion, using the IAU 2000A nutation model.
 
-]   celestial-to-terrestrial matrix (Note 3)
+  Given:
+     tta,ttb  double         TT as a 2-part Julian Date (Note 1)
+     uta,utb  double         UT1 as a 2-part Julian Date (Note 1)
+     xp,yp    double         coordinates of the pole (radians, Note 2)
 
- tta+ttb and uta+utb are Julian Dates,
-onvenient way between the arguments uta and
-D(UT1)=2450123.7 could be expressed in any of
-hers:
-   utb
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution is
-00 and MJD methods are good compromises
-nd convenience.  In the case of uta,utb, the
-s best matched to the Earth rotation angle
-imum precision is delivered when the uta
- UT1 on the day in question and the utb
- range 0 to 1, or vice versa.
- yp are the coordinates (in radians) of the
-te Pole with respect to the International
-e System (see IERS Conventions 2003),
-eridians to 0 and 90 deg west respectively.
-sforms from celestial to terrestrial
+  Returned:
+     rc2t     double[3][3]   celestial-to-terrestrial matrix (Note 3)
 
-3(ERA) * RC2I * [CRS]
-RS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), RC2I is the
-diate matrix, ERA is the Earth rotation
-e polar motion matrix.
-ly less accurate result (about 1 mas), can
- instead the eraC2t00b function.
-
-al-to-intermediate matrix, IAU 2000A
-otation angle, IAU 2000
- locator s', IERS 2000
-otion matrix
-O-based celestial-to-terrestrial matrix
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT and UT1 dates tta+ttb and uta+utb are Julian Dates,
      apportioned in any convenient way between the arguments uta and
@@ -4666,61 +3556,36 @@ Notes:
   4) A faster, but slightly less accurate result (about 1 mas), can
      be obtained by using instead the eraC2t00b function.
 
+  Called:
+     eraC2i00a    celestial-to-intermediate matrix, IAU 2000A
+     eraEra00     Earth rotation angle, IAU 2000
+     eraSp00      the TIO locator s', IERS 2000
+     eraPom00     polar motion matrix
+     eraC2tcio    form CIO-based celestial-to-terrestrial matrix
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 c2t00b
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
-    UT1 as a 2-part Julian Date (Note 1)
-    coordinates of the pole (radians, Note 2)
+  Form the celestial to terrestrial matrix given the date, the UT1 and
+  the polar motion, using the IAU 2000B nutation model.
 
-]   celestial-to-terrestrial matrix (Note 3)
+  Given:
+     tta,ttb  double         TT as a 2-part Julian Date (Note 1)
+     uta,utb  double         UT1 as a 2-part Julian Date (Note 1)
+     xp,yp    double         coordinates of the pole (radians, Note 2)
 
- tta+ttb and uta+utb are Julian Dates,
-onvenient way between the arguments uta and
-D(UT1)=2450123.7 could be expressed in any of
-hers:
-   utb
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution is
-00 and MJD methods are good compromises
-nd convenience.  In the case of uta,utb, the
-s best matched to the Earth rotation angle
-imum precision is delivered when the uta
- UT1 on the day in question and the utb
- range 0 to 1, or vice versa.
- yp are the coordinates (in radians) of the
-te Pole with respect to the International
-e System (see IERS Conventions 2003),
-eridians to 0 and 90 deg west respectively.
-sforms from celestial to terrestrial
+  Returned:
+     rc2t     double[3][3]   celestial-to-terrestrial matrix (Note 3)
 
-3(ERA) * RC2I * [CRS]
-RS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), RC2I is the
-diate matrix, ERA is the Earth rotation
-e polar motion matrix.
- is faster, but slightly less accurate (about
-C2t00a function.
-
-al-to-intermediate matrix, IAU 2000B
-otation angle, IAU 2000
-otion matrix
-O-based celestial-to-terrestrial matrix
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT and UT1 dates tta+ttb and uta+utb are Julian Dates,
      apportioned in any convenient way between the arguments uta and
@@ -4764,60 +3629,36 @@ Notes:
   4) The present function is faster, but slightly less accurate (about
      1 mas), than the eraC2t00a function.
 
+  Called:
+     eraC2i00b    celestial-to-intermediate matrix, IAU 2000B
+     eraEra00     Earth rotation angle, IAU 2000
+     eraPom00     polar motion matrix
+     eraC2tcio    form CIO-based celestial-to-terrestrial matrix
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 c2t06a
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
-    UT1 as a 2-part Julian Date (Note 1)
-    coordinates of the pole (radians, Note 2)
+  Form the celestial to terrestrial matrix given the date, the UT1 and
+  the polar motion, using the IAU 2006 precession and IAU 2000A
+  nutation models.
 
-]   celestial-to-terrestrial matrix (Note 3)
+  Given:
+     tta,ttb  double         TT as a 2-part Julian Date (Note 1)
+     uta,utb  double         UT1 as a 2-part Julian Date (Note 1)
+     xp,yp    double         coordinates of the pole (radians, Note 2)
 
- tta+ttb and uta+utb are Julian Dates,
-onvenient way between the arguments uta and
-D(UT1)=2450123.7 could be expressed in any of
-hers:
-   utb
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution is
-00 and MJD methods are good compromises
-nd convenience.  In the case of uta,utb, the
-s best matched to the Earth rotation angle
-imum precision is delivered when the uta
- UT1 on the day in question and the utb
- range 0 to 1, or vice versa.
- yp are the coordinates (in radians) of the
-te Pole with respect to the International
-e System (see IERS Conventions 2003),
-eridians to 0 and 90 deg west respectively.
-sforms from celestial to terrestrial
+  Returned:
+     rc2t     double[3][3]   celestial-to-terrestrial matrix (Note 3)
 
-3(ERA) * RC2I * [CRS]
-RS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), RC2I is the
-diate matrix, ERA is the Earth rotation
-e polar motion matrix.
-
-al-to-intermediate matrix, IAU 2006/2000A
-otation angle, IAU 2000
- locator s', IERS 2000
-otion matrix
-O-based celestial-to-terrestrial matrix
-
-it, G. (eds.), 2004, IERS Conventions (2003),
-No. 32, BKG
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT and UT1 dates tta+ttb and uta+utb are Julian Dates,
      apportioned in any convenient way between the arguments uta and
@@ -4858,44 +3699,37 @@ Notes:
      celestial-to-intermediate matrix, ERA is the Earth rotation
      angle and RPOM is the polar motion matrix.
 
+  Called:
+     eraC2i06a    celestial-to-intermediate matrix, IAU 2006/2000A
+     eraEra00     Earth rotation angle, IAU 2000
+     eraSp00      the TIO locator s', IERS 2000
+     eraPom00     polar motion matrix
+     eraC2tcio    form CIO-based celestial-to-terrestrial matrix
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), 2004, IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG
+
+
 
 ------
 c2tcio
 ------
 
-Given:
-]    celestial-to-intermediate matrix
-     Earth rotation angle (radians)
-]    polar-motion matrix
+  Assemble the celestial to terrestrial matrix from CIO-based
+  components (the celestial-to-intermediate matrix, the Earth Rotation
+  Angle and the polar motion matrix).
 
-]    celestial-to-terrestrial matrix
+  Given:
+     rc2i     double[3][3]    celestial-to-intermediate matrix
+     era      double          Earth rotation angle (radians)
+     rpom     double[3][3]    polar-motion matrix
 
-ucts the rotation matrix that transforms
-tial system into vectors in the terrestrial
-starting from precomputed components, namely
-ates from celestial coordinates to the
-the Earth rotation angle and the polar motion
-the present function is when generating a
-to-terrestrial matrices where only the Earth
-es, avoiding the considerable overhead of
-ession-nutation more often than necessary to
-cy objectives.
-ween the arguments is as follows:
-3(ERA) * rc2i * [CRS]
-RS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003).
+  Returned:
+     rc2t     double[3][3]    celestial-to-terrestrial matrix
 
-matrix
-around Z-axis
- of two r-matrices
-
-it, G. (eds.), 2004, IERS Conventions (2003),
-No. 32, BKG
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) This function constructs the rotation matrix that transforms
      vectors in the celestial system into vectors in the terrestrial
@@ -4918,44 +3752,35 @@ Notes:
      System and [TRS] is a vector in the International Terrestrial
      Reference System (see IERS Conventions 2003).
 
+  Called:
+     eraCr        copy r-matrix
+     eraRz        rotate around Z-axis
+     eraRxr       product of two r-matrices
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), 2004, IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG
+
+
 
 ------
 c2teqx
 ------
 
-Given:
- celestial-to-true matrix
- Greenwich (apparent) Sidereal Time (radians)
- polar-motion matrix
+  Assemble the celestial to terrestrial matrix from equinox-based
+  components (the celestial-to-true matrix, the Greenwich Apparent
+  Sidereal Time and the polar motion matrix).
 
- celestial-to-terrestrial matrix (Note 2)
+  Given:
+     rbpn   double[3][3]  celestial-to-true matrix
+     gst    double        Greenwich (apparent) Sidereal Time (radians)
+     rpom   double[3][3]  polar-motion matrix
 
-ucts the rotation matrix that transforms
-tial system into vectors in the terrestrial
-starting from precomputed components, namely
-ates from celestial coordinates to the
-inox of date, the Greenwich Apparent Sidereal
-otion matrix.  One use of the present function
- series of celestial-to-terrestrial matrices
-eal Time changes, avoiding the considerable
-ing the precession-nutation more often than
- given accuracy objectives.
-ween the arguments is as follows:
-3(gst) * rbpn * [CRS]
-RS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003).
+  Returned:
+     rc2t   double[3][3]  celestial-to-terrestrial matrix (Note 2)
 
-matrix
-around Z-axis
- of two r-matrices
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) This function constructs the rotation matrix that transforms
      vectors in the celestial system into vectors in the terrestrial
@@ -4978,69 +3803,35 @@ Notes:
      System and [TRS] is a vector in the International Terrestrial
      Reference System (see IERS Conventions 2003).
 
+  Called:
+     eraCr        copy r-matrix
+     eraRz        rotate around Z-axis
+     eraRxr       product of two r-matrices
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 c2tpe
 ------
 
-Given:
-     TT as a 2-part Julian Date (Note 1)
-     UT1 as a 2-part Julian Date (Note 1)
-     nutation (Note 2)
-     coordinates of the pole (radians, Note 3)
+  Form the celestial to terrestrial matrix given the date, the UT1,
+  the nutation and the polar motion.  IAU 2000.
 
-[3]  celestial-to-terrestrial matrix (Note 4)
+  Given:
+     tta,ttb    double        TT as a 2-part Julian Date (Note 1)
+     uta,utb    double        UT1 as a 2-part Julian Date (Note 1)
+     dpsi,deps  double        nutation (Note 2)
+     xp,yp      double        coordinates of the pole (radians, Note 3)
 
- tta+ttb and uta+utb are Julian Dates,
-onvenient way between the arguments uta and
-D(UT1)=2450123.7 could be expressed in any of
-hers:
-   utb
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution is
-00 and MJD methods are good compromises
-nd convenience.  In the case of uta,utb, the
-s best matched to the Earth rotation angle
-imum precision is delivered when the uta
- UT1 on the day in question and the utb
- range 0 to 1, or vice versa.
-sible for providing the nutation components;
-e and obliquity, in radians and are with
-ox and ecliptic of date.  For high-accuracy
-ore nutation should be included as well as
-orrections to the position of the CIP.
- yp are the coordinates (in radians) of the
-te Pole with respect to the International
-e System (see IERS Conventions 2003),
-eridians to 0 and 90 deg west respectively.
-sforms from celestial to terrestrial
+  Returned:
+     rc2t       double[3][3]  celestial-to-terrestrial matrix (Note 4)
 
-3(GST) * RBPN * [CRS]
-RS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), RBPN is the
-tion matrix, GST is the Greenwich (apparent)
-OM is the polar motion matrix.
-es not include "00", This function is in fact
-2000 models.
-
-ecession/nutation results, IAU 2000
-ch mean sidereal time, IAU 2000
- locator s', IERS 2000
-n of the equinoxes, IAU 2000
-otion matrix
-uinox-based celestial-to-terrestrial matrix
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT and UT1 dates tta+ttb and uta+utb are Julian Dates,
      apportioned in any convenient way between the arguments uta and
@@ -5090,65 +3881,38 @@ Notes:
   5) Although its name does not include "00", This function is in fact
      specific to the IAU 2000 models.
 
+  Called:
+     eraPn00      bias/precession/nutation results, IAU 2000
+     eraGmst00    Greenwich mean sidereal time, IAU 2000
+     eraSp00      the TIO locator s', IERS 2000
+     eraEe00      equation of the equinoxes, IAU 2000
+     eraPom00     polar motion matrix
+     eraC2teqx    form equinox-based celestial-to-terrestrial matrix
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 c2txy
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
-    UT1 as a 2-part Julian Date (Note 1)
-    Celestial Intermediate Pole (Note 2)
-    coordinates of the pole (radians, Note 3)
+  Form the celestial to terrestrial matrix given the date, the UT1,
+  the CIP coordinates and the polar motion.  IAU 2000.
 
-]   celestial-to-terrestrial matrix (Note 4)
+  Given:
+     tta,ttb  double         TT as a 2-part Julian Date (Note 1)
+     uta,utb  double         UT1 as a 2-part Julian Date (Note 1)
+     x,y      double         Celestial Intermediate Pole (Note 2)
+     xp,yp    double         coordinates of the pole (radians, Note 3)
 
- tta+ttb and uta+utb are Julian Dates,
-onvenient way between the arguments uta and
-D(UT1)=2450123.7 could be expressed in any o
-hers:
-   utb
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution is
-00 and MJD methods are good compromises
-nd convenience.  In the case of uta,utb, the
-s best matched to the Earth rotation angle
-imum precision is delivered when the uta
- UT1 on the day in question and the utb
- range 0 to 1, or vice versa.
-ediate Pole coordinates are the x,y
-it vector in the Geocentric Celestial
+  Returned:
+     rc2t     double[3][3]   celestial-to-terrestrial matrix (Note 4)
 
- yp are the coordinates (in radians) of the
-te Pole with respect to the International
-e System (see IERS Conventions 2003),
-eridians to 0 and 90 deg west respectively.
-sforms from celestial to terrestrial
-
-3(ERA) * RC2I * [CRS]
-RS]
-tor in the Geocentric Celestial Reference
-a vector in the International Terrestrial
-e IERS Conventions 2003), ERA is the Earth
-POM is the polar motion matrix.
-es not include "00", This function is in fact
-2000 models.
-
-al-to-intermediate matrix, given X,Y
-otation angle, IAU 2000
- locator s', IERS 2000
-otion matrix
-O-based celestial-to-terrestrial matrix
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT and UT1 dates tta+ttb and uta+utb are Julian Dates,
      apportioned in any convenient way between the arguments uta and
@@ -5195,131 +3959,133 @@ Notes:
   5) Although its name does not include "00", This function is in fact
      specific to the IAU 2000 models.
 
+  Called:
+     eraC2ixy     celestial-to-intermediate matrix, given X,Y
+     eraEra00     Earth rotation angle, IAU 2000
+     eraSp00      the TIO locator s', IERS 2000
+     eraPom00     polar motion matrix
+     eraC2tcio    form CIO-based celestial-to-terrestrial matrix
+
+ Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 cal2jd
 ------
 
-Given:
-ar, month, day in Gregorian calendar (Note 1)
+  Gregorian Calendar to Julian Date.
 
-D zero-point: always 2400000.5
-dified Julian Date for 0 hrs
-e):
-atus:
-  0 = OK
- -1 = bad year   (Note 3: JD not computed)
- -2 = bad month  (JD not computed)
- -3 = bad day    (JD computed)
+  Given:
+     iy,im,id  int     year, month, day in Gregorian calendar (Note 1)
 
-s valid from -4800 March 1, but this
-ts dates before -4799 January 1.
-eturned in two pieces, in the usual ERFA
-igned to preserve time resolution.  The
-able as a single number by adding djm0 and
+  Returned:
+     djm0      double  MJD zero-point: always 2400000.5
+     djm       double  Modified Julian Date for 0 hrs
 
-nversion is from the "Proleptic Gregorian
-nt is taken of the date(s) of adoption of
-ar, nor is the AD/BC numbering convention
+  Returned (function value):
+               int     status:
+                           0 = OK
+                          -1 = bad year   (Note 3: JD not computed)
+                          -2 = bad month  (JD not computed)
+                          -3 = bad day    (JD computed)
+
+  Notes:
+
+  1) The algorithm used is valid from -4800 March 1, but this
+     implementation rejects dates before -4799 January 1.
+
+  2) The Julian Date is returned in two pieces, in the usual ERFA
+     manner, which is designed to preserve time resolution.  The
+     Julian Date is available as a single number by adding djm0 and
+     djm.
+
+  3) In early eras the conversion is from the "Proleptic Gregorian
+     Calendar";  no account is taken of the date(s) of adoption of
+     the Gregorian Calendar, nor is the AD/BC numbering convention
+     observed.
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992),
+     Section 12.92 (p604).
 
 
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 cp
 ------
 
-Given:
-   p-vector to be copied
+  Copy a p-vector.
 
-   copy
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Given:
+     p        double[3]     p-vector to be copied
+
+  Returned:
+     c        double[3]     copy
+
+
 
 ------
 cpv
 ------
 
-Given:
-   position/velocity vector to be copied
+  Copy a position/velocity vector.
 
-   copy
+  Given:
+     pv     double[2][3]    position/velocity vector to be copied
 
-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     c      double[2][3]    copy
+
+  Called:
+     eraCp        copy p-vector
+
+
 
 ------
 cr
 ------
 
-Given:
-]    r-matrix to be copied
+  Copy an r-matrix.
 
-]    copy
+  Given:
+     r        double[3][3]    r-matrix to be copied
 
-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+   char[]     double[3][3]    copy
+
+  Called:
+     eraCp        copy p-vector
+
+
 
 ------
 d2dtf
 ------
 
-Given:
-me scale ID (Note 1)
-solution (Note 2)
-me as a 2-part Julian Date (Notes 3,4)
+  Format for output a 2-part Julian Date (or in the case of UTC a
+  quasi-JD form that includes special provision for leap seconds).
 
-ar, month, day in Gregorian calendar (Note 5)
-urs, minutes, seconds, fraction (Note 1)
-e):
-atus: +1 = dubious year (Note 5)
-       0 = OK
-      -1 = unacceptable date (Note 6)
+  Given:
+     scale     char[]  time scale ID (Note 1)
+     ndp       int     resolution (Note 2)
+     d1,d2     double  time as a 2-part Julian Date (Notes 3,4)
 
- time scale.  Only the value "UTC" (in upper
-, and enables handling of leap seconds (see
+  Returned:
+     iy,im,id  int     year, month, day in Gregorian calendar (Note 5)
+     ihmsf     int[4]  hours, minutes, seconds, fraction (Note 1)
 
- decimal places in the seconds field, and can
-l as positive values, such as:
-on
-0
-0
-0
-0
-1
-0.1
-0.01
-0.001
-orm dependent, but a safe range is -5 to +9.
-, apportioned in any convenient way between
-or example where d1 is the Julian Day Number
-on of a day.  In the case of UTC, where the
-atical, special conventions apply:  see the
+  Returned (function value):
+               int     status: +1 = dubious year (Note 5)
+                                0 = OK
+                               -1 = unacceptable date (Note 6)
 
-sly represent UTC during a leap second unless
- taken.  The ERFA internal convention is that
-resents UTC days whether the length is 86399,
-conds.  In the 1960-1972 era there were
-ther direction) each time the linear UTC(TAI)
-ed, and these "mini-leaps" are also included
-on.
-dubious year" flags UTCs that predate the
-time scale or that are too far in the future
-eraDat for further details.
-ions and limitations, see eraCal2jd.
-
-regorian calendar
-se days to hms
-T) = TAI-UTC
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) scale identifies the time scale.  Only the value "UTC" (in upper
      case) is significant, and enables handling of leap seconds (see
@@ -5360,113 +4126,119 @@ Notes:
 
   6) For calendar conventions and limitations, see eraCal2jd.
 
+  Called:
+     eraJd2cal    JD to Gregorian calendar
+     eraD2tf      decompose days to hms
+     eraDat       delta(AT) = TAI-UTC
+
+
 
 ------
 d2tf
 ------
 
-Given:
-lution (Note 1)
-rval in days
+  Decompose days to hours, minutes, seconds, fraction.
 
-or '-'
-s, minutes, seconds, fraction
+  Given:
+     ndp     int     resolution (Note 1)
+     days    double  interval in days
 
-interpreted as follows:
-on
-0
-0
-0
-0
-0
-0
-0
-0
-1
-0.1
-0.01
-0.001
-0.000...
- useful value for ndp is determined by the
-rmat of double on the target platform, and
-ing ihmsf[3].  On a typical platform, for
-available floating-point precision might
-.  However, the practical limit is typically
-pacity of a 32-bit int, or ndp=4 if int is
+  Returned:
+     sign    char    '+' or '-'
+     ihmsf   int[4]  hours, minutes, seconds, fraction
 
-f days may exceed 1.0.  In cases where it
-o the caller to test for and handle the
-ery nearly 1.0 and rounds up to 24 hours,
-[0]=24 and setting ihmsf[0-3] to zero.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Notes:
+
+  1) The argument ndp is interpreted as follows:
+
+     ndp         resolution
+      :      ...0000 00 00
+     -7         1000 00 00
+     -6          100 00 00
+     -5           10 00 00
+     -4            1 00 00
+     -3            0 10 00
+     -2            0 01 00
+     -1            0 00 10
+      0            0 00 01
+      1            0 00 00.1
+      2            0 00 00.01
+      3            0 00 00.001
+      :            0 00 00.000...
+
+  2) The largest positive useful value for ndp is determined by the
+     size of days, the format of double on the target platform, and
+     the risk of overflowing ihmsf[3].  On a typical platform, for
+     days up to 1.0, the available floating-point precision might
+     correspond to ndp=12.  However, the practical limit is typically
+     ndp=9, set by the capacity of a 32-bit int, or ndp=4 if int is
+     only 16 bits.
+
+  3) The absolute value of days may exceed 1.0.  In cases where it
+     does not, it is up to the caller to test for and handle the
+     case where days is very nearly 1.0 and rounds up to 24 hours,
+     by testing for ihmsf[0]=24 and setting ihmsf[0-3] to zero.
+
+
 
 ------
 dat
 ------
 
-Given:
-  year (Notes 1 and 2)
-  month (Note 2)
-  day (Notes 2 and 3)
-  fraction of day (Note 4)
+  For a given UTC date, calculate delta(AT) = TAI-UTC.
 
-minus UTC, seconds
-e):
-us (Note 5):
-= dubious year (Note 1)
-= OK
-= bad year
-= bad month
-= bad day (Note 3)
-= bad fraction (Note 4)
-= internal error (Note 5)
+     :------------------------------------------:
+     :                                          :
+     :                 IMPORTANT                :
+     :                                          :
+     :  A new version of this function must be  :
+     :  produced whenever a new leap second is  :
+     :  announced.  There are four items to     :
+     :  change on each such occasion:           :
+     :                                          :
+     :  1) A new line must be added to the set  :
+     :     of statements that initialize the    :
+     :     array "changes".                     :
+     :                                          :
+     :  2) The constant IYV must be set to the  :
+     :     current year.                        :
+     :                                          :
+     :  3) The "Latest leap second" comment     :
+     :     below must be set to the new leap    :
+     :     second date.                         :
+     :                                          :
+     :  4) The "This revision" comment, later,  :
+     :     must be set to the current date.     :
+     :                                          :
+     :  Change (2) must also be carried out     :
+     :  whenever the function is re-issued,     :
+     :  even if no leap seconds have been       :
+     :  added.                                  :
+     :                                          :
+     :  Latest leap second:  2015 June 30       :
+     :                                          :
+     :__________________________________________:
 
-nuary 1.0 (JD 2436934.5) and it is improper
- with an earlier date.  If this is attempted,
-ether with a warning status.
- cannot, in principle, be predicted in
-check for dates beyond the valid range is
-d against gross errors, a year five or more
-ar of the present function (see the constant
-ubious.  In this case a warning status is
-ult is computed in the normal way.
-nd too-late years, the warning status is +1.
-m the error status -1, which signifies a year
-ld not be computed.
-e is for a day which ends with a leap second,
-turned is for the period leading up to the
- date is for a day which begins as a leap
--TAI returned is for the period following the
+  Given:
+     iy     int      UTC:  year (Notes 1 and 2)
+     im     int            month (Note 2)
+     id     int            day (Notes 2 and 3)
+     fd     double         fraction of day (Note 4)
 
-be in the normal calendar range, for example
-il.  The "almanac" convention of allowing
-y 0 and December 32 is not supported in this
-o avoid confusion near leap seconds.
-is used only for dates before the
- seconds, the first of which occurred at the
-tested for validity (0 to 1 is the valid
-sed;  if invalid, zero is used and status -4
-ny applications, setting fd to zero is
-ulting error is always less than 3 ms (and
-).
-urned in the case where there are multiple
- first error detected.  For example, if the
- and 32 respectively, status -2 (bad month)
-he "internal error" status refers to a
-ble but causes some compilers to issue a
+  Returned:
+     deltat double   TAI minus UTC, seconds
 
-id result is not available, zero is returned.
+  Returned (function value):
+            int      status (Note 5):
+                       1 = dubious year (Note 1)
+                       0 = OK
+                      -1 = bad year
+                      -2 = bad month
+                      -3 = bad day (Note 3)
+                      -4 = bad fraction (Note 4)
+                      -5 = internal error (Note 5)
 
-January 1 onwards, the expressions from the
-.navy.mil/ser7/tai-utc.dat are used.
-1961 January 1 is taken from 2.58.1 (p87) of
- Supplement.
-
-an calendar to JD
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) UTC began at 1960 January 1.0 (JD 2436934.5) and it is improper
      to call the function with an earlier date.  If this is attempted,
@@ -5519,117 +4291,59 @@ Notes:
   2) The 5ms timestep at 1961 January 1 is taken from 2.58.1 (p87) of
      the 1992 Explanatory Supplement.
 
-
-References:
-
-  1) For dates from 1961 January 1 onwards, the expressions from the
-     file ftp://maia.usno.navy.mil/ser7/tai-utc.dat are used.
-
-  2) The 5ms timestep at 1961 January 1 is taken from 2.58.1 (p87) of
-     the 1992 Explanatory Supplement.
-
   Called:
      eraCal2jd    Gregorian calendar to JD
+
+
 
 ------
 dtdb
 ------
 
-Given:
-  date, TDB (Notes 1-3)
-  universal time (UT1, fraction of one day)
-  longitude (east positive, radians)
-  distance from Earth spin axis (km)
-  distance north of equatorial plane (km)
-e):
-  TDB-TT (seconds)
+  An approximation to TDB-TT, the difference between barycentric
+  dynamical time and terrestrial time, for an observer on the Earth.
 
- is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  The different time scales - proper, coordinate and realized - are
+  related to each other:
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-, formally, barycentric dynamical time (TDB),
-mical time (TT) can be used with no practical
-cy of the prediction.
-s a coordinate time that is realized as an
-om International Atomic Time, TAI.  TT is a
-sformation of geocentric coordinate time TCG,
-ale for the Geocentric Celestial Reference
+            TAI             <-  physically realized
+             :
+          offset            <-  observed (nominally +32.184s)
+             :
+            TT              <-  terrestrial time
+             :
+    rate adjustment (L_G)   <-  definition of TT
+             :
+            TCG             <-  time scale for GCRS
+             :
+      "periodic" terms      <-  eraDtdb  is an implementation
+             :
+    rate adjustment (L_C)   <-  function of solar-system ephemeris
+             :
+            TCB             <-  time scale for BCRS
+             :
+    rate adjustment (-L_B)  <-  definition of TDB
+             :
+            TDB             <-  TCB scaled to track TT
+             :
+      "periodic" terms      <-  -eraDtdb is an approximation
+             :
+            TT              <-  terrestrial time
 
-time, and is a specific linear transformation
-inate time TCB, which is the time scale for
-stial Reference System, BCRS.
-CB depends on the masses and positions of the
-system and the velocity of the Earth.  It is
-difference, the residual being of a periodic
-er, which is modeled by the present function,
-nual) sinusoidal term of amplitude
-6 seconds, plus planetary terms up to about
- lunar and diurnal terms up to 2 microseconds.
-rom the changing transverse Doppler effect
-d-shift as the observer (on the Earth's
- variations in speed (with respect to the
-nal potential.
-as the same as TCB but with a rate adjustment
-TT, which is convenient for many applications.
-ssive attempts to define TDB is set out in
- by the IAU General Assembly in 2006, which
-TCB) transformation that is consistent with
-ystem ephemerides.  Future ephemerides will
-ed transformations between TCG and TCB, which
-near drift between TDB and TT;  however, any
-ly to exceed 1 nanosecond per century.
-T model used in the present function is that of
- (1990), in its full form.  It was originally
- (private communications with P.T.Wallace,
-ubroutine.  The present C function contains an
-irhead code.  The numerical results are
-ed by the changes, the differences with
-ead & Bretagnon original being at the 1e-20 s
+  Adopted values for the various constants can be found in the IERS
+  Conventions (McCarthy & Petit 2003).
 
- of the model is from Moyer (1981) and
-fundamental arguments adapted from
-It is an approximation to the expression
-), where v is the barycentric velocity of
-geocentric position of the observer and
-ght.
-for u and v, the topocentric part of the
-ed, and the function will return the Fairhead
-lone.
-1950-2050, the absolute accuracy is better
-ds relative to time ephemerides obtained by
-egrations based on the JPL DE405 solar system
+  Given:
+     date1,date2   double  date, TDB (Notes 1-3)
+     ut            double  universal time (UT1, fraction of one day)
+     elong         double  longitude (east positive, radians)
+     u             double  distance from Earth spin axis (km)
+     v             double  distance north of equatorial plane (km)
 
-that the present function is merely a model,
-ntegration of solar-system ephemerides is the
-r predicting the relationship between TCG and
-n TT and TDB.
+  Returned (function value):
+                   double  TDB-TT (seconds)
 
-agnon, P., Astron.Astrophys., 229, 240-247
-
-3.
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-h., 23, 33 (1981).
-ial Astrometry, Adam Hilger (1983).
-al., Explanatory Supplement to the
-, Chapter 2, University Science Books (1992).
-on, P., Chapront, J., Chapront-Touze, M.,
-, J., Astron.Astrophys., 282, 663-683 (1994).
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -5716,8 +4430,7 @@ Notes:
      definitive method for predicting the relationship between TCG and
      TCB and hence between TT and TDB.
 
-
-References:
+  References:
 
      Fairhead, L., & Bretagnon, P., Astron.Astrophys., 229, 240-247
      (1990).
@@ -5737,64 +4450,38 @@ References:
      Simon, J.L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
      Francou, G. & Laskar, J., Astron.Astrophys., 282, 663-683 (1994).
 
+
+
 ------
 dtf2d
 ------
 
-Given:
-me scale ID (Note 1)
-ar, month, day in Gregorian calendar (Note 2)
-ur, minute
-conds
+  Encode date and time fields into 2-part Julian Date (or in the case
+  of UTC a quasi-JD form that includes special provision for leap
+  seconds).
 
-part Julian Date (Notes 3,4)
-e):
-atus: +3 = both of next two
-      +2 = time is after end of day (Note 5)
-      +1 = dubious year (Note 6)
-       0 = OK
-      -1 = bad year
-      -2 = bad month
-      -3 = bad day
-      -4 = bad hour
-      -5 = bad minute
-      -6 = bad second (<0)
+  Given:
+     scale     char[]  time scale ID (Note 1)
+     iy,im,id  int     year, month, day in Gregorian calendar (Note 2)
+     ihr,imn   int     hour, minute
+     sec       double  seconds
 
- time scale.  Only the value "UTC" (in upper
-, and enables handling of leap seconds (see
+  Returned:
+     d1,d2     double  2-part Julian Date (Notes 3,4)
 
-ions and limitations, see eraCal2jd.
-ts, d1+d2, is Julian Date, where normally d1
-mber and d2 is the fraction of a day.  In the
-he use of JD is problematical, special
-see the next note.
-sly represent UTC during a leap second unless
- taken.  The ERFA internal convention is that
-resents UTC days whether the length is 86399,
-conds.  In the 1960-1972 era there were
-ther direction) each time the linear UTC(TAI)
-ed, and these "mini-leaps" are also included
-on.
-time is after end of day" usually means that
-greater than 60.0.  However, in a day ending
- limit changes to 61.0 (or 59.0 in the case
-econd).
-dubious year" flags UTCs that predate the
-time scale or that are too far in the future
-eraDat for further details.
-continuous and regular time scales (TAI, TT,
- the result d1+d2 a Julian Date, strictly
-her cases (UT1 and UTC) the result must be
-tion;  in particular the difference between
-not be interpreted as a precise time
+  Returned (function value):
+               int     status: +3 = both of next two
+                               +2 = time is after end of day (Note 5)
+                               +1 = dubious year (Note 6)
+                                0 = OK
+                               -1 = bad year
+                               -2 = bad month
+                               -3 = bad day
+                               -4 = bad hour
+                               -5 = bad minute
+                               -6 = bad second (<0)
 
-
-an calendar to JD
-T) = TAI-UTC
-regorian calendar
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) scale identifies the time scale.  Only the value "UTC" (in upper
      case) is significant, and enables handling of leap seconds (see
@@ -5831,94 +4518,78 @@ Notes:
      two such results cannot be interpreted as a precise time
      interval.
 
+  Called:
+     eraCal2jd    Gregorian calendar to JD
+     eraDat       delta(AT) = TAI-UTC
+     eraJd2cal    JD to Gregorian calendar
+
+
 
 ------
 eceq06
 ------
 
-Given:
-T as a 2-part Julian date (Note 1)
-cliptic longitude and latitude (radians)
+  Transformation from ecliptic coordinates (mean equinox and ecliptic
+  of date) to ICRS RA,Dec, using the IAU 2006 precession model.
 
-CRS right ascension and declination (radians)
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2 double TT as a 2-part Julian date (Note 1)
+     dl,db       double ecliptic longitude and latitude (radians)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-ade about whether the coordinates represent
- astrometric effects such as parallax or
+  Returned:
+     dr,dd       double ICRS right ascension and declination (radians)
 
-s approximately that from ecliptic longitude
-quinox and ecliptic of date) to mean J2000.0
-declination, with only frame bias (always
- disturb this classical picture.
+  1) The TT date date1+date2 is a Julian Date, apportioned in any
+     convenient way between the two arguments.  For example,
+     JD(TT)=2450123.7 could be expressed in any of these ways,
+     among others:
 
-al coordinates to unit vector
- to ecliptic rotation matrix, IAU 2006
- of transpose of r-matrix and p-vector
-ctor to spherical coordinates
-ze angle into range 0 to 2pi
-ze angle into range +/- pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+            date1          date2
+
+         2450123.7           0.0       (JD method)
+         2451545.0       -1421.3       (J2000 method)
+         2400000.5       50123.2       (MJD method)
+         2450123.5           0.2       (date & time method)
+
+     The JD method is the most natural and convenient to use in
+     cases where the loss of several decimal digits of resolution
+     is acceptable.  The J2000 method is best matched to the way
+     the argument is handled internally and will deliver the
+     optimum resolution.  The MJD method and the date & time methods
+     are both good compromises between resolution and convenience.
+
+  2) No assumptions are made about whether the coordinates represent
+     starlight and embody astrometric effects such as parallax or
+     aberration.
+
+  3) The transformation is approximately that from ecliptic longitude
+     and latitude (mean equinox and ecliptic of date) to mean J2000.0
+     right ascension and declination, with only frame bias (always
+     less than 25 mas) to disturb this classical picture.
+
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraEcm06     J2000.0 to ecliptic rotation matrix, IAU 2006
+     eraTrxp      product of transpose of r-matrix and p-vector
+     eraC2s       unit vector to spherical coordinates
+     eraAnp       normalize angle into range 0 to 2pi
+     eraAnpm      normalize angle into range +/- pi
+
+
 
 ------
 ecm06
 ------
 
-Given:
-        TT as a 2-part Julian date (Note 1)
+  ICRS equatorial to ecliptic rotation matrix, IAU 2006.
 
-3][3]   ICRS to ecliptic rotation matrix
+  Given:
+     date1,date2  double         TT as a 2-part Julian date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rm           double[3][3]   ICRS to ecliptic rotation matrix
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- sense
-S,
-ctor with respect to ICRS right ascension
- and E_ep is the same vector with respect to
-tic and equinox of date.
-tor, merely a direction, typically of unit
-ound to any particular spatial origin, such
- SSB.  No assumptions are made about whether
-ght and embodies astrometric effects such as
-on.  The transformation is approximately that
- right ascension and declination and ecliptic
-de, with only frame bias (always less than
-his classical picture.
-
-liquity, IAU 2006
-ix, IAU 2006
-ize r-matrix to identity
-around X-axis
- of two r-matrices
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -5956,50 +4627,31 @@ Notes:
      longitude and latitude, with only frame bias (always less than
      25 mas) to disturb this classical picture.
 
+  Called:
+     eraObl06     mean obliquity, IAU 2006
+     eraPmat06    PB matrix, IAU 2006
+     eraIr        initialize r-matrix to identity
+     eraRx        rotate around X-axis
+     eraRxr       product of two r-matrices
+
+
 
 ------
 ee00
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
-   mean obliquity (Note 2)
-   nutation in longitude (Note 3)
-e):
-   equation of the equinoxes (Note 4)
+  The equation of the equinoxes, compatible with IAU 2000 resolutions,
+  given the nutation in longitude and the mean obliquity.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double    TT as a 2-part Julian Date (Note 1)
+     epsa         double    mean obliquity (Note 2)
+     dpsi         double    nutation in longitude (Note 3)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-dians, is mean of date.
- in radians, operates in the following sense:
-t ST = GMST + equation of the equinoxes
-ible with the IAU 2000 resolutions.  For
- IERS Conventions 2003 and Capitaine et al.
+  Returned (function value):
+                  double    equation of the equinoxes (Note 4)
 
-
-n of the equinoxes complementary terms
-
-ce, P.T. and McCarthy, D.D., "Expressions to
-00 definition of UT1", Astronomy &
-135-1149 (2003)
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -6030,8 +4682,10 @@ Notes:
      further details, see IERS Conventions 2003 and Capitaine et al.
      (2002).
 
+  Called:
+     eraEect00    equation of the equinoxes complementary terms
 
-References:
+  References:
 
      Capitaine, N., Wallace, P.T. and McCarthy, D.D., "Expressions to
      implement the IAU 2000 definition of UT1", Astronomy &
@@ -6040,49 +4694,21 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 ee00a
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
-e):
-   equation of the equinoxes (Note 2)
+  Equation of the equinoxes, compatible with IAU 2000 resolutions.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double    TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- in radians, operates in the following sense:
-t ST = GMST + equation of the equinoxes
-ible with the IAU 2000 resolutions.  For
- IERS Conventions 2003 and Capitaine et al.
+  Returned (function value):
+                  double    equation of the equinoxes (Note 2)
 
-
-0 precession adjustments
-liquity, IAU 1980
-n, IAU 2000A
-n of the equinoxes, IAU 2000
-
-ce, P.T. and McCarthy, D.D., "Expressions to
-00 definition of UT1", Astronomy &
-135-1149 (2003).
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004).
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -6111,8 +4737,13 @@ Notes:
      further details, see IERS Conventions 2003 and Capitaine et al.
      (2002).
 
+  Called:
+     eraPr00      IAU 2000 precession adjustments
+     eraObl80     mean obliquity, IAU 1980
+     eraNut00a    nutation, IAU 2000A
+     eraEe00      equation of the equinoxes, IAU 2000
 
-References:
+  References:
 
      Capitaine, N., Wallace, P.T. and McCarthy, D.D., "Expressions to
      implement the IAU 2000 definition of UT1", Astronomy &
@@ -6121,53 +4752,22 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004).
 
+
+
 ------
 ee00b
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
-e):
-   equation of the equinoxes (Note 2)
+  Equation of the equinoxes, compatible with IAU 2000 resolutions but
+  using the truncated nutation model IAU 2000B.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double    TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- in radians, operates in the following sense:
-t ST = GMST + equation of the equinoxes
-ible with the IAU 2000 resolutions except
-en compromised for the sake of speed.  For
- McCarthy & Luzum (2001), IERS Conventions
-t al. (2003).
+  Returned (function value):
+                  double    equation of the equinoxes (Note 2)
 
-0 precession adjustments
-liquity, IAU 1980
-n, IAU 2000B
-n of the equinoxes, IAU 2000
-
-ce, P.T. and McCarthy, D.D., "Expressions to
-00 definition of UT1", Astronomy &
-135-1149 (2003)
-um, B.J., "An abridged model of the
-of the celestial pole", Celestial Mechanics &
- 85, 37-49 (2003)
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -6197,8 +4797,13 @@ Notes:
      further details, see McCarthy & Luzum (2001), IERS Conventions
      2003 and Capitaine et al. (2003).
 
+  Called:
+     eraPr00      IAU 2000 precession adjustments
+     eraObl80     mean obliquity, IAU 1980
+     eraNut00b    nutation, IAU 2000B
+     eraEe00      equation of the equinoxes, IAU 2000
 
-References:
+  References:
 
      Capitaine, N., Wallace, P.T. and McCarthy, D.D., "Expressions to
      implement the IAU 2000 definition of UT1", Astronomy &
@@ -6211,42 +4816,22 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 ee06a
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
-e):
-   equation of the equinoxes (Note 2)
+  Equation of the equinoxes, compatible with IAU 2000 resolutions and
+  IAU 2006/2000A precession-nutation.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double    TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- in radians, operates in the following sense:
-t ST = GMST + equation of the equinoxes
+  Returned (function value):
+                  double    equation of the equinoxes (Note 2)
 
-ze angle into range +/- pi
-ch apparent sidereal time, IAU 2006/2000A
-ch mean sidereal time, IAU 2006
-
-it, G. (eds.), 2004, IERS Conventions (2003),
-No. 32, BKG
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -6271,75 +4856,32 @@ Notes:
 
         Greenwich apparent ST = GMST + equation of the equinoxes
 
+  Called:
+     eraAnpm      normalize angle into range +/- pi
+     eraGst06a    Greenwich apparent sidereal time, IAU 2006/2000A
+     eraGmst06    Greenwich mean sidereal time, IAU 2006
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), 2004, IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG
+
+
 
 ------
 eect00
 ------
 
-Given:
-  TT as a 2-part Julian Date (Note 1)
-e):
-  complementary terms (Note 2)
+  Equation of the equinoxes complementary terms, consistent with
+  IAU 2000 resolutions.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double   TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-erms" are part of the equation of the
-sically the difference between apparent and
+  Returned (function value):
+                  double   complementary terms (Note 2)
 
-
-
-ps)
-tation in longitude and eps is the obliquity
-f the rotation of the Earth were constant in
-e classical formulation would lead to
-ies in the UT1 timescale traceable to side-
-n-nutation.  In order to eliminate these
-omplementary terms" were introduced in 1994
- effect from 1997 (Capitaine and Gontier,
-
-+ EE
-omplementary terms are included as part of
-equinoxes rather than as part of the mean
- slightly compromises the "geometrical"
-an sidereal time but is otherwise
-
- computes CT in the above expression,
-2000 resolutions (Capitaine et al., 2002, and
-3).
-
-omaly of the Moon
-omaly of the Sun
-gument of the latitude of the Moon
-ongation of the Moon from the Sun
-ngitude of the Moon's ascending node
-ngitude of Venus
-ngitude of Earth
- accumulated precession in longitude
-
-ier, A.-M., Astron. Astrophys., 275,
-
-ce, P.T. and McCarthy, D.D., "Expressions to
-00 definition of UT1", Astronomy &
-135-1149 (2003)
-ecommendation 3 (1994)
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -6391,8 +4933,17 @@ Notes:
      compatible with IAU 2000 resolutions (Capitaine et al., 2002, and
      IERS Conventions 2003).
 
+  Called:
+     eraFal03     mean anomaly of the Moon
+     eraFalp03    mean anomaly of the Sun
+     eraFaf03     mean argument of the latitude of the Moon
+     eraFad03     mean elongation of the Moon from the Sun
+     eraFaom03    mean longitude of the Moon's ascending node
+     eraFave03    mean longitude of Venus
+     eraFae03     mean longitude of Earth
+     eraFapa03    general accumulated precession in longitude
 
-References:
+  References:
 
      Capitaine, N. & Gontier, A.-M., Astron. Astrophys., 275,
      645-650 (1993)
@@ -6406,45 +4957,26 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 eform
 ------
 
-Given:
-ipsoid identifier (Note 1)
+  Earth reference ellipsoids.
 
-atorial radius (meters, Note 2)
-ttening (Note 2)
-e):
-tus:  0 = OK
-     -1 = illegal identifier (Note 3)
+  Given:
+     n    int         ellipsoid identifier (Note 1)
 
-a number that specifies the choice of
-  The following are supported:
+  Returned:
+     a    double      equatorial radius (meters, Note 2)
+     f    double      flattening (Note 2)
 
+  Returned (function value):
+          int         status:  0 = OK
+                              -1 = illegal identifier (Note 3)
 
-
-
-ignificance outside the ERFA software.  For
- ERFA_WGS84 etc. are defined in erfam.h.
-ters are returned in the form of equatorial
- and flattening (f).  The latter is a number
- around 1/298.
-n unsupported n value is supplied, zero a and
-ell as error status.
-
-e World Geodetic System 1984, National
-Agency Technical Report 8350.2, Third
-
-odesique 66-2, 187 (1992).
-fense World Geodetic System 1972, World
-ittee, May 1974.
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The identifier n is a number that specifies the choice of
      reference ellipsoid.  The following are supported:
@@ -6465,8 +4997,7 @@ Notes:
   3) For the case where an unsupported n value is supplied, zero a and
      f are returned, as well as error status.
 
-
-References:
+  References:
 
      Department of Defense World Geodetic System 1984, National
      Imagery and Mapping Agency Technical Report 8350.2, Third
@@ -6481,47 +5012,21 @@ References:
      P. Kenneth Seidelmann (ed), University Science Books (1992),
      p220.
 
+
+
 ------
 eo06a
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
-e):
-   equation of the origins in radians
+  Equation of the origins, IAU 2006 precession and IAU 2000A nutation.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double    TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-origins is the distance between the true
-stial intermediate origin and, equivalently,
-en Earth rotation angle and Greenwich
-me (ERA-GST).  It comprises the precession
-ight ascension plus the equation of the
- the small correction terms).
+  Returned (function value):
+                  double    equation of the origins in radians
 
-al NPB matrix, IAU 2006/2000A
- CIP X,Y coordinates from NPB matrix
- locator s, given X,Y, IAU 2006
-n of the origins, given NPB matrix and s
-
-ace, P.T., 2006, Astron.Astrophys. 450, 855
-taine, N., 2006, Astron.Astrophys. 459, 981
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -6549,260 +5054,316 @@ Notes:
      (since J2000.0) in right ascension plus the equation of the
      equinoxes (including the small correction terms).
 
+  Called:
+     eraPnm06a    classical NPB matrix, IAU 2006/2000A
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+     eraS06       the CIO locator s, given X,Y, IAU 2006
+     eraEors      equation of the origins, given NPB matrix and s
 
-References:
+  References:
 
      Capitaine, N. & Wallace, P.T., 2006, Astron.Astrophys. 450, 855
 
      Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 
+
+
 ------
 eors
 ------
 
-Given:
-classical nutation x precession x bias matrix
-the quantity s (the CIO locator)
-e):
-the equation of the origins in radians.
+  Equation of the origins, given the classical NPB matrix and the
+  quantity s.
 
- origins is the distance between the true
-estial intermediate origin and, equivalently,
-een Earth rotation angle and Greenwich
-ime (ERA-GST).  It comprises the precession
-right ascension plus the equation of the
-g the small correction terms).
-om Wallace & Capitaine (2006).
+  Given:
+     rnpb  double[3][3]  classical nutation x precession x bias matrix
+     s     double        the quantity s (the CIO locator)
 
-ace, P.T., 2006, Astron.Astrophys. 450, 855
-ine, N., 2006, Astron.Astrophys. 459, 981
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned (function value):
+           double        the equation of the origins in radians.
+
+  Notes:
+
+  1)  The equation of the origins is the distance between the true
+      equinox and the celestial intermediate origin and, equivalently,
+      the difference between Earth rotation angle and Greenwich
+      apparent sidereal time (ERA-GST).  It comprises the precession
+      (since J2000.0) in right ascension plus the equation of the
+      equinoxes (including the small correction terms).
+
+  2)  The algorithm is from Wallace & Capitaine (2006).
+
+ References:
+
+     Capitaine, N. & Wallace, P.T., 2006, Astron.Astrophys. 450, 855
+
+     Wallace, P. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
+
+
 
 ------
 epb
 ------
 
-Given:
-  Julian Date (see note)
-e):
-  Besselian Epoch.
+  Julian Date to Besselian Epoch.
 
-upplied in two pieces, in the usual ERFA
-igned to preserve time resolution.  The
-able as a single number by adding dj1 and
-solution is achieved if dj1 is 2451545.0
+  Given:
+     dj1,dj2    double     Julian Date (see note)
+
+  Returned (function value):
+                double     Besselian Epoch.
+
+  Note:
+
+     The Julian Date is supplied in two pieces, in the usual ERFA
+     manner, which is designed to preserve time resolution.  The
+     Julian Date is available as a single number by adding dj1 and
+     dj2.  The maximum resolution is achieved if dj1 is 2451545.0
+     (J2000.0).
+
+  Reference:
+
+     Lieske, J.H., 1979. Astron.Astrophys., 73, 282.
 
 
-Astron.Astrophys., 73, 282.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 epb2jd
 ------
 
-Given:
-esselian Epoch (e.g. 1957.3)
+  Besselian Epoch to Julian Date.
 
-JD zero-point: always 2400000.5
-odified Julian Date
+  Given:
+     epb      double    Besselian Epoch (e.g. 1957.3)
 
-eturned in two pieces, in the usual ERFA
-igned to preserve time resolution.  The
-able as a single number by adding djm0 and
+  Returned:
+     djm0     double    MJD zero-point: always 2400000.5
+     djm      double    Modified Julian Date
+
+  Note:
+
+     The Julian Date is returned in two pieces, in the usual ERFA
+     manner, which is designed to preserve time resolution.  The
+     Julian Date is available as a single number by adding djm0 and
+     djm.
+
+  Reference:
+
+     Lieske, J.H., 1979, Astron.Astrophys. 73, 282.
 
 
-Astron.Astrophys. 73, 282.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 epj
 ------
 
-Given:
-  Julian Date (see note)
-e):
-  Julian Epoch
+  Julian Date to Julian Epoch.
 
-upplied in two pieces, in the usual ERFA
-igned to preserve time resolution.  The
-able as a single number by adding dj1 and
-solution is achieved if dj1 is 2451545.0
+  Given:
+     dj1,dj2    double     Julian Date (see note)
+
+  Returned (function value):
+                double     Julian Epoch
+
+  Note:
+
+     The Julian Date is supplied in two pieces, in the usual ERFA
+     manner, which is designed to preserve time resolution.  The
+     Julian Date is available as a single number by adding dj1 and
+     dj2.  The maximum resolution is achieved if dj1 is 2451545.0
+     (J2000.0).
+
+  Reference:
+
+     Lieske, J.H., 1979, Astron.Astrophys. 73, 282.
 
 
-Astron.Astrophys. 73, 282.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 epj2jd
 ------
 
-Given:
-ulian Epoch (e.g. 1996.8)
+  Julian Epoch to Julian Date.
 
-JD zero-point: always 2400000.5
-odified Julian Date
+  Given:
+     epj      double    Julian Epoch (e.g. 1996.8)
 
-eturned in two pieces, in the usual ERFA
-igned to preserve time resolution.  The
-able as a single number by adding djm0 and
+  Returned:
+     djm0     double    MJD zero-point: always 2400000.5
+     djm      double    Modified Julian Date
+
+  Note:
+
+     The Julian Date is returned in two pieces, in the usual ERFA
+     manner, which is designed to preserve time resolution.  The
+     Julian Date is available as a single number by adding djm0 and
+     djm.
+
+  Reference:
+
+     Lieske, J.H., 1979, Astron.Astrophys. 73, 282.
 
 
-Astron.Astrophys. 73, 282.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 epv00
 ------
 
-Given:
-       TDB date (Note 1)
+  Earth position and velocity, heliocentric and barycentric, with
+  respect to the Barycentric Celestial Reference System.
 
-2][3]  heliocentric Earth position/velocity
-2][3]  barycentric Earth position/velocity
-e):
-       status: 0 = OK
-              +1 = warning: date outside
-                   the range 1900-2100 AD
+  Given:
+     date1,date2  double        TDB date (Note 1)
 
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-uld be expressed in any of these ways, among
+  Returned:
+     pvh          double[2][3]  heliocentric Earth position/velocity
+     pvb          double[2][3]  barycentric Earth position/velocity
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  However,
-result is more likely to be limited by the
-n the way the date has been expressed.
-instead of TDB in most applications.
-s pvh and pvb contain the following:
-  }
-  } heliocentric position, AU
-  }
-  }
-  } heliocentric velocity, AU/d
-  }
-  }
-  } barycentric position, AU
-  }
-  }
-  } barycentric velocity, AU/d
-  }
- respect to the Barycentric Celestial
-he time unit is one day in TDB.
-MPLIFIED SOLUTION from the planetary theory
-, P. Bretagnon, 2001, Celes. Mechanics &
-4, 205-213) and is an adaptation of original
-d by P. Bretagnon (private comm., 2000).
- time span 1900-2100 with this simplified
- DE405 ephemeris give the following results:
-       RMS    max
+  Returned (function value):
+                  int           status: 0 = OK
+                                       +1 = warning: date outside
+                                            the range 1900-2100 AD
 
-ror    3.7   11.2   km
-ror    1.4    5.0   mm/s
+  Notes:
 
-ror    4.6   13.4   km
-ror    1.4    4.9   mm/s
- JPL DE406 ephemeris show that by 1800 and
-rors are approximately double their 1900-2100
-500 the deterioration is a factor of 10 and
-actor of 60.  The velocity accuracy falls off
-ate.
- use the same array for pvh and pvb, which
-ycentric values.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  1) The TDB date date1+date2 is a Julian Date, apportioned in any
+     convenient way between the two arguments.  For example,
+     JD(TDB)=2450123.7 could be expressed in any of these ways, among
+     others:
+
+            date1          date2
+
+         2450123.7           0.0       (JD method)
+         2451545.0       -1421.3       (J2000 method)
+         2400000.5       50123.2       (MJD method)
+         2450123.5           0.2       (date & time method)
+
+     The JD method is the most natural and convenient to use in cases
+     where the loss of several decimal digits of resolution is
+     acceptable.  The J2000 method is best matched to the way the
+     argument is handled internally and will deliver the optimum
+     resolution.  The MJD method and the date & time methods are both
+     good compromises between resolution and convenience.  However,
+     the accuracy of the result is more likely to be limited by the
+     algorithm itself than the way the date has been expressed.
+
+     n.b. TT can be used instead of TDB in most applications.
+
+  2) On return, the arrays pvh and pvb contain the following:
+
+        pvh[0][0]  x       }
+        pvh[0][1]  y       } heliocentric position, AU
+        pvh[0][2]  z       }
+
+        pvh[1][0]  xdot    }
+        pvh[1][1]  ydot    } heliocentric velocity, AU/d
+        pvh[1][2]  zdot    }
+
+        pvb[0][0]  x       }
+        pvb[0][1]  y       } barycentric position, AU
+        pvb[0][2]  z       }
+
+        pvb[1][0]  xdot    }
+        pvb[1][1]  ydot    } barycentric velocity, AU/d
+        pvb[1][2]  zdot    }
+
+     The vectors are with respect to the Barycentric Celestial
+     Reference System.  The time unit is one day in TDB.
+
+  3) The function is a SIMPLIFIED SOLUTION from the planetary theory
+     VSOP2000 (X. Moisson, P. Bretagnon, 2001, Celes. Mechanics &
+     Dyn. Astron., 80, 3/4, 205-213) and is an adaptation of original
+     Fortran code supplied by P. Bretagnon (private comm., 2000).
+
+  4) Comparisons over the time span 1900-2100 with this simplified
+     solution and the JPL DE405 ephemeris give the following results:
+
+                                RMS    max
+           Heliocentric:
+              position error    3.7   11.2   km
+              velocity error    1.4    5.0   mm/s
+
+           Barycentric:
+              position error    4.6   13.4   km
+              velocity error    1.4    4.9   mm/s
+
+     Comparisons with the JPL DE406 ephemeris show that by 1800 and
+     2200 the position errors are approximately double their 1900-2100
+     size.  By 1500 and 2500 the deterioration is a factor of 10 and
+     by 1000 and 3000 a factor of 60.  The velocity accuracy falls off
+     at about half that rate.
+
+  5) It is permissible to use the same array for pvh and pvb, which
+     will receive the barycentric values.
+
+
 
 ------
 eqec06
 ------
 
-Given:
-T as a 2-part Julian date (Note 1)
-CRS right ascension and declination (radians)
+  Transformation from ICRS equatorial coordinates to ecliptic
+  coordinates (mean equinox and ecliptic of date) using IAU 2006
+  precession model.
 
-cliptic longitude and latitude (radians)
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2 double TT as a 2-part Julian date (Note 1)
+     dr,dd       double ICRS right ascension and declination (radians)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-ade about whether the coordinates represent
- astrometric effects such as parallax or
+  Returned:
+     dl,db       double ecliptic longitude and latitude (radians)
 
-s approximately that from mean J2000.0 right
-ation to ecliptic longitude and latitude
-liptic of date), with only frame bias (always
- disturb this classical picture.
+  1) The TT date date1+date2 is a Julian Date, apportioned in any
+     convenient way between the two arguments.  For example,
+     JD(TT)=2450123.7 could be expressed in any of these ways,
+     among others:
 
-al coordinates to unit vector
- to ecliptic rotation matrix, IAU 2006
- of r-matrix and p-vector
-ctor to spherical coordinates
-ze angle into range 0 to 2pi
-ze angle into range +/- pi
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+            date1          date2
+
+         2450123.7           0.0       (JD method)
+         2451545.0       -1421.3       (J2000 method)
+         2400000.5       50123.2       (MJD method)
+         2450123.5           0.2       (date & time method)
+
+     The JD method is the most natural and convenient to use in
+     cases where the loss of several decimal digits of resolution
+     is acceptable.  The J2000 method is best matched to the way
+     the argument is handled internally and will deliver the
+     optimum resolution.  The MJD method and the date & time methods
+     are both good compromises between resolution and convenience.
+
+  2) No assumptions are made about whether the coordinates represent
+     starlight and embody astrometric effects such as parallax or
+     aberration.
+
+  3) The transformation is approximately that from mean J2000.0 right
+     ascension and declination to ecliptic longitude and latitude
+     (mean equinox and ecliptic of date), with only frame bias (always
+     less than 25 mas) to disturb this classical picture.
+
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraEcm06     J2000.0 to ecliptic rotation matrix, IAU 2006
+     eraRxp       product of r-matrix and p-vector
+     eraC2s       unit vector to spherical coordinates
+     eraAnp       normalize angle into range 0 to 2pi
+     eraAnpm      normalize angle into range +/- pi
+
+
 
 ------
 eqeq94
 ------
 
-Given:
-     TDB date (Note 1)
-e):
-     equation of the equinoxes (Note 2)
+  Equation of the equinoxes, IAU 1994 model.
 
- is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2   double     TDB date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- in radians, operates in the following sense:
-t ST = GMST + equation of the equinoxes
+  Returned (function value):
+                   double     equation of the equinoxes (Note 2)
 
-ze angle into range +/- pi
-n, IAU 1980
-liquity, IAU 1980
-
-ecommendation 3 (1994).
-ier, A.-M., 1993, Astron. Astrophys., 275,
-
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -6827,55 +5388,33 @@ Notes:
 
         Greenwich apparent ST = GMST + equation of the equinoxes
 
+  Called:
+     eraAnpm      normalize angle into range +/- pi
+     eraNut80     nutation, IAU 1980
+     eraObl80     mean obliquity, IAU 1980
 
-References:
+  References:
 
      IAU Resolution C7, Recommendation 3 (1994).
 
      Capitaine, N. & Gontier, A.-M., 1993, Astron. Astrophys., 275,
      645-650.
 
+
+
 ------
 era00
 ------
 
-Given:
-UT1 as a 2-part Julian Date (see note)
-e):
-Earth rotation angle (radians), range 0-2pi
+  Earth rotation angle (IAU 2000 model).
 
- is a Julian Date, apportioned in any
-en the arguments dj1 and dj2.  For example,
-uld be expressed in any of these ways,
+  Given:
+     dj1,dj2   double    UT1 as a 2-part Julian Date (see note)
 
-   dj2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 and MJD methods are good compromises
-nd convenience.  The date & time method is
-algorithm used:  maximum precision is
-j1 argument is for 0hrs UT1 on the day in
- argument lies in the range 0 to 1, or vice
+  Returned (function value):
+               double    Earth rotation angle (radians), range 0-2pi
 
-pted from Expression 22 of Capitaine et al.
-ment has been expressed in days directly,
-sion, integer contributions have been
-e formulation is given in IERS Conventions
- 14.
-
-ze angle into range 0 to 2pi
-
- B. and McCarthy D.D, 2000, Astron.
--405.
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The UT1 date dj1+dj2 is a Julian Date, apportioned in any
      convenient way between the arguments dj1 and dj2.  For example,
@@ -6904,8 +5443,10 @@ Notes:
      eliminated.  The same formulation is given in IERS Conventions
      (2003), Chap. 5, Eq. 14.
 
+  Called:
+     eraAnp       normalize angle into range 0 to 2pi
 
-References:
+  References:
 
      Capitaine N., Guinot B. and McCarthy D.D, 2000, Astron.
      Astrophys., 355, 398-405.
@@ -6913,27 +5454,22 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 fad03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
-adians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean elongation of the Moon from the Sun.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
- (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    D, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -6941,38 +5477,30 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      is from Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
      Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
      Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
+
+
 
 ------
 fae03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
- longitude of Earth, radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean longitude of Earth.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
-t al. (1999) after Simon et al. (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
- B., Kinoshita, H., Folgueira, M. 1999,
-p.Ser. 135, 111
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    mean longitude of Earth, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -6980,8 +5508,7 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      comes from Souchay et al. (1999) after Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -6991,28 +5518,24 @@ References:
 
      Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
      Astron.Astrophys.Supp.Ser. 135, 111
+
+
 
 ------
 faf03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
-adians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean longitude of the Moon minus mean longitude of the ascending
+  node.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
- (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    F, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7020,38 +5543,30 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      is from Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
      Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
      Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
+
+
 
 ------
 faju03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
- longitude of Jupiter, radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean longitude of Jupiter.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
-t al. (1999) after Simon et al. (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
- B., Kinoshita, H., Folgueira, M. 1999,
-p.Ser. 135, 111
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    mean longitude of Jupiter, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7059,8 +5574,7 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      comes from Souchay et al. (1999) after Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -7070,28 +5584,23 @@ References:
 
      Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
      Astron.Astrophys.Supp.Ser. 135, 111
+
+
 
 ------
 fal03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
-adians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean anomaly of the Moon.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
- (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    l, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7099,36 +5608,30 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      is from Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
      Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
      Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
+
+
 
 ------
 falp03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
-radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean anomaly of the Sun.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
- (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    l', radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7136,38 +5639,30 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      is from Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
      Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
      Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
+
+
 
 ------
 fama03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
- longitude of Mars, radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean longitude of Mars.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
-t al. (1999) after Simon et al. (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
- B., Kinoshita, H., Folgueira, M. 1999,
-p.Ser. 135, 111
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    mean longitude of Mars, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7175,8 +5670,7 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      comes from Souchay et al. (1999) after Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -7186,30 +5680,23 @@ References:
 
      Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
      Astron.Astrophys.Supp.Ser. 135, 111
+
+
 
 ------
 fame03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
- longitude of Mercury, radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean longitude of Mercury.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
-t al. (1999) after Simon et al. (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
- B., Kinoshita, H., Folgueira, M. 1999,
-p.Ser. 135, 111
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    mean longitude of Mercury, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7217,8 +5704,7 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      comes from Souchay et al. (1999) after Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -7229,27 +5715,22 @@ References:
      Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
      Astron.Astrophys.Supp.Ser. 135, 111
 
+
+
 ------
 fane03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
- longitude of Neptune, radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean longitude of Neptune.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
-n et al. (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    mean longitude of Neptune, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7257,8 +5738,7 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      is adapted from Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -7266,27 +5746,22 @@ References:
      Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
      Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
 
+
+
 ------
 faom03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
-a, radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean longitude of the Moon's ascending node.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
- (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    Omega, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7294,8 +5769,7 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      is from Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -7303,30 +5777,22 @@ References:
      Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
      Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
 
+
+
 ------
 fapa03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
-ral precession in longitude, radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  general accumulated precession in longitude.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003).  It
-ita & Souchay (1990) and comes originally
-1977).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-uchay J. 1990, Celest.Mech. and Dyn.Astron.
+  Returned (function value):
+           double    general precession in longitude, radians (Note 2)
 
-e, T., Fricke, W. & Morando, B. 1977,
-, 1-16
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7335,8 +5801,7 @@ Notes:
      is taken from Kinoshita & Souchay (1990) and comes originally
      from Lieske et al. (1977).
 
-
-References:
+  References:
 
      Kinoshita, H. and Souchay J. 1990, Celest.Mech. and Dyn.Astron.
      48, 187
@@ -7347,29 +5812,22 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 fasa03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
- longitude of Saturn, radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean longitude of Saturn.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
-t al. (1999) after Simon et al. (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
- B., Kinoshita, H., Folgueira, M. 1999,
-p.Ser. 135, 111
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    mean longitude of Saturn, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7377,8 +5835,7 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      comes from Souchay et al. (1999) after Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -7389,27 +5846,22 @@ References:
      Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
      Astron.Astrophys.Supp.Ser. 135, 111
 
+
+
 ------
 faur03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-ue):
- longitude of Uranus, radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean longitude of Uranus.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
-n et al. (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned  (function value):
+           double    mean longitude of Uranus, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7417,8 +5869,7 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      is adapted from Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -7426,29 +5877,22 @@ References:
      Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
      Francou, G., Laskar, J. 1994, Astron.Astrophys. 282, 663-683
 
+
+
 ------
 fave03
 ------
 
-Given:
- Julian centuries since J2000.0 (Note 1)
-e):
- longitude of Venus, radians (Note 2)
+  Fundamental argument, IERS Conventions (2003):
+  mean longitude of Venus.
 
- TDB, it is usually more convenient to use
-ignificant difference.
-is as adopted in IERS Conventions (2003) and
-t al. (1999) after Simon et al. (1994).
+  Given:
+     t     double    TDB, Julian centuries since J2000.0 (Note 1)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
- B., Kinoshita, H., Folgueira, M. 1999,
-p.Ser. 135, 111
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+           double    mean longitude of Venus, radians (Note 2)
+
+  Notes:
 
   1) Though t is strictly TDB, it is usually more convenient to use
      TT, which makes no significant difference.
@@ -7456,8 +5900,7 @@ Notes:
   2) The expression used is as adopted in IERS Conventions (2003) and
      comes from Souchay et al. (1999) after Simon et al. (1994).
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -7468,12 +5911,31 @@ References:
      Souchay, J., Loysel, B., Kinoshita, H., Folgueira, M. 1999,
      Astron.Astrophys.Supp.Ser. 135, 111
 
+
+
 ------
 fk52h
 ------
 
+  Transform FK5 (J2000.0) star data into the Hipparcos system.
 
-Notes:
+  Given (all FK5, equinox J2000.0, epoch J2000.0):
+     r5      double    RA (radians)
+     d5      double    Dec (radians)
+     dr5     double    proper motion in RA (dRA/dt, rad/Jyear)
+     dd5     double    proper motion in Dec (dDec/dt, rad/Jyear)
+     px5     double    parallax (arcsec)
+     rv5     double    radial velocity (km/s, positive = receding)
+
+  Returned (all Hipparcos, epoch J2000.0):
+     rh      double    RA (radians)
+     dh      double    Dec (radians)
+     drh     double    proper motion in RA (dRA/dt, rad/Jyear)
+     ddh     double    proper motion in Dec (dDec/dt, rad/Jyear)
+     pxh     double    parallax (arcsec)
+     rvh     double    radial velocity (km/s, positive = receding)
+
+  Notes:
 
   1) This function transforms FK5 star positions and proper motions
      into the system of the Hipparcos catalog.
@@ -7487,13 +5949,31 @@ Notes:
 
   4) See also eraH2fk5, eraFk5hz, eraHfk5z.
 
+  Called:
+     eraStarpv    star catalog data to space motion pv-vector
+     eraFk5hip    FK5 to Hipparcos rotation and spin
+     eraRxp       product of r-matrix and p-vector
+     eraPxp       vector product of two p-vectors
+     eraPpp       p-vector plus p-vector
+     eraPvstar    space motion pv-vector to star catalog data
+
+  Reference:
+
+     F.Mignard & M.Froeschle, Astron. Astrophys. 354, 732-739 (2000).
+
+
 
 ------
 fk5hip
 ------
 
+  FK5 to Hipparcos rotation and spin.
 
-Notes:
+  Returned:
+     r5h   double[3][3]  r-matrix: FK5 rotation wrt Hipparcos (Note 2)
+     s5h   double[3]     r-vector: FK5 spin wrt Hipparcos (Note 3)
+
+  Notes:
 
   1) This function models the FK5 to Hipparcos transformation as a
      pure rotation and spin;  zonal errors in the FK5 catalogue are
@@ -7510,59 +5990,32 @@ Notes:
      Hipparcos rotation.  The units are radians per year (Julian,
      TDB).
 
+  Called:
+     eraRv2m      r-vector to r-matrix
+
+  Reference:
+
+     F.Mignard & M.Froeschle, Astron. Astrophys. 354, 732-739 (2000).
+
+
 
 ------
 fk5hz
 ------
 
-Given:
-  FK5 RA (radians), equinox J2000.0, at date
-  FK5 Dec (radians), equinox J2000.0, at date
-  TDB date (Notes 1,2)
+  Transform an FK5 (J2000.0) star position into the system of the
+  Hipparcos catalogue, assuming zero Hipparcos proper motion.
 
-  Hipparcos RA (radians)
-  Hipparcos Dec (radians)
+  Given:
+     r5           double   FK5 RA (radians), equinox J2000.0, at date
+     d5           double   FK5 Dec (radians), equinox J2000.0, at date
+     date1,date2  double   TDB date (Notes 1,2)
 
-ts a star position from the FK5 system to
-, in such a way that the Hipparcos proper
-ause such a star has, in general, a non-zero
- FK5 system, the function requires the date
-n in the FK5 system was determined.
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rh           double   Hipparcos RA (radians)
+     dh           double   Hipparcos Dec (radians)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- transformation is modeled as a pure
-zonal errors in the FK5 catalogue are not
-
-d by this function is in the Hipparcos
- at date date1+date2.
-raH2fk5, eraHfk5z.
-
-al coordinates to unit vector
-Hipparcos rotation and spin
-y p-vector by scalar
-r to r-matrix
- of transpose of r-matrix and p-vector
-product of two p-vectors
-r to spherical
-ze angle into range 0 to 2pi
-
-hle, 2000, Astron.Astrophys. 354, 732-739.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) This function converts a star position from the FK5 system to
      the Hipparcos system, in such a way that the Hipparcos proper
@@ -7598,53 +6051,38 @@ Notes:
 
   5) See also eraFk52h, eraH2fk5, eraHfk5z.
 
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraFk5hip    FK5 to Hipparcos rotation and spin
+     eraSxp       multiply p-vector by scalar
+     eraRv2m      r-vector to r-matrix
+     eraTrxp      product of transpose of r-matrix and p-vector
+     eraPxp       vector product of two p-vectors
+     eraC2s       p-vector to spherical
+     eraAnp       normalize angle into range 0 to 2pi
+
+  Reference:
+
+     F.Mignard & M.Froeschle, 2000, Astron.Astrophys. 354, 732-739.
+
+
 
 ------
 fw2m
 ------
 
-Given:
-    F-W angle gamma_bar (radians)
-    F-W angle phi_bar (radians)
-    F-W angle psi (radians)
-    F-W angle epsilon (radians)
+  Form rotation matrix given the Fukushima-Williams angles.
 
-]   rotation matrix
+  Given:
+     gamb     double         F-W angle gamma_bar (radians)
+     phib     double         F-W angle phi_bar (radians)
+     psi      double         F-W angle psi (radians)
+     eps      double         F-W angle epsilon (radians)
 
- points:
-liptic pole,
+  Returned:
+     r        double[3][3]   rotation matrix
 
-ole of date,
-
-illiams angles are as follows:
-E
-
-
-P
-ing the combined effects of frame bias,
-ion is:
-.R_3(-psi).R_1(phib).R_3(gamb)
-ices can be constructed, depending on the
-
-ation x precession x frame bias matrix,
- precession angles, generate the nutation
-d them to the psi_bar and epsilon_A angles,
-ent function.
-cession x frame bias matrix, generate the
-ngles and call the present function.
-me bias matrix, generate the four precession
-2000.0 and call the present function.
-d precession-only matrices can if necessary
-ning these three appropriately.
-
-ize r-matrix to identity
-around Z-axis
-around X-axis
-
-006, Celest.Mech.Dyn.Astron. 94, 351
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) Naming the following points:
 
@@ -7682,42 +6120,33 @@ Notes:
      The nutation-only and precession-only matrices can if necessary
      be obtained by combining these three appropriately.
 
+  Called:
+     eraIr        initialize r-matrix to identity
+     eraRz        rotate around Z-axis
+     eraRx        rotate around X-axis
+
+  Reference:
+
+     Hilton, J. et al., 2006, Celest.Mech.Dyn.Astron. 94, 351
+
+
 
 ------
 fw2xy
 ------
 
-Given:
--W angle gamma_bar (radians)
--W angle phi_bar (radians)
--W angle psi (radians)
--W angle epsilon (radians)
+  CIP X,Y given Fukushima-Williams bias-precession-nutation angles.
 
-IP unit vector X,Y
+  Given:
+     gamb     double    F-W angle gamma_bar (radians)
+     phib     double    F-W angle phi_bar (radians)
+     psi      double    F-W angle psi (radians)
+     eps      double    F-W angle epsilon (radians)
 
- points:
-liptic pole,
+  Returned:
+     x,y      double    CIP unit vector X,Y
 
-ole of date,
-
-illiams angles are as follows:
-E
-
-
-P
-ing the combined effects of frame bias,
-ion is:
-).R_3(-psi).R_1(phib).R_3(gamb)
-x,y are elements [2][0] and [2][1] of the
-0, they are essentially angles in radians.
-
-les to r-matrix
- CIP X,Y coordinates from NPB matrix
-
-006, Celest.Mech.Dyn.Astron. 94, 351
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) Naming the following points:
 
@@ -7741,55 +6170,31 @@ Notes:
      The returned values x,y are elements [2][0] and [2][1] of the
      matrix.  Near J2000.0, they are essentially angles in radians.
 
+  Called:
+     eraFw2m      F-W angles to r-matrix
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+
+  Reference:
+
+     Hilton, J. et al., 2006, Celest.Mech.Dyn.Astron. 94, 351
+
+
 
 ------
 g2icrs
 ------
 
-Given:
-alactic longitude (radians)
-alactic latitude (radians)
+  Transformation from Galactic Coordinates to ICRS.
 
-CRS right ascension (radians)
-CRS declination (radians)
+  Given:
+     dl     double      galactic longitude (radians)
+     db     double      galactic latitude (radians)
 
-of Galactic coordinates was defined with
-bsolete reference system FK4 B1950.0.  When
-tem in a modern context, several factors have
-ount:
-K4 positions of the E-terms of aberration.
-the FK4 proper motion system by differential
+  Returned:
+     dr     double      ICRS right ascension (radians)
+     dd     double      ICRS declination (radians)
 
-50.0 equinox rather than the now-standard
-
-ween ICRS and the J2000.0 mean place system.
-gue (Perryman & ESA 1997) provides a rotation
-ms directly between ICRS and Galactic
- above factors taken into account.  The
-om three angles, namely the ICRS coordinates
- and the longitude of the ascending node of
- on the ICRS equator.  They are given in
-mal places and for canonical purposes are
-In the Hipparcos Catalogue the matrix
-o 10 decimal places (about 20 microarcsec).
-function the matrix elements have been
-canonical three angles and are given to 30
-
-mation is performed by the function eraIcrs2g.
-
-ze angle into range 0 to 2pi
-ze angle into range +/- pi
-al coordinates to unit vector
- of transpose of r-matrix and p-vector
-r to spherical
-
-A, 1997, ESA SP-1200, The Hipparcos and Tycho
-tric and photometric star catalogues
- Hipparcos Space Astrometry Mission.  ESA
-n, Noordwijk, Netherlands.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The IAU 1958 system of Galactic coordinates was defined with
      respect to the now obsolete reference system FK4 B1950.0.  When
@@ -7821,43 +6226,43 @@ Notes:
 
   2) The inverse transformation is performed by the function eraIcrs2g.
 
+  Called:
+     eraAnp       normalize angle into range 0 to 2pi
+     eraAnpm      normalize angle into range +/- pi
+     eraS2c       spherical coordinates to unit vector
+     eraTrxp      product of transpose of r-matrix and p-vector
+     eraC2s       p-vector to spherical
+
+  Reference:
+     Perryman M.A.C. & ESA, 1997, ESA SP-1200, The Hipparcos and Tycho
+     catalogues.  Astrometric and photometric star catalogues
+     derived from the ESA Hipparcos Space Astrometry Mission.  ESA
+     Publications Division, Noordwijk, Netherlands.
+
+
 
 ------
 gc2gd
 ------
 
-Given:
-llipsoid identifier (Note 1)
-eocentric vector (Note 2)
+  Transform geocentric coordinates to geodetic using the specified
+  reference ellipsoid.
 
-ongitude (radians, east +ve, Note 3)
-atitude (geodetic, radians, Note 3)
-eight above ellipsoid (geodetic, Notes 2,3)
-e):
-tatus:  0 = OK
-       -1 = illegal identifier (Note 3)
-       -2 = internal error (Note 3)
+  Given:
+     n       int        ellipsoid identifier (Note 1)
+     xyz     double[3]  geocentric vector (Note 2)
 
-a number that specifies the choice of
-  The following are supported:
+  Returned:
+     elong   double     longitude (radians, east +ve, Note 3)
+     phi     double     latitude (geodetic, radians, Note 3)
+     height  double     height above ellipsoid (geodetic, Notes 2,3)
 
+  Returned (function value):
+            int         status:  0 = OK
+                                -1 = illegal identifier (Note 3)
+                                -2 = internal error (Note 3)
 
-
-
-ignificance outside the ERFA software.  For
- ERFA_WGS84 etc. are defined in erfam.h.
-r (xyz, given) and height (height, returned)
-
-eans that the identifier n is illegal.  An
-heoretically impossible.  In all error cases,
-e set to -1e9.
-mation is performed in the function eraGd2gc.
-
-eference ellipsoids
-ric to geodetic transformation, general
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The identifier n is a number that specifies the choice of
      reference ellipsoid.  The following are supported:
@@ -7880,86 +6285,89 @@ Notes:
 
   4) The inverse transformation is performed in the function eraGd2gc.
 
+  Called:
+     eraEform     Earth reference ellipsoids
+     eraGc2gde    geocentric to geodetic transformation, general
+
+
 
 ------
 gc2gde
 ------
 
-Given:
-quatorial radius (Notes 2,4)
-lattening (Note 3)
-eocentric vector (Note 4)
+  Transform geocentric coordinates to geodetic for a reference
+  ellipsoid of specified form.
 
-ongitude (radians, east +ve)
-atitude (geodetic, radians)
-eight above ellipsoid (geodetic, Note 4)
-e):
-tatus:  0 = OK
-       -1 = illegal f
-       -2 = illegal a
+  Given:
+     a       double     equatorial radius (Notes 2,4)
+     f       double     flattening (Note 3)
+     xyz     double[3]  geocentric vector (Note 4)
 
-ed on the GCONV2H Fortran subroutine by
-e reference).
-s, a, can be in any units, but meters is
-ice.
-s (for the Earth) a value around 0.00335,
+  Returned:
+     elong   double     longitude (radians, east +ve)
+     phi     double     latitude (geodetic, radians)
+     height  double     height above ellipsoid (geodetic, Note 4)
 
-s, a, and the geocentric vector, xyz,
- same units, and determine the units of
- height.
-status < 0), elong, phi and height are
+  Returned (function value):
+             int        status:  0 = OK
+                                -1 = illegal f
+                                -2 = illegal a
 
-mation is performed in the function
+  Notes:
 
-or a standard ellipsoid (such as ERFA_WGS84) can
- performed by calling eraGc2gd, which uses a
-entify the required A and F values.
+  1) This function is based on the GCONV2H Fortran subroutine by
+     Toshio Fukushima (see reference).
 
-sformation from Cartesian to geodetic
-ted by Halley's method", J.Geodesy (2006)
+  2) The equatorial radius, a, can be in any units, but meters is
+     the conventional choice.
 
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  3) The flattening, f, is (for the Earth) a value around 0.00335,
+     i.e. around 1/298.
+
+  4) The equatorial radius, a, and the geocentric vector, xyz,
+     must be given in the same units, and determine the units of
+     the returned height, height.
+
+  5) If an error occurs (status < 0), elong, phi and height are
+     unchanged.
+
+  6) The inverse transformation is performed in the function
+     eraGd2gce.
+
+  7) The transformation for a standard ellipsoid (such as ERFA_WGS84) can
+     more conveniently be performed by calling eraGc2gd, which uses a
+     numerical code to identify the required A and F values.
+
+  Reference:
+
+     Fukushima, T., "Transformation from Cartesian to geodetic
+     coordinates accelerated by Halley's method", J.Geodesy (2006)
+     79: 689-693
+
+
 
 ------
 gd2gc
 ------
 
-Given:
-llipsoid identifier (Note 1)
-ongitude (radians, east +ve)
-atitude (geodetic, radians, Note 3)
-eight above ellipsoid (geodetic, Notes 2,3)
+  Transform geodetic coordinates to geocentric using the specified
+  reference ellipsoid.
 
-eocentric vector (Note 2)
-e):
-tatus:  0 = OK
-       -1 = illegal identifier (Note 3)
-       -2 = illegal case (Note 3)
+  Given:
+     n       int        ellipsoid identifier (Note 1)
+     elong   double     longitude (radians, east +ve)
+     phi     double     latitude (geodetic, radians, Note 3)
+     height  double     height above ellipsoid (geodetic, Notes 2,3)
 
-a number that specifies the choice of
-  The following are supported:
+  Returned:
+     xyz     double[3]  geocentric vector (Note 2)
 
+  Returned (function value):
+             int        status:  0 = OK
+                                -1 = illegal identifier (Note 3)
+                                -2 = illegal case (Note 3)
 
-
-
-ignificance outside the ERFA software.  For
- ERFA_WGS84 etc. are defined in erfam.h.
-given) and the geocentric vector (xyz,
-ers.
-formed on the arguments elong, phi and
-atus -1 means that the identifier n is
-tatus -2 protects against cases that would
-xceptions.  In all error cases, xyz is set
-
-mation is performed in the function eraGc2gd.
-
-eference ellipsoids
-c to geocentric transformation, general
-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The identifier n is a number that specifies the choice of
      reference ellipsoid.  The following are supported:
@@ -7984,47 +6392,34 @@ Notes:
 
   4) The inverse transformation is performed in the function eraGc2gd.
 
+  Called:
+     eraEform     Earth reference ellipsoids
+     eraGd2gce    geodetic to geocentric transformation, general
+     eraZp        zero p-vector
+
+
 
 ------
 gd2gce
 ------
 
-Given:
-quatorial radius (Notes 1,4)
-lattening (Notes 2,4)
-ongitude (radians, east +ve)
-atitude (geodetic, radians, Note 4)
-eight above ellipsoid (geodetic, Notes 3,4)
+  Transform geodetic coordinates to geocentric for a reference
+  ellipsoid of specified form.
 
-eocentric vector (Note 3)
-e):
-tatus:  0 = OK
-       -1 = illegal case (Note 4)
+  Given:
+     a       double     equatorial radius (Notes 1,4)
+     f       double     flattening (Notes 2,4)
+     elong   double     longitude (radians, east +ve)
+     phi     double     latitude (geodetic, radians, Note 4)
+     height  double     height above ellipsoid (geodetic, Notes 3,4)
 
-s, a, can be in any units, but meters is
-ice.
-s (for the Earth) a value around 0.00335,
+  Returned:
+     xyz     double[3]  geocentric vector (Note 3)
 
-s, a, and the height, height, must be
-its, and determine the units of the
-vector, xyz.
-formed on individual arguments.  The error
-gainst (unrealistic) cases that would lead
-ions.  If an error occurs, xyz is unchanged.
-mation is performed in the function
-
-or a standard ellipsoid (such as ERFA_WGS84) can
- performed by calling eraGd2gc,  which uses a
-entify the required a and f values.
-
-al Astronomy, Cambridge University Press,
-p96.
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Returned (function value):
+             int        status:  0 = OK
+                                -1 = illegal case (Note 4)
+  Notes:
 
   1) The equatorial radius, a, can be in any units, but meters is
      the conventional choice.
@@ -8047,8 +6442,7 @@ Notes:
      more conveniently be performed by calling eraGd2gc,  which uses a
      numerical code to identify the required a and f values.
 
-
-References:
+  References:
 
      Green, R.M., Spherical Astronomy, Cambridge University Press,
      (1985) Section 4.5, p96.
@@ -8057,57 +6451,23 @@ References:
      P. Kenneth Seidelmann (ed), University Science Books (1992),
      Section 4.22, p202.
 
+
+
 ------
 gmst00
 ------
 
-Given:
- UT1 as a 2-part Julian Date (Notes 1,2)
- TT as a 2-part Julian Date (Notes 1,2)
-e):
- Greenwich mean sidereal time (radians)
+  Greenwich mean sidereal time (model consistent with IAU 2000
+  resolutions).
 
- uta+utb and tta+ttb respectively, are both
-ioned in any convenient way between the
- example, JD=2450123.7 could be expressed in
-mong others:
-  Part B
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-e case of UT;  the TT is not at all critical
-he J2000 and MJD methods are good compromises
-nd convenience.  For UT, the date & time
-ed to the algorithm that is used by the Earth
-ion, called internally:  maximum precision is
-ta argument is for 0hrs UT1 on the day in
- argument lies in the range 0 to 1, or vice
+  Given:
+     uta,utb    double    UT1 as a 2-part Julian Date (Notes 1,2)
+     tta,ttb    double    TT as a 2-part Julian Date (Notes 1,2)
 
-required, UT1 to predict the Earth rotation
-e effects of precession.  If UT1 is used for
-s of order 100 microarcseconds result.
-ble with the IAU 2000 resolutions and must be
-tion with other IAU 2000 compatible
-recession-nutation and equation of the
+  Returned (function value):
+                double    Greenwich mean sidereal time (radians)
 
-ed in the range 0 to 2pi.
-m Capitaine et al. (2003) and IERS
-
-
-otation angle, IAU 2000
-ze angle into range 0 to 2pi
-
-ce, P.T. and McCarthy, D.D., "Expressions to
-00 definition of UT1", Astronomy &
-135-1149 (2003)
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The UT1 and TT dates uta+utb and tta+ttb respectively, are both
      Julian Dates, apportioned in any convenient way between the
@@ -8146,8 +6506,11 @@ Notes:
   5) The algorithm is from Capitaine et al. (2003) and IERS
      Conventions 2003.
 
+  Called:
+     eraEra00     Earth rotation angle, IAU 2000
+     eraAnp       normalize angle into range 0 to 2pi
 
-References:
+  References:
 
      Capitaine, N., Wallace, P.T. and McCarthy, D.D., "Expressions to
      implement the IAU 2000 definition of UT1", Astronomy &
@@ -8156,50 +6519,22 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 gmst06
 ------
 
-Given:
- UT1 as a 2-part Julian Date (Notes 1,2)
- TT as a 2-part Julian Date (Notes 1,2)
-e):
- Greenwich mean sidereal time (radians)
+  Greenwich mean sidereal time (consistent with IAU 2006 precession).
 
- uta+utb and tta+ttb respectively, are both
-ioned in any convenient way between the
- example, JD=2450123.7 could be expressed in
-mong others:
- Part B
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-e case of UT;  the TT is not at all critical
-he J2000 and MJD methods are good compromises
-nd convenience.  For UT, the date & time
-ed to the algorithm that is used by the Earth
-ion, called internally:  maximum precision is
-ta argument is for 0hrs UT1 on the day in
- argument lies in the range 0 to 1, or vice
+  Given:
+     uta,utb    double    UT1 as a 2-part Julian Date (Notes 1,2)
+     tta,ttb    double    TT as a 2-part Julian Date (Notes 1,2)
 
-required, UT1 to predict the Earth rotation
-e effects of precession.  If UT1 is used for
-s of order 100 microarcseconds result.
-ble with the IAU 2006 precession and must not
-recession models.
-ed in the range 0 to 2pi.
+  Returned (function value):
+                double    Greenwich mean sidereal time (radians)
 
-otation angle, IAU 2000
-ze angle into range 0 to 2pi
-
-ce, P.T. & Chapront, J., 2005,
-2, 355
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The UT1 and TT dates uta+utb and tta+ttb respectively, are both
      Julian Dates, apportioned in any convenient way between the
@@ -8233,53 +6568,30 @@ Notes:
 
   4) The result is returned in the range 0 to 2pi.
 
+  Called:
+     eraEra00     Earth rotation angle, IAU 2000
+     eraAnp       normalize angle into range 0 to 2pi
+
+  Reference:
+
+     Capitaine, N., Wallace, P.T. & Chapront, J., 2005,
+     Astron.Astrophys. 432, 355
+
+
 
 ------
 gmst82
 ------
 
-Given:
- UT1 Julian Date (see note)
-e):
- Greenwich mean sidereal time (radians)
+  Universal Time to Greenwich mean sidereal time (IAU 1982 model).
 
- is a Julian Date, apportioned in any
-en the arguments dj1 and dj2.  For example,
-uld be expressed in any of these ways,
+  Given:
+     dj1,dj2    double    UT1 Julian Date (see note)
 
-   dj2
-   0          (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-  0.2         (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 and MJD methods are good compromises
-nd convenience.  The date & time method is
-algorithm used:  maximum accuracy (or, at
-) is delivered when the dj1 argument is for
-in question and the dj2 argument lies in the
-e versa.
-ed on the IAU 1982 expression.  This is
-giving the GMST at 0 hours UT1.  In fact, it
- between the GMST and the UT, the steady
-awing-ahead of ST with respect to UT.  When
-ed, the expression happens to equal the GMST
-day.
-e entire UT1 (the sum of the two arguments
- directly as the argument for the standard
-t term of which is adjusted by 12 hours to
-noon phasing of Julian Date.  The UT1 is then
-whole days to conserve accuracy.
+  Returned (function value):
+                double    Greenwich mean sidereal time (radians)
 
-ze angle into range 0 to 2pi
-
-International Astronomical Union,
-
- Astrophys. 105, 359-361 (1982).
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The UT1 date dj1+dj2 is a Julian Date, apportioned in any
      convenient way between the arguments dj1 and dj2.  For example,
@@ -8315,66 +6627,33 @@ Notes:
      take account of the noon phasing of Julian Date.  The UT1 is then
      added, but omitting whole days to conserve accuracy.
 
+  Called:
+     eraAnp       normalize angle into range 0 to 2pi
 
-References:
+  References:
 
      Transactions of the International Astronomical Union,
      XVIII B, 67 (1983).
 
      Aoki et al., Astron. Astrophys. 105, 359-361 (1982).
 
+
+
 ------
 gst00a
 ------
 
-Given:
- UT1 as a 2-part Julian Date (Notes 1,2)
- TT as a 2-part Julian Date (Notes 1,2)
-e):
- Greenwich apparent sidereal time (radians)
+  Greenwich apparent sidereal time (consistent with IAU 2000
+  resolutions).
 
- uta+utb and tta+ttb respectively, are both
-ioned in any convenient way between the
- example, JD=2450123.7 could be expressed in
-mong others:
- Part B
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-e case of UT;  the TT is not at all critical
-he J2000 and MJD methods are good compromises
-nd convenience.  For UT, the date & time
-ed to the algorithm that is used by the Earth
-ion, called internally:  maximum precision is
-ta argument is for 0hrs UT1 on the day in
- argument lies in the range 0 to 1, or vice
+  Given:
+     uta,utb    double    UT1 as a 2-part Julian Date (Notes 1,2)
+     tta,ttb    double    TT as a 2-part Julian Date (Notes 1,2)
 
-required, UT1 to predict the Earth rotation
-e effects of precession-nutation.  If UT1 is
-es, errors of order 100 microarcseconds
+  Returned (function value):
+                double    Greenwich apparent sidereal time (radians)
 
-ble with the IAU 2000 resolutions and must be
-tion with other IAU 2000 compatible
-recession-nutation.
-ed in the range 0 to 2pi.
-m Capitaine et al. (2003) and IERS
-
-
-ch mean sidereal time, IAU 2000
-n of the equinoxes, IAU 2000A
-ze angle into range 0 to 2pi
-
-ce, P.T. and McCarthy, D.D., "Expressions to
-00 definition of UT1", Astronomy &
-135-1149 (2003)
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The UT1 and TT dates uta+utb and tta+ttb respectively, are both
      Julian Dates, apportioned in any convenient way between the
@@ -8413,8 +6692,12 @@ Notes:
   5) The algorithm is from Capitaine et al. (2003) and IERS
      Conventions 2003.
 
+  Called:
+     eraGmst00    Greenwich mean sidereal time, IAU 2000
+     eraEe00a     equation of the equinoxes, IAU 2000A
+     eraAnp       normalize angle into range 0 to 2pi
 
-References:
+  References:
 
      Capitaine, N., Wallace, P.T. and McCarthy, D.D., "Expressions to
      implement the IAU 2000 definition of UT1", Astronomy &
@@ -8423,63 +6706,22 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 gst00b
 ------
 
-Given:
- UT1 as a 2-part Julian Date (Notes 1,2)
-e):
- Greenwich apparent sidereal time (radians)
+  Greenwich apparent sidereal time (consistent with IAU 2000
+  resolutions but using the truncated nutation model IAU 2000B).
 
- is a Julian Date, apportioned in any
-en the argument pair.  For example,
-e expressed in any of these ways, among
+  Given:
+     uta,utb    double    UT1 as a 2-part Julian Date (Notes 1,2)
 
-   utb
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 and MJD methods are good compromises
-nd convenience.  For UT, the date & time
-ed to the algorithm that is used by the Earth
-ion, called internally:  maximum precision is
-ta argument is for 0hrs UT1 on the day in
- argument lies in the range 0 to 1, or vice
+  Returned (function value):
+                double    Greenwich apparent sidereal time (radians)
 
-ible with the IAU 2000 resolutions, except
-en compromised for the sake of speed and
-espects:
- of TDB (or TT) to compute the precession
-and the equation of the equinoxes.  This
-of order 0.1 mas at present.
-dged nutation model (McCarthy & Luzum, 2001)
-ng errors of up to 1 mas.
-ble with the IAU 2000 resolutions and must be
-tion with other IAU 2000 compatible
-recession-nutation.
-ed in the range 0 to 2pi.
-m Capitaine et al. (2003) and IERS
-
-
-ch mean sidereal time, IAU 2000
-n of the equinoxes, IAU 2000B
-ze angle into range 0 to 2pi
-
-ce, P.T. and McCarthy, D.D., "Expressions to
-00 definition of UT1", Astronomy &
-135-1149 (2003)
-um, B.J., "An abridged model of the
-of the celestial pole", Celestial Mechanics &
- 85, 37-49 (2003)
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The UT1 date uta+utb is a Julian Date, apportioned in any
      convenient way between the argument pair.  For example,
@@ -8523,8 +6765,12 @@ Notes:
   5) The algorithm is from Capitaine et al. (2003) and IERS
      Conventions 2003.
 
+  Called:
+     eraGmst00    Greenwich mean sidereal time, IAU 2000
+     eraEe00b     equation of the equinoxes, IAU 2000B
+     eraAnp       normalize angle into range 0 to 2pi
 
-References:
+  References:
 
      Capitaine, N., Wallace, P.T. and McCarthy, D.D., "Expressions to
      implement the IAU 2000 definition of UT1", Astronomy &
@@ -8537,55 +6783,23 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 gst06
 ------
 
-Given:
-   UT1 as a 2-part Julian Date (Notes 1,2)
-   TT as a 2-part Julian Date (Notes 1,2)
-]  nutation x precession x bias matrix
-e):
-   Greenwich apparent sidereal time (radians)
+  Greenwich apparent sidereal time, IAU 2006, given the NPB matrix.
 
- uta+utb and tta+ttb respectively, are both
-ioned in any convenient way between the
- example, JD=2450123.7 could be expressed in
-mong others:
- Part B
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-e case of UT;  the TT is not at all critical
-he J2000 and MJD methods are good compromises
-nd convenience.  For UT, the date & time
-ed to the algorithm that is used by the Earth
-ion, called internally:  maximum precision is
-ta argument is for 0hrs UT1 on the day in
- argument lies in the range 0 to 1, or vice
+  Given:
+     uta,utb  double        UT1 as a 2-part Julian Date (Notes 1,2)
+     tta,ttb  double        TT as a 2-part Julian Date (Notes 1,2)
+     rnpb     double[3][3]  nutation x precession x bias matrix
 
-required, UT1 to predict the Earth rotation
-e effects of precession-nutation.  If UT1 is
-es, errors of order 100 microarcseconds
+  Returned (function value):
+              double        Greenwich apparent sidereal time (radians)
 
-n uses the IAU 2006 series for s+XY/2, it is
-t of the precession-nutation model and can in
-h any equinox-based NPB matrix.
-ed in the range 0 to 2pi.
-
- CIP X,Y coordinates from NPB matrix
- locator s, given X,Y, IAU 2006
-ze angle into range 0 to 2pi
-otation angle, IAU 2000
-n of the origins, given NPB matrix and s
-
-taine, N., 2006, Astron.Astrophys. 459, 981
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The UT1 and TT dates uta+utb and tta+ttb respectively, are both
      Julian Dates, apportioned in any convenient way between the
@@ -8621,52 +6835,34 @@ Notes:
 
   4) The result is returned in the range 0 to 2pi.
 
+  Called:
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+     eraS06       the CIO locator s, given X,Y, IAU 2006
+     eraAnp       normalize angle into range 0 to 2pi
+     eraEra00     Earth rotation angle, IAU 2000
+     eraEors      equation of the origins, given NPB matrix and s
+
+  Reference:
+
+     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
+
+
 
 ------
 gst06a
 ------
 
-Given:
- UT1 as a 2-part Julian Date (Notes 1,2)
- TT as a 2-part Julian Date (Notes 1,2)
-e):
- Greenwich apparent sidereal time (radians)
+  Greenwich apparent sidereal time (consistent with IAU 2000 and 2006
+  resolutions).
 
- uta+utb and tta+ttb respectively, are both
-ioned in any convenient way between the
- example, JD=2450123.7 could be expressed in
-mong others:
- Part B
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-e case of UT;  the TT is not at all critical
-he J2000 and MJD methods are good compromises
-nd convenience.  For UT, the date & time
-ed to the algorithm that is used by the Earth
-ion, called internally:  maximum precision is
-ta argument is for 0hrs UT1 on the day in
- argument lies in the range 0 to 1, or vice
+  Given:
+     uta,utb    double    UT1 as a 2-part Julian Date (Notes 1,2)
+     tta,ttb    double    TT as a 2-part Julian Date (Notes 1,2)
 
-required, UT1 to predict the Earth rotation
-e effects of precession-nutation.  If UT1 is
-es, errors of order 100 microarcseconds
+  Returned (function value):
+                double    Greenwich apparent sidereal time (radians)
 
-ble with the IAU 2000/2006 resolutions and
- conjunction with IAU 2006 precession and
-
-ed in the range 0 to 2pi.
-
-al NPB matrix, IAU 2006/2000A
-ch apparent ST, IAU 2006, given NPB matrix
-
-taine, N., 2006, Astron.Astrophys. 459, 981
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The UT1 and TT dates uta+utb and tta+ttb respectively, are both
      Julian Dates, apportioned in any convenient way between the
@@ -8702,53 +6898,30 @@ Notes:
 
   4) The result is returned in the range 0 to 2pi.
 
+  Called:
+     eraPnm06a    classical NPB matrix, IAU 2006/2000A
+     eraGst06     Greenwich apparent ST, IAU 2006, given NPB matrix
+
+  Reference:
+
+     Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
+
+
 
 ------
 gst94
 ------
 
-Given:
- UT1 as a 2-part Julian Date (Notes 1,2)
-e):
- Greenwich apparent sidereal time (radians)
+  Greenwich apparent sidereal time (consistent with IAU 1982/94
+  resolutions).
 
- is a Julian Date, apportioned in any
-en the argument pair.  For example,
-e expressed in any of these ways, among
+  Given:
+     uta,utb    double    UT1 as a 2-part Julian Date (Notes 1,2)
 
-   utb
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 and MJD methods are good compromises
-nd convenience.  For UT, the date & time
-ed to the algorithm that is used by the Earth
-ion, called internally:  maximum precision is
-ta argument is for 0hrs UT1 on the day in
- argument lies in the range 0 to 1, or vice
+  Returned (function value):
+                double    Greenwich apparent sidereal time (radians)
 
-ible with the IAU 1982 and 1994 resolutions,
- has been compromised for the sake of
-UT is used instead of TDB (or TT) to compute
-equinoxes.
-ed only in conjunction with contemporaneous
-s 1976 precession, 1980 obliquity and 1982
- compatible with the IAU 2000 resolutions.
-ed in the range 0 to 2pi.
-
-ch mean sidereal time, IAU 1982
-n of the equinoxes, IAU 1994
-ze angle into range 0 to 2pi
-
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-ecommendation 3 (1994)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The UT1 date uta+utb is a Julian Date, apportioned in any
      convenient way between the argument pair.  For example,
@@ -8783,20 +6956,43 @@ Notes:
 
   4) The result is returned in the range 0 to 2pi.
 
+  Called:
+     eraGmst82    Greenwich mean sidereal time, IAU 1982
+     eraEqeq94    equation of the equinoxes, IAU 1994
+     eraAnp       normalize angle into range 0 to 2pi
 
-References:
+  References:
 
      Explanatory Supplement to the Astronomical Almanac,
      P. Kenneth Seidelmann (ed), University Science Books (1992)
 
      IAU Resolution C7, Recommendation 3 (1994)
 
+
+
 ------
 h2fk5
 ------
 
+  Transform Hipparcos star data into the FK5 (J2000.0) system.
 
-Notes:
+  Given (all Hipparcos, epoch J2000.0):
+     rh      double    RA (radians)
+     dh      double    Dec (radians)
+     drh     double    proper motion in RA (dRA/dt, rad/Jyear)
+     ddh     double    proper motion in Dec (dDec/dt, rad/Jyear)
+     pxh     double    parallax (arcsec)
+     rvh     double    radial velocity (km/s, positive = receding)
+
+  Returned (all FK5, equinox J2000.0, epoch J2000.0):
+     r5      double    RA (radians)
+     d5      double    Dec (radians)
+     dr5     double    proper motion in RA (dRA/dt, rad/Jyear)
+     dd5     double    proper motion in Dec (dDec/dt, rad/Jyear)
+     px5     double    parallax (arcsec)
+     rv5     double    radial velocity (km/s, positive = receding)
+
+  Notes:
 
   1) This function transforms Hipparcos star positions and proper
      motions into FK5 J2000.0.
@@ -8810,63 +7006,41 @@ Notes:
 
   4) See also eraFk52h, eraFk5hz, eraHfk5z.
 
+  Called:
+     eraStarpv    star catalog data to space motion pv-vector
+     eraFk5hip    FK5 to Hipparcos rotation and spin
+     eraRv2m      r-vector to r-matrix
+     eraRxp       product of r-matrix and p-vector
+     eraTrxp      product of transpose of r-matrix and p-vector
+     eraPxp       vector product of two p-vectors
+     eraPmp       p-vector minus p-vector
+     eraPvstar    space motion pv-vector to star catalog data
+
+  Reference:
+
+     F.Mignard & M.Froeschle, Astron. Astrophys. 354, 732-739 (2000).
+
+
 
 ------
 hfk5z
 ------
 
-Given:
-    Hipparcos RA (radians)
-    Hipparcos Dec (radians)
-    TDB date (Note 1)
-nox J2000.0, date date1+date2):
-    RA (radians)
-    Dec (radians)
-    FK5 RA proper motion (rad/year, Note 4)
-    Dec proper motion (rad/year, Note 4)
+  Transform a Hipparcos star position into FK5 J2000.0, assuming
+  zero Hipparcos proper motion.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     rh            double    Hipparcos RA (radians)
+     dh            double    Hipparcos Dec (radians)
+     date1,date2   double    TDB date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- RA is dRA/dt rather than cos(Dec)*dRA/dt.
- transformation is modeled as a pure rotation
-ors in the FK5 catalogue are not taken into
+  Returned (all FK5, equinox J2000.0, date date1+date2):
+     r5            double    RA (radians)
+     d5            double    Dec (radians)
+     dr5           double    FK5 RA proper motion (rad/year, Note 4)
+     dd5           double    Dec proper motion (rad/year, Note 4)
 
- that Hipparcos should be a close
-inertial frame, so that distant objects have
- such objects have (in general) non-zero
-, and this function returns those fictitious
-
-d by this function is in the FK5 J2000.0
- at date date1+date2.
-raH2fk5, eraFk5zhz.
-
-al coordinates to unit vector
-Hipparcos rotation and spin
- of r-matrix and p-vector
-y p-vector by scalar
- of two r-matrices
- of transpose of r-matrix and p-vector
-product of two p-vectors
-or to spherical
-ze angle into range 0 to 2pi
-
-hle, 2000, Astron.Astrophys. 354, 732-739.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -8904,55 +7078,38 @@ Notes:
 
   6) See also eraFk52h, eraH2fk5, eraFk5zhz.
 
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraFk5hip    FK5 to Hipparcos rotation and spin
+     eraRxp       product of r-matrix and p-vector
+     eraSxp       multiply p-vector by scalar
+     eraRxr       product of two r-matrices
+     eraTrxp      product of transpose of r-matrix and p-vector
+     eraPxp       vector product of two p-vectors
+     eraPv2s      pv-vector to spherical
+     eraAnp       normalize angle into range 0 to 2pi
+
+  Reference:
+
+     F.Mignard & M.Froeschle, 2000, Astron.Astrophys. 354, 732-739.
+
+
 
 ------
 icrs2g
 ------
 
-Given:
-CRS right ascension (radians)
-CRS declination (radians)
+  Transformation from ICRS to Galactic Coordinates.
 
-alactic longitude (radians)
-alactic latitude (radians)
+  Given:
+     dr     double      ICRS right ascension (radians)
+     dd     double      ICRS declination (radians)
 
-of Galactic coordinates was defined with
-bsolete reference system FK4 B1950.0.  When
-tem in a modern context, several factors have
-ount:
-K4 positions of the E-terms of aberration.
-the FK4 proper motion system by differential
+  Returned:
+     dl     double      galactic longitude (radians)
+     db     double      galactic latitude (radians)
 
-50.0 equinox rather than the now-standard
-
-ween ICRS and the J2000.0 mean place system.
-gue (Perryman & ESA 1997) provides a rotation
-ms directly between ICRS and Galactic
- above factors taken into account.  The
-om three angles, namely the ICRS coordinates
- and the longitude of the ascending node of
- on the ICRS equator.  They are given in
-mal places and for canonical purposes are
-In the Hipparcos Catalogue the matrix
-o 10 decimal places (about 20 microarcsec).
-function the matrix elements have been
-canonical three angles and are given to 30
-
-mation is performed by the function eraG2icrs.
-
-ze angle into range 0 to 2pi
-ze angle into range +/- pi
-al coordinates to unit vector
- of r-matrix and p-vector
-r to spherical
-
-A, 1997, ESA SP-1200, The Hipparcos and Tycho
-tric and photometric star catalogues
- Hipparcos Space Astrometry Mission.  ESA
-n, Noordwijk, Netherlands.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The IAU 1958 system of Galactic coordinates was defined with
      respect to the now obsolete reference system FK4 B1950.0.  When
@@ -8984,10 +7141,29 @@ Notes:
 
   2) The inverse transformation is performed by the function eraG2icrs.
 
+  Called:
+     eraAnp       normalize angle into range 0 to 2pi
+     eraAnpm      normalize angle into range +/- pi
+     eraS2c       spherical coordinates to unit vector
+     eraRxp       product of r-matrix and p-vector
+     eraC2s       p-vector to spherical
+
+  Reference:
+     Perryman M.A.C. & ESA, 1997, ESA SP-1200, The Hipparcos and Tycho
+     catalogues.  Astrometric and photometric star catalogues
+     derived from the ESA Hipparcos Space Astrometry Mission.  ESA
+     Publications Division, Noordwijk, Netherlands.
+
+
 
 ------
 ir
 ------
+
+  Initialize an r-matrix to the identity matrix.
+
+  Returned:
+     r       double[3][3]    r-matrix
 
 
 
@@ -8995,79 +7171,73 @@ ir
 jd2cal
 ------
 
-Given:
-ulian Date (Notes 1, 2)
+  Julian Date to Gregorian year, month, day, and fraction of a day.
 
-ear
-onth
-ay
-raction of day
-e):
-tatus:
-  0 = OK
- -1 = unacceptable date (Note 3)
+  Given:
+     dj1,dj2   double   Julian Date (Notes 1, 2)
 
-ate is -68569.5 (-4900 March 1).  The
-ed is 1e9.
-pportioned in any convenient way between
-d dj2.  For example, JD=2450123.7 could
-of these ways, among others:
-   dj2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
-nversion is from the "proleptic Gregorian
-nt is taken of the date(s) of adoption of
-ar, nor is the AD/BC numbering convention
+  Returned (arguments):
+     iy        int      year
+     im        int      month
+     id        int      day
+     fd        double   fraction of day
+
+  Returned (function value):
+               int      status:
+                           0 = OK
+                          -1 = unacceptable date (Note 3)
+
+  Notes:
+
+  1) The earliest valid date is -68569.5 (-4900 March 1).  The
+     largest value accepted is 1e9.
+
+  2) The Julian Date is apportioned in any convenient way between
+     the arguments dj1 and dj2.  For example, JD=2450123.7 could
+     be expressed in any of these ways, among others:
+
+            dj1             dj2
+
+         2450123.7           0.0       (JD method)
+         2451545.0       -1421.3       (J2000 method)
+         2400000.5       50123.2       (MJD method)
+         2450123.5           0.2       (date & time method)
+
+  3) In early eras the conversion is from the "proleptic Gregorian
+     calendar";  no account is taken of the date(s) of adoption of
+     the Gregorian calendar, nor is the AD/BC numbering convention
+     observed.
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992),
+     Section 12.92 (p604).
 
 
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 jdcalf
 ------
 
-Given:
-umber of decimal places of days in fraction
-j1+dj2 = Julian Date (Note 1)
+  Julian Date to Gregorian Calendar, expressed in a form convenient
+  for formatting messages:  rounded to a specified precision.
 
-ear, month, day, fraction in Gregorian
-alendar
-e):
-tatus:
- -1 = date out of range
-  0 = OK
- +1 = NDP not 0-9 (interpreted as 0)
+  Given:
+     ndp       int      number of decimal places of days in fraction
+     dj1,dj2   double   dj1+dj2 = Julian Date (Note 1)
 
-pportioned in any convenient way between
-d dj2.  For example, JD=2450123.7 could
-of these ways, among others:
-   dj2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
-nversion is from the "Proleptic Gregorian
-nt is taken of the date(s) of adoption of
-ar, nor is the AD/BC numbering convention
+  Returned:
+     iymdf     int[4]   year, month, day, fraction in Gregorian
+                        calendar
 
-n eraJd2cal.
-ess if internal overflows are to be
-which use 16-bit integers.
+  Returned (function value):
+               int      status:
+                          -1 = date out of range
+                           0 = OK
+                          +1 = NDP not 0-9 (interpreted as 0)
 
-regorian calendar
-
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The Julian Date is apportioned in any convenient way between
      the arguments dj1 and dj2.  For example, JD=2450123.7 could
@@ -9090,57 +7260,36 @@ Notes:
   4) NDP should be 4 or less if internal overflows are to be
      avoided on machines which use 16-bit integers.
 
+  Called:
+     eraJd2cal    JD to Gregorian calendar
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992),
+     Section 12.92 (p604).
+
+
 
 ------
 ld
 ------
 
-Given:
-ss of the gravitating body (solar masses)
-rection from observer to source (unit vector)
-rection from body to source (unit vector)
-rection from body to observer (unit vector)
-stance from body to observer (au)
-flection limiter (Note 4)
+  Apply light deflection by a solar-system body, as part of
+  transforming coordinate direction into natural direction.
 
-server to deflected source (unit vector)
+  Given:
+     bm     double     mass of the gravitating body (solar masses)
+     p      double[3]  direction from observer to source (unit vector)
+     q      double[3]  direction from body to source (unit vector)
+     e      double[3]  direction from body to observer (unit vector)
+     em     double     distance from body to observer (au)
+     dlim   double     deflection limiter (Note 4)
 
-ed on Expr. (70) in Klioner (2003) and
-Explanatory Supplement (Urban & Seidelmann
-rrangement to minimize the effects of machine
+  Returned:
+     p1     double[3]  observer to deflected source (unit vector)
 
-m can, as required, be adjusted in order to
-ts as quadrupole field.
-tion of the deflecting body should ideally
-me of closest approach of the light ray to
-
-er parameter dlim is phi^2/2, where phi is
-on (in radians) between source and body at
-plied.  As phi shrinks below the chosen
-ction is artificially reduced, reaching zero
-
-p1 is not normalized, but the consequential
-magnitude is always negligible.
-p1 can be the same array.
-light deflection taking into account the
-everal bodies, call the present function for
-ion, in decreasing order of distance from the
-
-dation is omitted.  The supplied vectors must
-, and the deflection limiter non-zero and
-
-
-nn, P. K. (eds), Explanatory Supplement to
-anac, 3rd ed., University Science Books
-
-"A practical relativistic model for micro-
- in space", Astr. J. 125, 1580-1597 (2003).
-
-product of two p-vectors
-product of two p-vectors
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The algorithm is based on Expr. (70) in Klioner (2003) and
      Expr. (7.63) in the Explanatory Supplement (Urban & Seidelmann
@@ -9183,104 +7332,104 @@ Notes:
      Klioner, Sergei A., "A practical relativistic model for micro-
      arcsecond astrometry in space", Astr. J. 125, 1580-1597 (2003).
 
-
-References:
-
-     Urban, S. & Seidelmann, P. K. (eds), Explanatory Supplement to
-     the Astronomical Almanac, 3rd ed., University Science Books
-     (2013).
-
-     Klioner, Sergei A., "A practical relativistic model for micro-
-     arcsecond astrometry in space", Astr. J. 125, 1580-1597 (2003).
-
   Called:
      eraPdp       scalar product of two p-vectors
      eraPxp       vector product of two p-vectors
+
+
 
 ------
 ldn
 ------
 
-Given:
-umber of bodies (note 1)
-ata for each of the n bodies (Notes 1,2):
- mass of the body (solar masses, Note 3)
- deflection limiter (Note 4)
- barycentric PV of the body (au, au/day)
-arycentric position of the observer (au)
-bserver to star coord direction (unit vector)
+  For a star, apply light deflection by multiple solar-system bodies,
+  as part of transforming coordinate direction into natural direction.
 
- observer to deflected star (unit vector)
- n entries, one for each body to be
-0, no gravitational light deflection will be
-r the Sun.
-nclude an entry for the Sun as well as for
-body to be taken into account.  The entries
-er in which the light passes the body.
-b array for body i, the mass parameter
-ired, be adjusted in order to allow for such
-e field.
-er parameter b[i].dl is phi^2/2, where phi is
-on (in radians) between star and body at
-plied.  As phi shrinks below the chosen
-ction is artificially reduced, reaching zero
-le values suitable for a terrestrial
-ith masses, are as follows:
-m        b[i].dl
-         6e-6
-5435     3e-9
-8574     3e-10
-starlight passes the body before reaching the
-s placed back along its barycentric track by
-that point to the observer.  For cases where
- the observer no such shift is applied.  If
-t is preferred, the user has the option of
-aLd function.  Similarly, eraLd can be used
-source is nearby, not a star.
-sn is not normalized, but the consequential
-magnitude is always negligible.
- sn can be the same array.
-dation is omitted.  The supplied masses must
-, the position and velocity vectors must be
-ction limiter greater than zero.
+  Given:
+     n    int           number of bodies (note 1)
+     b    eraLDBODY[n]  data for each of the n bodies (Notes 1,2):
+      bm   double         mass of the body (solar masses, Note 3)
+      dl   double         deflection limiter (Note 4)
+      pv   [2][3]         barycentric PV of the body (au, au/day)
+     ob   double[3]     barycentric position of the observer (au)
+     sc   double[3]     observer to star coord direction (unit vector)
 
-nn, P. K. (eds), Explanatory Supplement to
-anac, 3rd ed., University Science Books
-4.
+  Returned:
+     sn    double[3]      observer to deflected star (unit vector)
 
-vector
-product of two p-vectors
-r minus p-vector
-r plus scaled p-vector
-se p-vector into modulus and direction
-eflection by a solar-system body
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  1) The array b contains n entries, one for each body to be
+     considered.  If n = 0, no gravitational light deflection will be
+     applied, not even for the Sun.
+
+  2) The array b should include an entry for the Sun as well as for
+     any planet or other body to be taken into account.  The entries
+     should be in the order in which the light passes the body.
+
+  3) In the entry in the b array for body i, the mass parameter
+     b[i].bm can, as required, be adjusted in order to allow for such
+     effects as quadrupole field.
+
+  4) The deflection limiter parameter b[i].dl is phi^2/2, where phi is
+     the angular separation (in radians) between star and body at
+     which limiting is applied.  As phi shrinks below the chosen
+     threshold, the deflection is artificially reduced, reaching zero
+     for phi = 0.   Example values suitable for a terrestrial
+     observer, together with masses, are as follows:
+
+        body i     b[i].bm        b[i].dl
+
+        Sun        1.0            6e-6
+        Jupiter    0.00095435     3e-9
+        Saturn     0.00028574     3e-10
+
+  5) For cases where the starlight passes the body before reaching the
+     observer, the body is placed back along its barycentric track by
+     the light time from that point to the observer.  For cases where
+     the body is "behind" the observer no such shift is applied.  If
+     a different treatment is preferred, the user has the option of
+     instead using the eraLd function.  Similarly, eraLd can be used
+     for cases where the source is nearby, not a star.
+
+  6) The returned vector sn is not normalized, but the consequential
+     departure from unit magnitude is always negligible.
+
+  7) The arguments sc and sn can be the same array.
+
+  8) For efficiency, validation is omitted.  The supplied masses must
+     be greater than zero, the position and velocity vectors must be
+     right, and the deflection limiter greater than zero.
+
+  Reference:
+
+     Urban, S. & Seidelmann, P. K. (eds), Explanatory Supplement to
+     the Astronomical Almanac, 3rd ed., University Science Books
+     (2013), Section 7.2.4.
+
+  Called:
+     eraCp        copy p-vector
+     eraPdp       scalar product of two p-vectors
+     eraPmp       p-vector minus p-vector
+     eraPpsp      p-vector plus scaled p-vector
+     eraPn        decompose p-vector into modulus and direction
+     eraLd        light deflection by a solar-system body
+
+
 
 ------
 ldsun
 ------
 
-Given:
-rection from observer to star (unit vector)
-rection from Sun to observer (unit vector)
-stance from Sun to observer (au)
+  Deflection of starlight by the Sun.
 
-server to deflected star (unit vector)
+  Given:
+     p      double[3]  direction from observer to star (unit vector)
+     e      double[3]  direction from Sun to observer (unit vector)
+     em     double     distance from Sun to observer (au)
 
-ed to be sufficiently distant that its
- the Sun and the observer are essentially
+  Returned:
+     p1     double[3]  observer to deflected star (unit vector)
 
-strained when the angle between the star and
-n is less than about 9 arcsec, falling to
-tion. (The chosen threshold is within the
-olar-system applications.)
-p1 can be the same array.
-
-eflection by a solar-system body
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The source is presumed to be sufficiently distant that its
      directions seen from the Sun and the observer are essentially
@@ -9293,47 +7442,50 @@ Notes:
 
   3) The arguments p and p1 can be the same array.
 
+  Called:
+     eraLd        light deflection by a solar-system body
+
+
 
 ------
 lteceq
 ------
 
-Given:
-ulian epoch (TT)
-cliptic longitude and latitude (radians)
+  Transformation from ecliptic coordinates (mean equinox and ecliptic
+  of date) to ICRS RA,Dec, using a long-term precession model.
 
-CRS right ascension and declination (radians)
-ade about whether the coordinates represent
- astrometric effects such as parallax or
+  Given:
+     epj     double     Julian epoch (TT)
+     dl,db   double     ecliptic longitude and latitude (radians)
 
-s approximately that from ecliptic longitude
-quinox and ecliptic of date) to mean J2000.0
-declination, with only frame bias (always
- disturb this classical picture.
-2011, 2012) 400 millennia precession model
-2006 precession at J2000.0 and stays within
-during the 20th and 21st centuries.  It is
-cseconds throughout the historical period,
-enths of a degree at the end of the
-e span.
+  Returned:
+     dr,dd   double     ICRS right ascension and declination (radians)
 
-al coordinates to unit vector
- to ecliptic rotation matrix, long term
- of transpose of r-matrix and p-vector
-ctor to spherical coordinates
-ze angle into range 0 to 2pi
-ze angle into range +/- pi
+  1) No assumptions are made about whether the coordinates represent
+     starlight and embody astrometric effects such as parallax or
+     aberration.
 
-e, N. and Wallace, P., 2011, New precession
-r long time intervals, Astron.Astrophys. 534,
+  2) The transformation is approximately that from ecliptic longitude
+     and latitude (mean equinox and ecliptic of date) to mean J2000.0
+     right ascension and declination, with only frame bias (always
+     less than 25 mas) to disturb this classical picture.
 
-e, N. and Wallace, P., 2012, New precession
-r long time intervals (Corrigendum),
-, C1
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  3) The Vondrak et al. (2011, 2012) 400 millennia precession model
+     agrees with the IAU 2006 precession at J2000.0 and stays within
+     100 microarcseconds during the 20th and 21st centuries.  It is
+     accurate to a few arcseconds throughout the historical period,
+     worsening to a few tenths of a degree at the end of the
+     +/- 200,000 year time span.
 
-References:
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraLtecm     J2000.0 to ecliptic rotation matrix, long term
+     eraTrxp      product of transpose of r-matrix and p-vector
+     eraC2s       unit vector to spherical coordinates
+     eraAnp       normalize angle into range 0 to 2pi
+     eraAnpm      normalize angle into range +/- pi
+
+  References:
 
     Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
     expressions, valid for long time intervals, Astron.Astrophys. 534,
@@ -9343,49 +7495,21 @@ References:
     expressions, valid for long time intervals (Corrigendum),
     Astron.Astrophys. 541, C1
 
+
+
 ------
 ltecm
 ------
 
-Given:
-   Julian epoch (TT)
+  ICRS equatorial to ecliptic rotation matrix, long-term.
 
-   ICRS to ecliptic rotation matrix
+  Given:
+     epj     double         Julian epoch (TT)
 
- sense
-S,
-ctor with respect to ICRS right ascension
- and E_ep is the same vector with respect to
-tic and equinox of epoch epj.
-tor, merely a direction, typically of unit
-ound to any particular spatial origin, such
- SSB.  No assumptions are made about whether
-ght and embodies astrometric effects such as
-on.  The transformation is approximately that
- right ascension and declination and ecliptic
-de, with only frame bias (always less than
-his classical picture.
-2011, 2012) 400 millennia precession model
-2006 precession at J2000.0 and stays within
-during the 20th and 21st centuries.  It is
-cseconds throughout the historical period,
-enths of a degree at the end of the
-e span.
+  Returned:
+     rm      double[3][3]   ICRS to ecliptic rotation matrix
 
- pole, long term
-c pole, long term
-product
-ze vector
-
-e, N. and Wallace, P., 2011, New precession
-r long time intervals, Astron.Astrophys. 534,
-
-e, N. and Wallace, P., 2012, New precession
-r long time intervals (Corrigendum),
-, C1
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The matrix is in the sense
 
@@ -9411,8 +7535,13 @@ Notes:
      worsening to a few tenths of a degree at the end of the
      +/- 200,000 year time span.
 
+  Called:
+     eraLtpequ    equator pole, long term
+     eraLtpecl    ecliptic pole, long term
+     eraPxp       vector product
+     eraPn        normalize vector
 
-References:
+  References:
 
     Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
     expressions, valid for long time intervals, Astron.Astrophys. 534,
@@ -9421,47 +7550,49 @@ References:
     Vondrak, J., Capitaine, N. and Wallace, P., 2012, New precession
     expressions, valid for long time intervals (Corrigendum),
     Astron.Astrophys. 541, C1
+
+
 
 ------
 lteqec
 ------
 
-Given:
-ulian epoch (TT)
-CRS right ascension and declination (radians)
+  Transformation from ICRS equatorial coordinates to ecliptic
+  coordinates (mean equinox and ecliptic of date) using a long-term
+  precession model.
 
-cliptic longitude and latitude (radians)
-ade about whether the coordinates represent
- astrometric effects such as parallax or
+  Given:
+     epj     double     Julian epoch (TT)
+     dr,dd   double     ICRS right ascension and declination (radians)
 
-s approximately that from mean J2000.0 right
-ation to ecliptic longitude and latitude
-liptic of date), with only frame bias (always
- disturb this classical picture.
-2011, 2012) 400 millennia precession model
-2006 precession at J2000.0 and stays within
-during the 20th and 21st centuries.  It is
-cseconds throughout the historical period,
-enths of a degree at the end of the
-e span.
+  Returned:
+     dl,db   double     ecliptic longitude and latitude (radians)
 
-al coordinates to unit vector
- to ecliptic rotation matrix, long term
- of r-matrix and p-vector
-ctor to spherical coordinates
-ze angle into range 0 to 2pi
-ze angle into range +/- pi
+  1) No assumptions are made about whether the coordinates represent
+     starlight and embody astrometric effects such as parallax or
+     aberration.
 
-e, N. and Wallace, P., 2011, New precession
-r long time intervals, Astron.Astrophys. 534,
+  2) The transformation is approximately that from mean J2000.0 right
+     ascension and declination to ecliptic longitude and latitude
+     (mean equinox and ecliptic of date), with only frame bias (always
+     less than 25 mas) to disturb this classical picture.
 
-e, N. and Wallace, P., 2012, New precession
-r long time intervals (Corrigendum),
-, C1
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  3) The Vondrak et al. (2011, 2012) 400 millennia precession model
+     agrees with the IAU 2006 precession at J2000.0 and stays within
+     100 microarcseconds during the 20th and 21st centuries.  It is
+     accurate to a few arcseconds throughout the historical period,
+     worsening to a few tenths of a degree at the end of the
+     +/- 200,000 year time span.
 
-References:
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraLtecm     J2000.0 to ecliptic rotation matrix, long term
+     eraRxp       product of r-matrix and p-vector
+     eraC2s       unit vector to spherical coordinates
+     eraAnp       normalize angle into range 0 to 2pi
+     eraAnpm      normalize angle into range +/- pi
+
+  References:
 
     Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
     expressions, valid for long time intervals, Astron.Astrophys. 534,
@@ -9471,41 +7602,21 @@ References:
     expressions, valid for long time intervals (Corrigendum),
     Astron.Astrophys. 541, C1
 
+
+
 ------
 ltp
 ------
 
-Given:
-   Julian epoch (TT)
+  Long-term precession matrix.
 
-   precession matrix, J2000.0 to date
+  Given:
+     epj     double         Julian epoch (TT)
 
- sense
-2000,
-ector with respect to the J2000.0 mean
-and P_date is the same vector with respect to
-nox of epoch epj.
-2011, 2012) 400 millennia precession model
-2006 precession at J2000.0 and stays within
-during the 20th and 21st centuries.  It is
-cseconds throughout the historical period,
-enths of a degree at the end of the
-e span.
+  Returned:
+     rp      double[3][3]   precession matrix, J2000.0 to date
 
- pole, long term
-c pole, long term
-product
-ze vector
-
-e, N. and Wallace, P., 2011, New precession
-r long time intervals, Astron.Astrophys. 534,
-
-e, N. and Wallace, P., 2012, New precession
-r long time intervals (Corrigendum),
-, C1
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The matrix is in the sense
 
@@ -9522,8 +7633,13 @@ Notes:
      worsening to a few tenths of a degree at the end of the
      +/- 200,000 year time span.
 
+  Called:
+     eraLtpequ    equator pole, long term
+     eraLtpecl    ecliptic pole, long term
+     eraPxp       vector product
+     eraPn        normalize vector
 
-References:
+  References:
 
     Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
     expressions, valid for long time intervals, Astron.Astrophys. 534,
@@ -9533,39 +7649,21 @@ References:
     expressions, valid for long time intervals (Corrigendum),
     Astron.Astrophys. 541, C1
 
+
+
 ------
 ltpb
 ------
 
-Given:
-   Julian epoch (TT)
+  Long-term precession matrix, including ICRS frame bias.
 
-   precession-bias matrix, J2000.0 to date
+  Given:
+     epj     double         Julian epoch (TT)
 
- sense
-ICRS,
-ctor in the Geocentric Celestial Reference
-s the vector with respect to the Celestial
-ce System at that date but with nutation
+  Returned:
+     rpb     double[3][3]   precession-bias matrix, J2000.0 to date
 
-bias formulation is used, of sub-
-acy compared with a full 3D rotation.
-2011, 2012) 400 millennia precession model
-2006 precession at J2000.0 and stays within
-during the 20th and 21st centuries.  It is
-cseconds throughout the historical period,
-enths of a degree at the end of the
-e span.
-
-e, N. and Wallace, P., 2011, New precession
-r long time intervals, Astron.Astrophys. 534,
-
-e, N. and Wallace, P., 2012, New precession
-r long time intervals (Corrigendum),
-, C1
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The matrix is in the sense
 
@@ -9586,8 +7684,7 @@ Notes:
      worsening to a few tenths of a degree at the end of the
      +/- 200,000 year time span.
 
-
-References:
+  References:
 
     Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
     expressions, valid for long time intervals, Astron.Astrophys. 534,
@@ -9596,34 +7693,22 @@ References:
     Vondrak, J., Capitaine, N. and Wallace, P., 2012, New precession
     expressions, valid for long time intervals (Corrigendum),
     Astron.Astrophys. 541, C1
+
+
 
 ------
 ltpecl
 ------
 
-Given:
-   Julian epoch (TT)
+  Long-term precession of the ecliptic.
 
-   ecliptic pole unit vector
+  Given:
+     epj     double         Julian epoch (TT)
 
-is with respect to the J2000.0 mean equator
+  Returned:
+     vec     double[3]      ecliptic pole unit vector
 
-2011, 2012) 400 millennia precession model
-2006 precession at J2000.0 and stays within
-during the 20th and 21st centuries.  It is
-cseconds throughout the historical period,
-enths of a degree at the end of the
-e span.
-
-e, N. and Wallace, P., 2011, New precession
-r long time intervals, Astron.Astrophys. 534,
-
-e, N. and Wallace, P., 2012, New precession
-r long time intervals (Corrigendum),
-, C1
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The returned vector is with respect to the J2000.0 mean equator
      and equinox.
@@ -9635,8 +7720,7 @@ Notes:
      worsening to a few tenths of a degree at the end of the
      +/- 200,000 year time span.
 
-
-References:
+  References:
 
     Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
     expressions, valid for long time intervals, Astron.Astrophys. 534,
@@ -9645,34 +7729,22 @@ References:
     Vondrak, J., Capitaine, N. and Wallace, P., 2012, New precession
     expressions, valid for long time intervals (Corrigendum),
     Astron.Astrophys. 541, C1
+
+
 
 ------
 ltpequ
 ------
 
-Given:
-   Julian epoch (TT)
+  Long-term precession of the equator.
 
-   equator pole unit vector
+  Given:
+     epj     double         Julian epoch (TT)
 
-is with respect to the J2000.0 mean equator
+  Returned:
+     veq     double[3]      equator pole unit vector
 
-2011, 2012) 400 millennia precession model
-2006 precession at J2000.0 and stays within
-during the 20th and 21st centuries.  It is
-cseconds throughout the historical period,
-enths of a degree at the end of the
-e span.
-
-e, N. and Wallace, P., 2011, New precession
-r long time intervals, Astron.Astrophys. 534,
-
-e, N. and Wallace, P., 2012, New precession
-r long time intervals (Corrigendum),
-, C1
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The returned vector is with respect to the J2000.0 mean equator
      and equinox.
@@ -9684,8 +7756,7 @@ Notes:
      worsening to a few tenths of a degree at the end of the
      +/- 200,000 year time span.
 
-
-References:
+  References:
 
     Vondrak, J., Capitaine, N. and Wallace, P., 2011, New precession
     expressions, valid for long time intervals, Astron.Astrophys. 534,
@@ -9695,45 +7766,21 @@ References:
     expressions, valid for long time intervals (Corrigendum),
     Astron.Astrophys. 541, C1
 
+
+
 ------
 num00a
 ------
 
-Given:
-         TT as a 2-part Julian Date (Note 1)
+  Form the matrix of nutation for a given date, IAU 2000A model.
 
-3][3]    nutation matrix
+  Given:
+     date1,date2  double          TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rmatn        double[3][3]    nutation matrix
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(true) = rmatn * V(mean), where
- is with respect to the true equatorial triad
-ctor V(mean) is with respect to the mean
-date.
-ly less accurate result (about 1 mas), can be
-stead the eraNum00b function.
-
-ecession/nutation, IAU 2000A
-
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-4).
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -9762,46 +7809,30 @@ Notes:
   3) A faster, but slightly less accurate result (about 1 mas), can be
      obtained by using instead the eraNum00b function.
 
+  Called:
+     eraPn00a     bias/precession/nutation, IAU 2000A
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992),
+     Section 3.222-3 (p114).
+
+
 
 ------
 num00b
 ------
 
-Given:
-        TT as a 2-part Julian Date (Note 1)
+  Form the matrix of nutation for a given date, IAU 2000B model.
 
-3][3]   nutation matrix
+  Given:
+     date1,date2  double         TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rmatn        double[3][3]   nutation matrix
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(true) = rmatn * V(mean), where
- is with respect to the true equatorial triad
-ctor V(mean) is with respect to the mean
-date.
- is faster, but slightly less accurate (about
-Num00a function.
-
-ecession/nutation, IAU 2000B
-
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-4).
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -9830,46 +7861,30 @@ Notes:
   3) The present function is faster, but slightly less accurate (about
      1 mas), than the eraNum00a function.
 
+  Called:
+     eraPn00b     bias/precession/nutation, IAU 2000B
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992),
+     Section 3.222-3 (p114).
+
+
 
 ------
 num06a
 ------
 
-Given:
-          TT as a 2-part Julian Date (Note 1)
+  Form the matrix of nutation for a given date, IAU 2006/2000A model.
 
-[3][3]    nutation matrix
+  Given:
+     date1,date2   double          TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rmatn         double[3][3]    nutation matrix
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(true) = rmatn * V(mean), where
- is with respect to the true equatorial triad
-ctor V(mean) is with respect to the mean
-date.
-
-liquity, IAU 2006
-n, IAU 2006/2000A
-tation matrix
-
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-4).
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -9895,37 +7910,33 @@ Notes:
      of date and the p-vector V(mean) is with respect to the mean
      equatorial triad of date.
 
+  Called:
+     eraObl06     mean obliquity, IAU 2006
+     eraNut06a    nutation, IAU 2006/2000A
+     eraNumat     form nutation matrix
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992),
+     Section 3.222-3 (p114).
+
+
 
 ------
 numat
 ------
 
-Given:
-       mean obliquity of date (Note 1)
-       nutation (Note 2)
+  Form the matrix of nutation.
 
-][3]   nutation matrix (Note 3)
+  Given:
+     epsa        double         mean obliquity of date (Note 1)
+     dpsi,deps   double         nutation (Note 2)
 
-liquity epsa, must be consistent with the
-models from which dpsi and deps were obtained.
-sible for providing the nutation components;
-e and obliquity, in radians and are with
-ox and ecliptic of date.
-in the sense V(true) = rmatn * V(mean),
-(true) is with respect to the true
-date and the p-vector V(mean) is with
-equatorial triad of date.
+  Returned:
+     rmatn       double[3][3]   nutation matrix (Note 3)
 
-ize r-matrix to identity
-around X-axis
-around Z-axis
-
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-4).
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
 
   1) The supplied mean obliquity epsa, must be consistent with the
@@ -9940,127 +7951,33 @@ Notes:
      equatorial triad of date and the p-vector V(mean) is with
      respect to the mean equatorial triad of date.
 
+  Called:
+     eraIr        initialize r-matrix to identity
+     eraRx        rotate around X-axis
+     eraRz        rotate around Z-axis
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992),
+     Section 3.222-3 (p114).
+
+
 
 ------
 nut00a
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
+  Nutation, IAU 2000A model (MHB2000 luni-solar and planetary nutation
+  with free core nutation omitted).
 
-   nutation, luni-solar + planetary (Note 2)
+  Given:
+     date1,date2   double   TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     dpsi,deps     double   nutation, luni-solar + planetary (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-nts in longitude and obliquity are in radians
-the equinox and ecliptic of date.  The
- is assumed to be the Lieske et al. (1977)
-rcsec.
-and planetary nutations are included.  The
-rect planetary nutations and the
- lunar and terrestrial orbits.
-s the MHB2000 nutation series with the
-ns for planetary nutations.  It is an
-e nutation part of the IAU 2000A precession-
-ally adopted by the IAU General Assembly in
- (Mathews et al. 2002), but with the free
- see Note 4) omitted.
-el also contains contributions to the
-de and obliquity due to the free-excitation
-ation during the period 1979-2000.  These FCN
-e-dependent and unpredictable, are NOT
-ent function and, if required, must be
-ed.  With the FCN corrections included, the
-ivers a pole which is at current epochs
-ndred microarcseconds.  The omission of FCN
-rrors of about that size.
- provides classical nutation.  The MHB2000
-h it is adapted, deals also with (i) the
-GCRS and mean poles and (ii) the adjustments
-iquity due to the changed precession rates.
-ctions, namely frame bias and precession
-ported by the ERFA functions eraBi00  and
-
-m also provides "total" nutations, comprising
-f the frame bias, precession adjustments,
-and planetary nutation.  These total
-d in combination with an existing IAU 1976
-ation, such as eraPmat76,  to deliver GCRS-
-of sub-mas accuracy at current dates.
-hree shortcomings in the MHB2000 model that
-ccount if more accurate or definitive results
-llace 2002):
-tal nutations are simply arithmetic sums,
- the various components are successive Euler
-is slight lack of rigor leads to cross terms
-mas after a century.  The rigorous procedure
- GCRS-to-true rotation matrix by applying the
-on and nutation in that order.
-recession adjustments are stated to be with
-ske et al. (1977), the MHB2000 model does
-ich set of Euler angles are to be used and
-ments are to be applied.  The most literal
-rward procedure is to adopt the 4-rotation
-_A, omega_A, xi_A option, and to add DPSIPR
-EPSPR to both omega_A and eps_A.
-del predates the determination by Chapront
-of a 14.6 mas displacement between the
-quinox and the origin of the ICRS frame.  It
-r, be noted that neglecting this displacement
-ng star coordinates does not lead to a
-e in right ascension, only a small second-
-on in the pattern of the precession-nutation
-
-he ERFA functions do not generate the "total
- though they can of course easily be
- eraBi00, eraPr00 and the present function
-ts.
-ntains 41 instances where the same frequency
-es, of which 38 are duplicates and three are
-p the present code close to the original MHB
-l inefficiency has not been corrected.
-
-omaly of the Moon
-gument of the latitude of the Moon
-ngitude of the Moon's ascending node
-ngitude of Mercury
-ngitude of Venus
-ngitude of Earth
-ngitude of Mars
-ngitude of Jupiter
-ngitude of Saturn
-ngitude of Uranus
- accumulated precession in longitude
-
-nt-Touze, M. & Francou, G. 2002,
-7, 700
-e, T., Fricke, W. & Morando, B. 1977,
-, 1-16
-ng, T.A., Buffet, B.A. 2002, J.Geophys.Res.
-00 code itself was obtained on 9th September
-usno.navy.mil/conv2000/chapter5/IAU2000A.
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
- B., Kinoshita, H., Folgueira, M. 1999,
-p.Ser. 135, 111
-ware for Implementing the IAU 2000
-S Workshop 5.1 (2002)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -10159,8 +8076,20 @@ Notes:
      triplicates.  To keep the present code close to the original MHB
      algorithm, this small inefficiency has not been corrected.
 
+  Called:
+     eraFal03     mean anomaly of the Moon
+     eraFaf03     mean argument of the latitude of the Moon
+     eraFaom03    mean longitude of the Moon's ascending node
+     eraFame03    mean longitude of Mercury
+     eraFave03    mean longitude of Venus
+     eraFae03     mean longitude of Earth
+     eraFama03    mean longitude of Mars
+     eraFaju03    mean longitude of Jupiter
+     eraFasa03    mean longitude of Saturn
+     eraFaur03    mean longitude of Uranus
+     eraFapa03    general accumulated precession in longitude
 
-References:
+  References:
 
      Chapront, J., Chapront-Touze, M. & Francou, G. 2002,
      Astron.Astrophys. 387, 700
@@ -10181,101 +8110,21 @@ References:
      Wallace, P.T., "Software for Implementing the IAU 2000
      Resolutions", in IERS Workshop 5.1 (2002)
 
+
+
 ------
 nut00b
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
+  Nutation, IAU 2000B model.
 
-    nutation, luni-solar + planetary (Note 2)
+  Given:
+     date1,date2   double    TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     dpsi,deps     double    nutation, luni-solar + planetary (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-nts in longitude and obliquity are in radians
-the equinox and ecliptic of date.  The
- is assumed to be the Lieske et al. (1977)
-rcsec.  (The errors that result from using
-he IAU 2006 value of 84381.406 arcsec can be
-
-onsists only of luni-solar terms, but
-d offset which compensates for certain long-
-ms (Note 7).
-implementation of the IAU 2000B abridged
-lly adopted by the IAU General Assembly in
-computes the MHB_2000_SHORT luni-solar
-um 2001), but without the associated
-precession rate adjustments and the offset
- J2000.0 mean poles.
-MHB2000) nutation model contains nearly 1400
-B model (McCarthy & Luzum 2003) contains only
-ional simplifications, yet still delivers
-uracy at present epochs.  This combination of
-kes the IAU 2000B abridged nutation model
-actical applications.
-s a pole accurate to 1 mas from 1900 to 2100
- 1 mas, very occasionally just outside
-U 2000A model, which is implemented in the
-q.v.), delivers considerably greater accuracy
-owever, to realize this improved accuracy,
-essentially unpredictable free-core-nutation
-ncluded.
- provides classical nutation.  The
-ithm, from which it is adapted, deals also
- between the GCRS and mean poles and (ii) the
-tude and obliquity due to the changed
-hese additional functions, namely frame bias
-tments, are supported by the ERFA functions
-.
-lgorithm also provides "total" nutations,
-metic sum of the frame bias, precession
-ation (luni-solar + planetary).  These total
-d in combination with an existing IAU 1976
-ation, such as eraPmat76,  to deliver GCRS-
-of mas accuracy at current epochs.  However,
-e eraNut00a  function (q.v. for the reasons),
-o not generate the "total nutations"
-ey be required, they could of course easily
-ing eraBi00, eraPr00 and the present function
-ts.
-includes "planetary bias" terms that are
-mpensate for long-period nutations.  The
- McCarthy & Luzum (2003), namely
-nd Depsilon = +1.6339 mas, are optimized for
-" method described in Note 6.  The Luzum
-n this ERFA implementation, namely -0.135 mas
-optimized for the "rigorous" method, where
-on and nutation are applied separately and in
-the interval 1995-2050, the ERFA
-ers a maximum error of 1.001 mas (not
-
-
-e, T., Fricke, W., Morando, B., "Expressions
-uantities based upon the IAU /1976/ system of
-ts", Astron.Astrophys. 58, 1-2, 1-16. (1977)
-ommunication, 2001 (Fortran code
-
-um, B.J., "An abridged model of the
-of the celestial pole", Cel.Mech.Dyn.Astron.
-
-non, P., Chapront, J., Chapront-Touze, M.,
- J., Astron.Astrophys. 282, 663-683 (1994)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -10361,8 +8210,7 @@ Notes:
      implementation delivers a maximum error of 1.001 mas (not
      including FCN).
 
-
-References:
+  References:
 
      Lieske, J.H., Lederle, T., Fricke, W., Morando, B., "Expressions
      for the precession quantities based upon the IAU /1976/ system of
@@ -10378,61 +8226,22 @@ References:
      Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touze, M.,
      Francou, G., Laskar, J., Astron.Astrophys. 282, 663-683 (1994)
 
+
+
 ------
 nut06a
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
+  IAU 2000A nutation with adjustments to match the IAU 2006
+  precession.
 
-   nutation, luni-solar + planetary (Note 2)
+  Given:
+     date1,date2   double   TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     dpsi,deps     double   nutation, luni-solar + planetary (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-nts in longitude and obliquity are in radians
-the mean equinox and ecliptic of date,
-model (Hilton et al. 2006, Capitaine et al.
-
-omputes the IAU 2000A nutation, then applies
-the consequences of the change in obliquity
-liptic to the IAU 2006 ecliptic and (ii) the
- the Earth's dynamical form factor J2.
- provides classical nutation, complementing
-ias and IAU 2006 precession.  It delivers a
-rent epochs accurate to a few tens of
-rt from the free core nutation.
-
-n, IAU 2000A
-
-nt-Touze, M. & Francou, G. 2002,
-7, 700
-e, T., Fricke, W. & Morando, B. 1977,
-, 1-16
-ng, T.A., Buffet, B.A. 2002, J.Geophys.Res.
-00 code itself was obtained on 9th September
-usno.navy.mil/conv2000/chapter5/IAU2000A.
-non, P., Chapront, J., Chapront-Touze, M.,
- J. 1994, Astron.Astrophys. 282, 663-683
- B., Kinoshita, H., Folgueira, M. 1999,
-p.Ser. 135, 111
-ware for Implementing the IAU 2000
-S Workshop 5.1 (2002)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -10468,8 +8277,10 @@ Notes:
      pole which is at current epochs accurate to a few tens of
      microarcseconds, apart from the free core nutation.
 
+  Called:
+     eraNut00a    nutation, IAU 2000A
 
-References:
+  References:
 
      Chapront, J., Chapront-Touze, M. & Francou, G. 2002,
      Astron.Astrophys. 387, 700
@@ -10490,42 +8301,22 @@ References:
      Wallace, P.T., "Software for Implementing the IAU 2000
      Resolutions", in IERS Workshop 5.1 (2002)
 
+
+
 ------
 nut80
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
+  Nutation, IAU 1980 model.
 
-    nutation in longitude (radians)
-    nutation in obliquity (radians)
+  Given:
+     date1,date2   double    TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     dpsi          double    nutation in longitude (radians)
+     deps          double    nutation in obliquity (radians)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-nts are with respect to the ecliptic of
-
-
-ze angle into range +/- pi
-
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -10549,42 +8340,30 @@ Notes:
   2) The nutation components are with respect to the ecliptic of
      date.
 
+  Called:
+     eraAnpm      normalize angle into range +/- pi
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992),
+     Section 3.222 (p111).
+
+
 
 ------
 nutm80
 ------
 
-Given:
-e          TDB date (Note 1)
+  Form the matrix of nutation for a given date, IAU 1980 model.
 
-e[3][3]    nutation matrix
+  Given:
+     date1,date2    double          TDB date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rmatn          double[3][3]    nutation matrix
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(true) = rmatn * V(mean),
-(true) is with respect to the true
-date and the p-vector V(mean) is with
-equatorial triad of date.
-
-n, IAU 1980
-liquity, IAU 1980
-tation matrix
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -10610,163 +8389,127 @@ Notes:
      equatorial triad of date and the p-vector V(mean) is with
      respect to the mean equatorial triad of date.
 
+  Called:
+     eraNut80     nutation, IAU 1980
+     eraObl80     mean obliquity, IAU 1980
+     eraNumat     form nutation matrix
+
+
 
 ------
 obl06
 ------
 
-Given:
-  TT as a 2-part Julian Date (Note 1)
-e):
-  obliquity of the ecliptic (radians, Note 2)
+  Mean obliquity of the ecliptic, IAU 2006 precession model.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double   TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-gle between the ecliptic and mean equator of
+  Returned (function value):
+                  double   obliquity of the ecliptic (radians, Note 2)
+
+  Notes:
+
+  1) The TT date date1+date2 is a Julian Date, apportioned in any
+     convenient way between the two arguments.  For example,
+     JD(TT)=2450123.7 could be expressed in any of these ways,
+     among others:
+
+            date1          date2
+
+         2450123.7           0.0       (JD method)
+         2451545.0       -1421.3       (J2000 method)
+         2400000.5       50123.2       (MJD method)
+         2450123.5           0.2       (date & time method)
+
+     The JD method is the most natural and convenient to use in
+     cases where the loss of several decimal digits of resolution
+     is acceptable.  The J2000 method is best matched to the way
+     the argument is handled internally and will deliver the
+     optimum resolution.  The MJD method and the date & time methods
+     are both good compromises between resolution and convenience.
+
+  2) The result is the angle between the ecliptic and mean equator of
+     date date1+date2.
+
+  Reference:
+
+     Hilton, J. et al., 2006, Celest.Mech.Dyn.Astron. 94, 351
 
 
-006, Celest.Mech.Dyn.Astron. 94, 351
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 obl80
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
-e):
-    obliquity of the ecliptic (radians, Note 2)
+  Mean obliquity of the ecliptic, IAU 1980 model.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2   double    TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-gle between the ecliptic and mean equator of
+  Returned (function value):
+                   double    obliquity of the ecliptic (radians, Note 2)
+
+  Notes:
+
+  1) The TT date date1+date2 is a Julian Date, apportioned in any
+     convenient way between the two arguments.  For example,
+     JD(TT)=2450123.7 could be expressed in any of these ways,
+     among others:
+
+            date1          date2
+
+         2450123.7           0.0       (JD method)
+         2451545.0       -1421.3       (J2000 method)
+         2400000.5       50123.2       (MJD method)
+         2450123.5           0.2       (date & time method)
+
+     The JD method is the most natural and convenient to use in
+     cases where the loss of several decimal digits of resolution
+     is acceptable.  The J2000 method is best matched to the way
+     the argument is handled internally and will deliver the
+     optimum resolution.  The MJD method and the date & time methods
+     are both good compromises between resolution and convenience.
+
+  2) The result is the angle between the ecliptic and mean equator of
+     date date1+date2.
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992),
+     Expression 3.222-1 (p114).
 
 
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-p114).
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 p06e
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
+  Precession angles, IAU 2006, equinox based.
 
-   epsilon_0
-   psi_A
-   omega_A
-   P_A
-   Q_A
-   pi_A
-   Pi_A
-   obliquity epsilon_A
-   chi_A
-   z_A
-   zeta_A
-   theta_A
-   p_A
-   F-W angle gamma_J2000
-   F-W angle phi_J2000
-   F-W angle psi_J2000
+  Given:
+     date1,date2   double   TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned (see Note 2):
+     eps0          double   epsilon_0
+     psia          double   psi_A
+     oma           double   omega_A
+     bpa           double   P_A
+     bqa           double   Q_A
+     pia           double   pi_A
+     bpia          double   Pi_A
+     epsa          double   obliquity epsilon_A
+     chia          double   chi_A
+     za            double   z_A
+     zetaa         double   zeta_A
+     thetaa        double   theta_A
+     pa            double   p_A
+     gam           double   F-W angle gamma_J2000
+     phi           double   F-W angle phi_J2000
+     psi           double   F-W angle psi_J2000
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-s the set of equinox based angles for the
-3" precession theory, adopted by the IAU in
-e set out in Table 1 of Hilton et al. (2006):
-bliquity at J2000.0
-uni-solar precession
-nclination of equator wrt J2000.0 ecliptic
-cliptic pole x, J2000.0 ecliptic triad
-cliptic pole -y, J2000.0 ecliptic triad
-ngle between moving and J2000.0 ecliptics
-ongitude of ascending node of the ecliptic
-bliquity of the ecliptic
-lanetary precession
-quatorial precession: -3rd 323 Euler angle
-quatorial precession: -1st 323 Euler angle
-quatorial precession: 2nd 323 Euler angle
-eneral precession
-2000.0 RA difference of ecliptic poles
-2000.0 codeclination of ecliptic pole
-ongitude difference of equator poles, J2000.0
-are all radians.
- Table 1 also contains angles that depend on
- the P03 precession theory itself, namely the
- and nutation.  The quoted polynomials are
-unctions:
-the polynomial parts of the X and Y series.
-he polynomial part of the s+XY/2 series.
-ts the series for the Fukushima-Williams
-th respect to the GCRS pole (i.e. the variants
- bias).
-tipulated that the choice of parameterization
-, and so an IAU compliant precession
-e constructed using various combinations of
-by the present function.
- used by ERFA is the version of the Fukushima-
- refers directly to the GCRS pole.  These
-ated by calling the function eraPfw06.  ERFA
-rect computation of the CIP GCRS X,Y by
- calling eraXy06.
-n the different parameterizations is at the
-el in the present era.
-precession formulation that refers to the GCRS
- dynamical pole, it may (depending on the
- necessary to introduce the frame bias
-
- re-use the same variable in the returned
-tities are stored in the stated order.
-
-006, Celest.Mech.Dyn.Astron. 94, 351
-
-liquity, IAU 2006
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -10849,74 +8592,69 @@ Notes:
 
      Hilton, J. et al., 2006, Celest.Mech.Dyn.Astron. 94, 351
 
+  Called:
+     eraObl06     mean obliquity, IAU 2006
+
+
 
 ------
 p2pv
 ------
 
-Given:
-     p-vector
+  Extend a p-vector to a pv-vector by appending a zero velocity.
 
-]    pv-vector
+  Given:
+     p        double[3]       p-vector
 
-vector
-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     pv       double[2][3]    pv-vector
+
+  Called:
+     eraCp        copy p-vector
+     eraZp        zero p-vector
+
+
 
 ------
 p2s
 ------
 
-Given:
-  p-vector
+  P-vector to spherical polar coordinates.
 
-  longitude angle (radians)
-  latitude angle (radians)
-  radial distance
+  Given:
+     p        double[3]    p-vector
 
-heta, phi and r are returned.
- theta is returned.
+  Returned:
+     theta    double       longitude angle (radians)
+     phi      double       latitude angle (radians)
+     r        double       radial distance
 
-r to spherical
- of p-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) If P is null, zero theta, phi and r are returned.
 
   2) At either pole, zero theta is returned.
+
+  Called:
+     eraC2s       p-vector to spherical
+     eraPm        modulus of p-vector
+
 
 
 ------
 pap
 ------
 
-Given:
-rection of reference point
-rection of point whose PA is required
-e):
-sition angle of b with respect to a (radians)
+  Position-angle from two p-vectors.
 
-sition angle, in radians, of direction b with
- a.  It is in the range -pi to +pi.  The
-f b is a small distance "north" of a the
-proximately zero, and if b is a small
- the position angle is approximately +pi/2.
-need not be of unit length.
-the two directions are the same or if either
+  Given:
+     a      double[3]  direction of reference point
+     b      double[3]  direction of point whose PA is required
 
-pole, the result is ill-defined.
+  Returned (function value):
+            double     position angle of b with respect to a (radians)
 
-se p-vector into modulus and direction
- of p-vector
-product of two p-vectors
-r minus p-vector
-product of two p-vectors
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The result is the position angle, in radians, of direction b with
      respect to direction a.  It is in the range -pi to +pi.  The
@@ -10931,75 +8669,58 @@ Notes:
 
   4) If vector a is at a pole, the result is ill-defined.
 
+  Called:
+     eraPn        decompose p-vector into modulus and direction
+     eraPm        modulus of p-vector
+     eraPxp       vector product of two p-vectors
+     eraPmp       p-vector minus p-vector
+     eraPdp       scalar product of two p-vectors
+
+
 
 ------
 pas
 ------
 
-Given:
-ngitude of point A (e.g. RA) in radians
-titude of point A (e.g. Dec) in radians
-ngitude of point B
-titude of point B
-e):
-sition angle of B with respect to A
+  Position-angle from spherical coordinates.
 
-aring (position angle), in radians, of point
-int A.  It is in the range -pi to +pi.  The
-f B is a small distance "east" of point A,
-ximately +pi/2.
-the two points are coincident.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Given:
+     al     double     longitude of point A (e.g. RA) in radians
+     ap     double     latitude of point A (e.g. Dec) in radians
+     bl     double     longitude of point B
+     bp     double     latitude of point B
+
+  Returned (function value):
+            double     position angle of B with respect to A
+
+  Notes:
+
+  1) The result is the bearing (position angle), in radians, of point
+     B with respect to point A.  It is in the range -pi to +pi.  The
+     sense is such that if B is a small distance "east" of point A,
+     the bearing is approximately +pi/2.
+
+  2) Zero is returned if the two points are coincident.
+
+
 
 ------
 pb06
 ------
 
-Given:
-  TT as a 2-part Julian Date (Note 1)
+  This function forms three Euler angles which implement general
+  precession from epoch J2000.0, using the IAU 2006 model.  Frame
+  bias (the offset between ICRS and mean J2000.0) is included.
 
-  1st rotation: radians cw around z
-  3rd rotation: radians cw around z
-  2nd rotation: radians ccw around y
+  Given:
+     date1,date2  double   TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     bzeta        double   1st rotation: radians cw around z
+     bz           double   3rd rotation: radians cw around z
+     btheta       double   2nd rotation: radians ccw around y
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-mulated precession angles zeta_A, z_A,
-tained in the usual way, namely through
-ns, because of the frame bias.  The latter
-e angles undergo rapid changes near this
-ead the results of decomposing the
-ix obtained by using the Fukushima-Williams
-ot suffer from the problem.  The
-s values which can be used in the
-tion and which include frame bias.
- returned in the conventional order, which
-he order of the corresponding Euler
-ession-bias matrix is
-) x R_3(-zeta).
-theta_A angles be required that do not
-they are available by calling the ERFA
-
-
-ix, IAU 2006
-around Z-axis
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -11039,71 +8760,43 @@ Notes:
      contain frame bias, they are available by calling the ERFA
      function eraP06e.
 
+  Called:
+     eraPmat06    PB matrix, IAU 2006
+     eraRz        rotate around Z-axis
+
+
 
 ------
 pdp
 ------
 
-Given:
- first p-vector
- second p-vector
-e):
- a . b
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  p-vector inner (=scalar=dot) product.
+
+  Given:
+     a      double[3]     first p-vector
+     b      double[3]     second p-vector
+
+  Returned (function value):
+            double        a . b
+
+
 
 ------
 pfw06
 ------
 
-Given:
-  TT as a 2-part Julian Date (Note 1)
+  Precession angles, IAU 2006 (Fukushima-Williams 4-angle formulation).
 
-  F-W angle gamma_bar (radians)
-  F-W angle phi_bar (radians)
-  F-W angle psi_bar (radians)
-  F-W angle epsilon_A (radians)
+  Given:
+     date1,date2  double   TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     gamb         double   F-W angle gamma_bar (radians)
+     phib         double   F-W angle phi_bar (radians)
+     psib         double   F-W angle psi_bar (radians)
+     epsa         double   F-W angle epsilon_A (radians)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- points:
-liptic pole,
-
-tic pole of date,
-of date,
-illiams angles are as follows:
-= epE
-pE
-pEP
-= EP
-ing the combined effects of frame bias and
-
-R_3(-psib).R_1(phib).R_3(gamb)
-ing the combined effects of frame bias,
-ion is simply:
--dE).R_3(-psib-dP).R_1(phib).R_3(gamb)
-the nutation components with respect to the
-
-
-006, Celest.Mech.Dyn.Astron. 94, 351
-
-liquity, IAU 2006
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -11155,123 +8848,35 @@ Notes:
 
      Hilton, J. et al., 2006, Celest.Mech.Dyn.Astron. 94, 351
 
+  Called:
+     eraObl06     mean obliquity, IAU 2006
+
+
 
 ------
 plan94
 ------
 
-Given:
-TDB date part A (Note 1)
-TDB date part B (Note 1)
-planet (1=Mercury, 2=Venus, 3=EMB, 4=Mars,
-    5=Jupiter, 6=Saturn, 7=Uranus, 8=Neptune)
+  Approximate heliocentric position and velocity of a nominated major
+  planet:  Mercury, Venus, EMB, Mars, Jupiter, Saturn, Uranus or
+  Neptune (but not the Earth itself).
 
-planet p,v (heliocentric, J2000.0, AU,AU/d)
-e):
-status: -1 = illegal NP (outside 1-8)
-         0 = OK
-        +1 = warning: year outside 1000-3000
-        +2 = warning: failed to converge
+  Given:
+     date1  double       TDB date part A (Note 1)
+     date2  double       TDB date part B (Note 1)
+     np     int          planet (1=Mercury, 2=Venus, 3=EMB, 4=Mars,
+                             5=Jupiter, 6=Saturn, 7=Uranus, 8=Neptune)
 
- is in the TDB time scale (in practice TT can
-lian Date, apportioned in any convenient way
-ments.  For example, JD(TDB)=2450123.7 could
-of these ways, among others:
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.  The limited
-ent algorithm is such that any of the methods
+  Returned (argument):
+     pv     double[2][3] planet p,v (heliocentric, J2000.0, AU,AU/d)
 
-de the range 1-8 is supplied, an error status
-is returned and the pv vector set to zeroes.
-is for the Earth-Moon Barycenter.  To obtain
-ition and velocity of the Earth, use instead
-aEpv00.
-, the array pv contains the following:
- }
- } heliocentric position, AU
- }
- }
- } heliocentric velocity, AU/d
- }
-is equatorial and is with respect to the
-inox of epoch J2000.0.
- to J.L. Simon, P. Bretagnon, J. Chapront,
-. Francou and J. Laskar (Bureau des
-rance).  From comparisons with JPL
-y quote the following maximum errors
-00-2050:
-rcsec)    B (arcsec)      R (km)
-4             1             300
-5             1             800
-6             1            1000
-7             1            7700
-1             5           76000
-1            13          267000
-6             7          712000
-1             1          253000
-00-3000, they report that the accuracy is no
- that over 1800-2050.  Outside 1000-3000 the
+  Returned (function value):
+            int          status: -1 = illegal NP (outside 1-8)
+                                  0 = OK
+                                 +1 = warning: year outside 1000-3000
+                                 +2 = warning: failed to converge
 
-resent function with the JPL DE200 ephemeris
-MS errors over the interval 1960-2025:
-ition (km)     velocity (m/s)
-  334               0.437
- 1060               0.855
- 2010               0.815
- 7690               1.98
-71700               7.70
-99000              19.4
-64000              16.4
-58000              14.4
-DE200 over the interval 1800-2100 gave the
-solute differences.  (The results using
-ly the same.)
-sec)   B (arcsec)     R (km)   Rdot (m/s)
-           1            500       0.7
-           1           1100       0.9
-           1           1300       1.0
-           1           9000       2.5
-           6          82000       8.2
-          14         263000      24.6
-           7         661000      27.4
-           2         248000      21.4
-implementation of the original Simon et al.
- from the original in the following respects:
-rtran.
-plied in two parts.
-eturned only in equatorial Cartesian form;
-ngitude, latitude and radius vector are not
-
-n the J2000.0 equatorial frame, not ecliptic.
--line: there are fewer calls to subroutines.
-/warning status values are used.
-ler's-equation-solver is used (avoiding
-recision complex).
-t are nested to minimize rounding errors.
- constants are used to avoid mixed-mode
-
-anges affects the result significantly.
-indicates the most serious condition
-xecution of the function.  Illegal np is
-serious, overriding failure to converge,
-precedence over the remote date warning.
-
-ze angle into range 0 to 2pi
- Bretagnon, P., Chapront, J.,
-uze, M., Francou, G., and Laskar, J.,
-rophys. 282, 663 (1994).
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The date date1+date2 is in the TDB time scale (in practice TT can
      be used) and is a Julian Date, apportioned in any convenient way
@@ -11396,55 +9001,43 @@ Notes:
      considered the most serious, overriding failure to converge,
      which in turn takes precedence over the remote date warning.
 
+  Called:
+     eraAnp       normalize angle into range 0 to 2pi
+
+  Reference:  Simon, J.L, Bretagnon, P., Chapront, J.,
+              Chapront-Touze, M., Francou, G., and Laskar, J.,
+              Astron. Astrophys. 282, 663 (1994).
+
+
 
 ------
 pm
 ------
 
-Given:
- p-vector
-e):
- modulus
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Modulus of p-vector.
+
+  Given:
+     p      double[3]     p-vector
+
+  Returned (function value):
+            double        modulus
+
+
 
 ------
 pmat00
 ------
 
-Given:
-         TT as a 2-part Julian Date (Note 1)
+  Precession matrix (including frame bias) from GCRS to a specified
+  date, IAU 2000 model.
 
-3][3]    bias-precession matrix (Note 2)
+  Given:
+     date1,date2  double          TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rbp          double[3][3]    bias-precession matrix (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(date) = rbp * V(GCRS), where
- is with respect to the Geocentric Celestial
-U, 2000) and the p-vector V(date) is with
-equatorial triad of the given date.
-
-ias and precession matrices, IAU 2000
-
-ional Astronomical Union, Vol. XXIVB;  Proc.
-y, Manchester, UK.  Resolutions B1.3, B1.6.
-
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -11469,45 +9062,32 @@ Notes:
      the p-vector V(GCRS) is with respect to the Geocentric Celestial
      Reference System (IAU, 2000) and the p-vector V(date) is with
      respect to the mean equatorial triad of the given date.
+
+  Called:
+     eraBp00      frame bias and precession matrices, IAU 2000
+
+  Reference:
+
+     IAU: Trans. International Astronomical Union, Vol. XXIVB;  Proc.
+     24th General Assembly, Manchester, UK.  Resolutions B1.3, B1.6.
+     (2000)
+
 
 
 ------
 pmat06
 ------
 
-Given:
-         TT as a 2-part Julian Date (Note 1)
+  Precession matrix (including frame bias) from GCRS to a specified
+  date, IAU 2006 model.
 
-3][3]    bias-precession matrix (Note 2)
+  Given:
+     date1,date2  double          TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rbp          double[3][3]    bias-precession matrix (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(date) = rbp * V(GCRS), where
- is with respect to the Geocentric Celestial
-U, 2000) and the p-vector V(date) is with
-equatorial triad of the given date.
-
-ecession F-W angles, IAU 2006
-les to r-matrix
-
-ace, P.T., 2006, Astron.Astrophys. 450, 855
-taine, N., 2006, Astron.Astrophys. 459, 981
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -11533,65 +9113,31 @@ Notes:
      Reference System (IAU, 2000) and the p-vector V(date) is with
      respect to the mean equatorial triad of the given date.
 
+  Called:
+     eraPfw06     bias-precession F-W angles, IAU 2006
+     eraFw2m      F-W angles to r-matrix
 
-References:
+  References:
 
      Capitaine, N. & Wallace, P.T., 2006, Astron.Astrophys. 450, 855
 
      Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 
+
+
 ------
 pmat76
 ------
 
-Given:
-     ending date, TT (Note 1)
+  Precession matrix from J2000.0 to a specified date, IAU 1976 model.
 
-][3] precession matrix, J2000.0 -> date1+date2
+  Given:
+     date1,date2 double       ending date, TT (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rmatp       double[3][3] precession matrix, J2000.0 -> date1+date2
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(date) = RMATP * V(J2000),
-(J2000) is with respect to the mean
-epoch J2000.0 and the p-vector V(date)
-he mean equatorial triad of the given
-
-thod itself is rigorous, the precession
- through canonical polynomials which are
-ited time span.  In addition, the IAU 1976
-nown to be imperfect.  The absolute accuracy
-lation is better than 0.1 arcsec from
-tter than 1 arcsec from 1640AD to 2360AD,
-arcsec for the whole of the period
-e errors exceed 10 arcsec outside the
-AD, exceed 100 arcsec outside 4200BC to
-00 arcsec outside 6800BC to 8200AD.
-
-ated precession angles, IAU 1976
-ize r-matrix to identity
-around Z-axis
-around Y-axis
-matrix
-
-Astron.Astrophys. 73, 282.
-, p283.
-SNO circular no. 163, pA2.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -11629,62 +9175,60 @@ Notes:
      range 1200BC to 3900AD, exceed 100 arcsec outside 4200BC to
      5600AD and exceed 1000 arcsec outside 6800BC to 8200AD.
 
+  Called:
+     eraPrec76    accumulated precession angles, IAU 1976
+     eraIr        initialize r-matrix to identity
+     eraRz        rotate around Z-axis
+     eraRy        rotate around Y-axis
+     eraCr        copy r-matrix
 
-References:
+  References:
 
      Lieske, J.H., 1979, Astron.Astrophys. 73, 282.
       equations (6) & (7), p283.
 
      Kaplan,G.H., 1981. USNO circular no. 163, pA2.
 
+
+
 ------
 pmp
 ------
 
-Given:
-    first p-vector
-    second p-vector
+  P-vector subtraction.
 
-    a - b
+  Given:
+     a        double[3]      first p-vector
+     b        double[3]      second p-vector
 
- re-use the same array for any of the
+  Returned:
+     amb      double[3]      a - b
 
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible to re-use the same array for any of the
+     arguments.
+
+
 
 ------
 pmpx
 ------
 
-Given:
-RS RA,Dec at catalog epoch (radians)
- proper motion (radians/year; Note 1)
-c proper motion (radians/year)
-rallax (arcsec)
-dial velocity (km/s, +ve if receding)
-oper motion time interval (SSB, Julian years)
-B to observer vector (au)
+  Proper motion and parallax.
 
-ordinate direction (BCRS unit vector)
+  Given:
+     rc,dc  double     ICRS RA,Dec at catalog epoch (radians)
+     pr     double     RA proper motion (radians/year; Note 1)
+     pd     double     Dec proper motion (radians/year)
+     px     double     parallax (arcsec)
+     rv     double     radial velocity (km/s, +ve if receding)
+     pmt    double     proper motion time interval (SSB, Julian years)
+     pob    double[3]  SSB to observer vector (au)
 
- RA is dRA/dt rather than cos(Dec)*dRA/dt.
-me interval is for when the starlight
-stem barycenter.
-r iteration, the Roemer effect (i.e. the
-ion of the proper motion coming from the
- is applied approximately, using the
-r at the catalog epoch.
+  Returned:
+     pco    double[3]  coordinate direction (BCRS unit vector)
 
-manac, pp B39-B41.
-nn, P. K. (eds), Explanatory Supplement to
-anac, 3rd ed., University Science Books
-
-
-product of two p-vectors
-se p-vector into modulus and direction
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The proper motion in RA is dRA/dt rather than cos(Dec)*dRA/dt.
 
@@ -11704,100 +9248,49 @@ Notes:
      the Astronomical Almanac, 3rd ed., University Science Books
      (2013), Section 7.2.
 
-
-References:
-
-     1984 Astronomical Almanac, pp B39-B41.
-
-     Urban, S. & Seidelmann, P. K. (eds), Explanatory Supplement to
-     the Astronomical Almanac, 3rd ed., University Science Books
-     (2013), Section 7.2.
-
   Called:
      eraPdp       scalar product of two p-vectors
      eraPn        decompose p-vector into modulus and direction
+
+
 
 ------
 pmsafe
 ------
 
-Given:
-ight ascension (radians), before
-eclination (radians), before
-A proper motion (radians/year), before
-ec proper motion (radians/year), before
-arallax (arcseconds), before
-adial velocity (km/s, +ve = receding), before
-before" epoch, part A (Note 1)
-before" epoch, part B (Note 1)
-after" epoch, part A (Note 1)
-after" epoch, part B (Note 1)
+  Star proper motion:  update star catalog data for space motion, with
+  special handling to handle the zero parallax case.
 
-ight ascension (radians), after
-eclination (radians), after
-A proper motion (radians/year), after
-ec proper motion (radians/year), after
-arallax (arcseconds), after
-adial velocity (km/s, +ve = receding), after
-e):
-tatus:
--1 = system error (should not occur)
- 0 = no warnings or errors
- 1 = distance overridden (Note 6)
- 2 = excessive velocity (Note 7)
- 4 = solution didn't converge (Note 8)
-se = binary logical OR of the above warnings
+  Given:
+     ra1    double      right ascension (radians), before
+     dec1   double      declination (radians), before
+     pmr1   double      RA proper motion (radians/year), before
+     pmd1   double      Dec proper motion (radians/year), before
+     px1    double      parallax (arcseconds), before
+     rv1    double      radial velocity (km/s, +ve = receding), before
+     ep1a   double      "before" epoch, part A (Note 1)
+     ep1b   double      "before" epoch, part B (Note 1)
+     ep2a   double      "after" epoch, part A (Note 1)
+     ep2b   double      "after" epoch, part B (Note 1)
 
-ing TDB epochs ep1a+ep1b and ep2a+ep2b are
-ioned in any convenient way between the two
-r example, JD(TDB)=2450123.7 could be
-these ways, among others:
-   epNb
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- method and the date & time methods are both
-ween resolution and convenience.
-ormal star-catalog conventions, the object's
-declination are freed from the effects of
- The frame, which is aligned to the catalog
- is Lorentzian and centered on the SSB.
-re the rate of change of the right ascension
-he catalog epoch and are in radians per TDB
+  Returned:
+     ra2    double      right ascension (radians), after
+     dec2   double      declination (radians), after
+     pmr2   double      RA proper motion (radians/year), after
+     pmd2   double      Dec proper motion (radians/year), after
+     px2    double      parallax (arcseconds), after
+     rv2    double      radial velocity (km/s, +ve = receding), after
 
-ial velocity are in the same frame.
-units.  The star coordinates are in radians
-ns in radians per Julian year, but the
-conds.
- is in terms of coordinate angle, not true
-og uses arcseconds for both RA and Dec proper
-er motion will need to be divided by cos(Dec)
+  Returned (function value):
+            int         status:
+                         -1 = system error (should not occur)
+                          0 = no warnings or errors
+                          1 = distance overridden (Note 6)
+                          2 = excessive velocity (Note 7)
+                          4 = solution didn't converge (Note 8)
+                       else = binary logical OR of the above warnings
 
- at constant speed, in the inertial frame, is
-
-or zero or negative) parallax is overridden
-bject is at a finite but very large distance,
-t the proper motion is equivalent to a large
-t 0.1c using the chosen constant).  A warning
- to the status if this action has been taken.
-y is a significant fraction of c (see the
- function eraStarpv), it is arbitrarily set
-action occurs, 2 is added to the status.
-ustment carried out in the eraStarpv function
-e calculation.  If the process fails to
-t number of iterations, 4 is added to the
-
-
-etween two points
-star catalog data for space motion
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The starting and ending TDB epochs ep1a+ep1b and ep2a+ep2b are
      Julian Dates, apportioned in any convenient way between the two
@@ -11856,28 +9349,26 @@ Notes:
      converge within a set number of iterations, 4 is added to the
      status.
 
+  Called:
+     eraSeps      angle between two points
+     eraStarpm    update star catalog data for space motion
+
+
 
 ------
 pn
 ------
 
-Given:
-    p-vector
+  Convert a p-vector into modulus and unit vector.
 
-    modulus
-    unit vector
+  Given:
+     p        double[3]      p-vector
 
-sult is null.  Otherwise the result is a unit
+  Returned:
+     r        double         modulus
+     u        double[3]      unit vector
 
- re-use the same array for any of the
-
-
- of p-vector
-vector
-y p-vector by scalar
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) If p is null, the result is null.  Otherwise the result is a unit
      vector.
@@ -11885,77 +9376,34 @@ Notes:
   2) It is permissible to re-use the same array for any of the
      arguments.
 
+  Called:
+     eraPm        modulus of p-vector
+     eraZp        zero p-vector
+     eraSxp       multiply p-vector by scalar
+
+
 
 ------
 pn00
 ------
 
-Given:
-         TT as a 2-part Julian Date (Note 1)
-         nutation (Note 2)
+  Precession-nutation, IAU 2000 model:  a multi-purpose function,
+  supporting classical (equinox-based) use directly and CIO-based
+  use indirectly.
 
-         mean obliquity (Note 3)
-3][3]    frame bias matrix (Note 4)
-3][3]    precession matrix (Note 5)
-3][3]    bias-precession matrix (Note 6)
-3][3]    nutation matrix (Note 7)
-3][3]    GCRS-to-true matrix (Note 8)
+  Given:
+     date1,date2  double          TT as a 2-part Julian Date (Note 1)
+     dpsi,deps    double          nutation (Note 2)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     epsa         double          mean obliquity (Note 3)
+     rb           double[3][3]    frame bias matrix (Note 4)
+     rp           double[3][3]    precession matrix (Note 5)
+     rbp          double[3][3]    bias-precession matrix (Note 6)
+     rn           double[3][3]    nutation matrix (Note 7)
+     rbpn         double[3][3]    GCRS-to-true matrix (Note 8)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-sible for providing the nutation components;
-e and obliquity, in radians and are with
-ox and ecliptic of date.  For high-accuracy
-ore nutation should be included as well as
-orrections to the position of the CIP.
-liquity is consistent with the IAU 2000
-models.
-orms vectors from GCRS to J2000.0 mean
-by applying frame bias.
-orms vectors from J2000.0 mean equator and
-tor and equinox of date by applying
-
-forms vectors from GCRS to mean equator and
-pplying frame bias then precession.  It is
-
-orms vectors from mean equator and equinox of
- and equinox of date by applying the nutation
-ary).
-sforms vectors from GCRS to true equator and
- is the product rn x rbp, applying frame
- nutation in that order.
- re-use the same array in the returned
-ys are filled in the order given.
-
-0 precession adjustments
-liquity, IAU 1980
-ias and precession matrices, IAU 2000
-matrix
-tation matrix
- of two r-matrices
-
-ont, J., Lambert, S. and Wallace, P.,
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154 (2003)
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -12007,76 +9455,47 @@ Notes:
   9) It is permissible to re-use the same array in the returned
      arguments.  The arrays are filled in the order given.
 
+  Called:
+     eraPr00      IAU 2000 precession adjustments
+     eraObl80     mean obliquity, IAU 1980
+     eraBp00      frame bias and precession matrices, IAU 2000
+     eraCr        copy r-matrix
+     eraNumat     form nutation matrix
+     eraRxr       product of two r-matrices
+
+  Reference:
+
+     Capitaine, N., Chapront, J., Lambert, S. and Wallace, P.,
+     "Expressions for the Celestial Intermediate Pole and Celestial
+     Ephemeris Origin consistent with the IAU 2000A precession-
+     nutation model", Astron.Astrophys. 400, 1145-1154 (2003)
+
+     n.b. The celestial ephemeris origin (CEO) was renamed "celestial
+          intermediate origin" (CIO) by IAU 2006 Resolution 2.
+
+
 
 ------
 pn00a
 ------
 
-Given:
-         TT as a 2-part Julian Date (Note 1)
+  Precession-nutation, IAU 2000A model:  a multi-purpose function,
+  supporting classical (equinox-based) use directly and CIO-based
+  use indirectly.
 
-         nutation (Note 2)
-         mean obliquity (Note 3)
-3][3]    frame bias matrix (Note 4)
-3][3]    precession matrix (Note 5)
-3][3]    bias-precession matrix (Note 6)
-3][3]    nutation matrix (Note 7)
-3][3]    GCRS-to-true matrix (Notes 8,9)
+  Given:
+     date1,date2  double          TT as a 2-part Julian Date (Note 1)
 
-ate2 is a Julian Date, apportioned in any
-een the two arguments.  For example,
-uld be expressed in any of these ways,
+  Returned:
+     dpsi,deps    double          nutation (Note 2)
+     epsa         double          mean obliquity (Note 3)
+     rb           double[3][3]    frame bias matrix (Note 4)
+     rp           double[3][3]    precession matrix (Note 5)
+     rbp          double[3][3]    bias-precession matrix (Note 6)
+     rn           double[3][3]    nutation matrix (Note 7)
+     rbpn         double[3][3]    GCRS-to-true matrix (Notes 8,9)
 
-   date2
-     0.0       (JD method)
- -1421.3       (J2000 method)
- 50123.2       (MJD method)
-     0.2       (date & time method)
-e most natural and convenient to use in
-s of several decimal digits of resolution
- J2000 method is best matched to the way
-dled internally and will deliver the
-  The MJD method and the date & time methods
-omises between resolution and convenience.
-ents (luni-solar + planetary, IAU 2000A) in
-uity are in radians and with respect to the
-c of date.  Free core nutation is omitted;
-racy, use the eraPn00  function, where the
- are caller-specified.  For faster but
-ate results, use the eraPn00b function.
-is consistent with the IAU 2000 precession.
-forms vectors from GCRS to J2000.0 mean
- by applying frame bias.
-forms vectors from J2000.0 mean equator and
-ator and equinox of date by applying
-
-sforms vectors from GCRS to mean equator and
-applying frame bias then precession.  It is
-.
-forms vectors from mean equator and equinox
-ator and equinox of date by applying the
-r + planetary).
-nsforms vectors from GCRS to true equator and
-t is the product rn x rbp, applying frame
-d nutation in that order.
-es of the IAU 2000A Celestial Intermediate
-3,1-3) of the GCRS-to-true matrix,
-
-o re-use the same array in the returned
-ays are filled in the order given.
-
-n, IAU 2000A
-ecession/nutation results, IAU 2000
-
-ont, J., Lambert, S. and Wallace, P.,
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154 (2003)
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1)  The TT date date1+date2 is a Julian Date, apportioned in any
       convenient way between the two arguments.  For example,
@@ -12132,76 +9551,43 @@ Notes:
   10) It is permissible to re-use the same array in the returned
       arguments.  The arrays are filled in the order given.
 
+  Called:
+     eraNut00a    nutation, IAU 2000A
+     eraPn00      bias/precession/nutation results, IAU 2000
+
+  Reference:
+
+     Capitaine, N., Chapront, J., Lambert, S. and Wallace, P.,
+     "Expressions for the Celestial Intermediate Pole and Celestial
+     Ephemeris Origin consistent with the IAU 2000A precession-
+     nutation model", Astron.Astrophys. 400, 1145-1154 (2003)
+
+     n.b. The celestial ephemeris origin (CEO) was renamed "celestial
+          intermediate origin" (CIO) by IAU 2006 Resolution 2.
+
+
 
 ------
 pn00b
 ------
 
-Given:
-         TT as a 2-part Julian Date (Note 1)
+  Precession-nutation, IAU 2000B model:  a multi-purpose function,
+  supporting classical (equinox-based) use directly and CIO-based
+  use indirectly.
 
-         nutation (Note 2)
-         mean obliquity (Note 3)
-3][3]    frame bias matrix (Note 4)
-3][3]    precession matrix (Note 5)
-3][3]    bias-precession matrix (Note 6)
-3][3]    nutation matrix (Note 7)
-3][3]    GCRS-to-true matrix (Notes 8,9)
+  Given:
+     date1,date2  double          TT as a 2-part Julian Date (Note 1)
 
-ate2 is a Julian Date, apportioned in any
-een the two arguments.  For example,
-uld be expressed in any of these ways,
+  Returned:
+     dpsi,deps    double          nutation (Note 2)
+     epsa         double          mean obliquity (Note 3)
+     rb           double[3][3]    frame bias matrix (Note 4)
+     rp           double[3][3]    precession matrix (Note 5)
+     rbp          double[3][3]    bias-precession matrix (Note 6)
+     rn           double[3][3]    nutation matrix (Note 7)
+     rbpn         double[3][3]    GCRS-to-true matrix (Notes 8,9)
 
-   date2
-     0.0       (JD method)
- -1421.3       (J2000 method)
- 50123.2       (MJD method)
-     0.2       (date & time method)
-e most natural and convenient to use in
-s of several decimal digits of resolution
- J2000 method is best matched to the way
-dled internally and will deliver the
-  The MJD method and the date & time methods
-omises between resolution and convenience.
-ents (luni-solar + planetary, IAU 2000B) in
-uity are in radians and with respect to the
-c of date.  For more accurate results, but
-eased computation, use the eraPn00a function.
-racy, use the eraPn00  function, where the
- are caller-specified.
-is consistent with the IAU 2000 precession.
-forms vectors from GCRS to J2000.0 mean
- by applying frame bias.
-forms vectors from J2000.0 mean equator and
-ator and equinox of date by applying
-
-sforms vectors from GCRS to mean equator and
-applying frame bias then precession.  It is
-.
-forms vectors from mean equator and equinox
-ator and equinox of date by applying the
-r + planetary).
-nsforms vectors from GCRS to true equator and
-t is the product rn x rbp, applying frame
-d nutation in that order.
-es of the IAU 2000B Celestial Intermediate
-3,1-3) of the GCRS-to-true matrix,
-
-o re-use the same array in the returned
-ays are filled in the stated order.
-
-n, IAU 2000B
-ecession/nutation results, IAU 2000
-
-ont, J., Lambert, S. and Wallace, P.,
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154 (2003).
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1)  The TT date date1+date2 is a Julian Date, apportioned in any
       convenient way between the two arguments.  For example,
@@ -12257,74 +9643,43 @@ Notes:
   10) It is permissible to re-use the same array in the returned
       arguments.  The arrays are filled in the stated order.
 
+  Called:
+     eraNut00b    nutation, IAU 2000B
+     eraPn00      bias/precession/nutation results, IAU 2000
+
+  Reference:
+
+     Capitaine, N., Chapront, J., Lambert, S. and Wallace, P.,
+     "Expressions for the Celestial Intermediate Pole and Celestial
+     Ephemeris Origin consistent with the IAU 2000A precession-
+     nutation model", Astron.Astrophys. 400, 1145-1154 (2003).
+
+     n.b. The celestial ephemeris origin (CEO) was renamed "celestial
+          intermediate origin" (CIO) by IAU 2006 Resolution 2.
+
+
 
 ------
 pn06
 ------
 
-Given:
-         TT as a 2-part Julian Date (Note 1)
-         nutation (Note 2)
+  Precession-nutation, IAU 2006 model:  a multi-purpose function,
+  supporting classical (equinox-based) use directly and CIO-based use
+  indirectly.
 
-         mean obliquity (Note 3)
-3][3]    frame bias matrix (Note 4)
-3][3]    precession matrix (Note 5)
-3][3]    bias-precession matrix (Note 6)
-3][3]    nutation matrix (Note 7)
-3][3]    GCRS-to-true matrix (Note 8)
+  Given:
+     date1,date2  double          TT as a 2-part Julian Date (Note 1)
+     dpsi,deps    double          nutation (Note 2)
 
-ate2 is a Julian Date, apportioned in any
-een the two arguments.  For example,
-uld be expressed in any of these ways,
+  Returned:
+     epsa         double          mean obliquity (Note 3)
+     rb           double[3][3]    frame bias matrix (Note 4)
+     rp           double[3][3]    precession matrix (Note 5)
+     rbp          double[3][3]    bias-precession matrix (Note 6)
+     rn           double[3][3]    nutation matrix (Note 7)
+     rbpn         double[3][3]    GCRS-to-true matrix (Note 8)
 
-   date2
-     0.0       (JD method)
- -1421.3       (J2000 method)
- 50123.2       (MJD method)
-     0.2       (date & time method)
-e most natural and convenient to use in
-s of several decimal digits of resolution
- J2000 method is best matched to the way
-dled internally and will deliver the
-  The MJD method and the date & time methods
-omises between resolution and convenience.
-nsible for providing the nutation components;
-de and obliquity, in radians and are with
-nox and ecliptic of date.  For high-accuracy
-core nutation should be included as well as
-corrections to the position of the CIP.
-bliquity is consistent with the IAU 2006
-
-forms vectors from GCRS to J2000.0 mean
- by applying frame bias.
-forms vectors from J2000.0 mean equator and
-ator and equinox of date by applying
-
-sforms vectors from GCRS to mean equator and
-applying frame bias then precession.  It is
-.
-forms vectors from mean equator and equinox
-ator and equinox of date by applying the
-r + planetary).
-nsforms vectors from GCRS to true equator and
-t is the product rn x rbp, applying frame
-d nutation in that order.
-es of the Celestial Intermediate Pole are
- the GCRS-to-true matrix, i.e. rbpn[2][0-2].
-o re-use the same array in the returned
-ays are filled in the stated order.
-
-ecession F-W angles, IAU 2006
-les to r-matrix
-matrix
-se r-matrix
- of two r-matrices
-
-ace, P.T., 2006, Astron.Astrophys. 450, 855
-taine, N., 2006, Astron.Astrophys. 459, 981
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1)  The TT date date1+date2 is a Julian Date, apportioned in any
       convenient way between the two arguments.  For example,
@@ -12379,73 +9734,42 @@ Notes:
   10) It is permissible to re-use the same array in the returned
       arguments.  The arrays are filled in the stated order.
 
+  Called:
+     eraPfw06     bias-precession F-W angles, IAU 2006
+     eraFw2m      F-W angles to r-matrix
+     eraCr        copy r-matrix
+     eraTr        transpose r-matrix
+     eraRxr       product of two r-matrices
 
-References:
+  References:
 
      Capitaine, N. & Wallace, P.T., 2006, Astron.Astrophys. 450, 855
 
      Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 
+
+
 ------
 pn06a
 ------
 
-Given:
-         TT as a 2-part Julian Date (Note 1)
+  Precession-nutation, IAU 2006/2000A models:  a multi-purpose function,
+  supporting classical (equinox-based) use directly and CIO-based use
+  indirectly.
 
-         nutation (Note 2)
-         mean obliquity (Note 3)
-3][3]    frame bias matrix (Note 4)
-3][3]    precession matrix (Note 5)
-3][3]    bias-precession matrix (Note 6)
-3][3]    nutation matrix (Note 7)
-3][3]    GCRS-to-true matrix (Notes 8,9)
+  Given:
+     date1,date2  double          TT as a 2-part Julian Date (Note 1)
 
-ate2 is a Julian Date, apportioned in any
-een the two arguments.  For example,
-uld be expressed in any of these ways,
+  Returned:
+     dpsi,deps    double          nutation (Note 2)
+     epsa         double          mean obliquity (Note 3)
+     rb           double[3][3]    frame bias matrix (Note 4)
+     rp           double[3][3]    precession matrix (Note 5)
+     rbp          double[3][3]    bias-precession matrix (Note 6)
+     rn           double[3][3]    nutation matrix (Note 7)
+     rbpn         double[3][3]    GCRS-to-true matrix (Notes 8,9)
 
-   date2
-     0.0       (JD method)
- -1421.3       (J2000 method)
- 50123.2       (MJD method)
-     0.2       (date & time method)
-e most natural and convenient to use in
-s of several decimal digits of resolution
- J2000 method is best matched to the way
-dled internally and will deliver the
-  The MJD method and the date & time methods
-omises between resolution and convenience.
-ents (luni-solar + planetary, IAU 2000A) in
-uity are in radians and with respect to the
-c of date.  Free core nutation is omitted;
-racy, use the eraPn06 function, where the
- are caller-specified.
-is consistent with the IAU 2006 precession.
-forms vectors from GCRS to mean J2000.0 by
-.
-forms vectors from mean J2000.0 to mean of
-ecession.
-sforms vectors from GCRS to mean of date by
- then precession.  It is the product rp x rb.
-forms vectors from mean of date to true of
-e nutation (luni-solar + planetary).
-nsforms vectors from GCRS to true of date
-is the product rn x rbp, applying frame bias,
-tion in that order.
-es of the IAU 2006/2000A Celestial
-re elements (3,1-3) of the GCRS-to-true
-][0-2].
-o re-use the same array in the returned
-ays are filled in the stated order.
-
-n, IAU 2006/2000A
-ecession/nutation results, IAU 2006
-
-ace, P.T., 2006, Astron.Astrophys. 450, 855
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1)  The TT date date1+date2 is a Julian Date, apportioned in any
       convenient way between the two arguments.  For example,
@@ -12497,46 +9821,30 @@ Notes:
   10) It is permissible to re-use the same array in the returned
       arguments.  The arrays are filled in the stated order.
 
+  Called:
+     eraNut06a    nutation, IAU 2006/2000A
+     eraPn06      bias/precession/nutation results, IAU 2006
+
+  Reference:
+
+     Capitaine, N. & Wallace, P.T., 2006, Astron.Astrophys. 450, 855
+
+
 
 ------
 pnm00a
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
+  Form the matrix of precession-nutation for a given date (including
+  frame bias), equinox-based, IAU 2000A model.
 
-3][3]    classical NPB matrix (Note 2)
+  Given:
+     date1,date2  double     TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rbpn         double[3][3]    classical NPB matrix (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(date) = rbpn * V(GCRS), where
- is with respect to the true equatorial triad
-and the p-vector V(GCRS) is with respect to
-tial Reference System (IAU, 2000).
-ly less accurate result (about 1 mas), can be
-stead the eraPnm00b function.
-
-ecession/nutation, IAU 2000A
-
-ional Astronomical Union, Vol. XXIVB;  Proc.
-y, Manchester, UK.  Resolutions B1.3, B1.6.
-
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -12565,46 +9873,31 @@ Notes:
   3) A faster, but slightly less accurate result (about 1 mas), can be
      obtained by using instead the eraPnm00b function.
 
+  Called:
+     eraPn00a     bias/precession/nutation, IAU 2000A
+
+  Reference:
+
+     IAU: Trans. International Astronomical Union, Vol. XXIVB;  Proc.
+     24th General Assembly, Manchester, UK.  Resolutions B1.3, B1.6.
+     (2000)
+
+
 
 ------
 pnm00b
 ------
 
-Given:
-     TT as a 2-part Julian Date (Note 1)
+  Form the matrix of precession-nutation for a given date (including
+  frame bias), equinox-based, IAU 2000B model.
 
-][3] bias-precession-nutation matrix (Note 2)
+  Given:
+     date1,date2 double       TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rbpn        double[3][3] bias-precession-nutation matrix (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(date) = rbpn * V(GCRS), where
- is with respect to the true equatorial triad
-and the p-vector V(GCRS) is with respect to
-tial Reference System (IAU, 2000).
- is faster, but slightly less accurate (about
-Pnm00a function.
-
-ecession/nutation, IAU 2000B
-
-ional Astronomical Union, Vol. XXIVB;  Proc.
-y, Manchester, UK.  Resolutions B1.3, B1.6.
-
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -12633,44 +9926,31 @@ Notes:
   3) The present function is faster, but slightly less accurate (about
      1 mas), than the eraPnm00a function.
 
+  Called:
+     eraPn00b     bias/precession/nutation, IAU 2000B
+
+  Reference:
+
+     IAU: Trans. International Astronomical Union, Vol. XXIVB;  Proc.
+     24th General Assembly, Manchester, UK.  Resolutions B1.3, B1.6.
+     (2000)
+
+
 
 ------
 pnm06a
 ------
 
-Given:
-     TT as a 2-part Julian Date (Note 1)
+  Form the matrix of precession-nutation for a given date (including
+  frame bias), IAU 2006 precession and IAU 2000A nutation models.
 
-][3] bias-precession-nutation matrix (Note 2)
+  Given:
+     date1,date2 double       TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     rnpb        double[3][3] bias-precession-nutation matrix (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(date) = rnpb * V(GCRS), where
- is with respect to the true equatorial triad
-and the p-vector V(GCRS) is with respect to
-tial Reference System (IAU, 2000).
-
-ecession F-W angles, IAU 2006
-n, IAU 2006/2000A
-les to r-matrix
-
-ace, P.T., 2006, Astron.Astrophys. 450, 855.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -12696,46 +9976,31 @@ Notes:
      of date date1+date2 and the p-vector V(GCRS) is with respect to
      the Geocentric Celestial Reference System (IAU, 2000).
 
+  Called:
+     eraPfw06     bias-precession F-W angles, IAU 2006
+     eraNut06a    nutation, IAU 2006/2000A
+     eraFw2m      F-W angles to r-matrix
+
+  Reference:
+
+     Capitaine, N. & Wallace, P.T., 2006, Astron.Astrophys. 450, 855.
+
+
 
 ------
 pnm80
 ------
 
-Given:
-e         TDB date (Note 1)
+  Form the matrix of precession/nutation for a given date, IAU 1976
+  precession model, IAU 1980 nutation model.
 
-e[3][3]   combined precession/nutation matrix
+  Given:
+     date1,date2    double         TDB date (Note 1)
 
-ate2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-uld be expressed in any of these ways,
+  Returned:
+     rmatpn         double[3][3]   combined precession/nutation matrix
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-in the sense V(date) = rmatpn * V(J2000),
-(date) is with respect to the true equatorial
-date2 and the p-vector V(J2000) is with
-equatorial triad of epoch J2000.0.
-
-ion matrix, IAU 1976
-n matrix, IAU 1980
- of two r-matrices
-
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992),
-
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TDB date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -12761,43 +10026,33 @@ Notes:
      triad of date date1+date2 and the p-vector V(J2000) is with
      respect to the mean equatorial triad of epoch J2000.0.
 
+  Called:
+     eraPmat76    precession matrix, IAU 1976
+     eraNutm80    nutation matrix, IAU 1980
+     eraRxr       product of two r-matrices
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992),
+     Section 3.3 (p145).
+
+
 
 ------
 pom00
 ------
 
-Given:
-oordinates of the pole (radians, Note 1)
-he TIO locator s' (radians, Note 2)
+  Form the matrix of polar motion for a given date, IAU 2000.
 
-]   polar-motion matrix (Note 3)
+  Given:
+     xp,yp    double    coordinates of the pole (radians, Note 1)
+     sp       double    the TIO locator s' (radians, Note 2)
 
- yp are the coordinates (in radians) of the
-te Pole with respect to the International
-e System (see IERS Conventions 2003),
-eridians to 0 and 90 deg west respectively.
-he TIO locator s', in radians, which
-trial Intermediate Origin on the equator.  It
-ar motion observations by numerical
-is in essence unpredictable.  However, it is
-ar drift of about 47 microarcseconds per
-be taken into account by using s' = -47*t,
- since J2000.0.  The function eraSp00
-oximation.
-in the sense V(TRS) = rpom * V(CIP), meaning
- rotation when computing the pointing
-tial source.
+  Returned:
+     rpom     double[3][3]   polar-motion matrix (Note 3)
 
-ize r-matrix to identity
-around Z-axis
-around Y-axis
-around X-axis
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The arguments xp and yp are the coordinates (in radians) of the
      Celestial Intermediate Pole with respect to the International
@@ -12817,90 +10072,75 @@ Notes:
      that it is the final rotation when computing the pointing
      direction to a celestial source.
 
+  Called:
+     eraIr        initialize r-matrix to identity
+     eraRz        rotate around Z-axis
+     eraRy        rotate around Y-axis
+     eraRx        rotate around X-axis
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 ppp
 ------
 
-Given:
-    first p-vector
-    second p-vector
+  P-vector addition.
 
-    a + b
+  Given:
+     a        double[3]      first p-vector
+     b        double[3]      second p-vector
 
- re-use the same array for any of the
+  Returned:
+     apb      double[3]      a + b
 
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible to re-use the same array for any of the
+     arguments.
+
+
 
 ------
 ppsp
 ------
 
-Given:
- first p-vector
- scalar (multiplier for b)
- second p-vector
+  P-vector plus scaled p-vector.
 
- a + s*b
+  Given:
+     a      double[3]     first p-vector
+     s      double        scalar (multiplier for b)
+     b      double[3]     second p-vector
 
-r any of a, b and apsb to be the same array.
+  Returned:
+     apsb   double[3]     a + s*b
 
-y p-vector by scalar
-r plus p-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible for any of a, b and apsb to be the same array.
+
+  Called:
+     eraSxp       multiply p-vector by scalar
+     eraPpp       p-vector plus p-vector
+
+
 
 ------
 pr00
 ------
 
-Given:
-e  TT as a 2-part Julian Date (Note 1)
+  Precession-rate part of the IAU 2000 precession-nutation models
+  (part of MHB2000).
 
-e  precession corrections (Notes 2,3)
+  Given:
+     date1,date2    double  TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     dpsipr,depspr  double  precession corrections (Notes 2,3)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-tments are expressed as "nutation
-ions in longitude and obliquity with respect
-ox and ecliptic.
-ion adjustments are stated to be with respect
-77), the MHB2000 model does not specify which
-are to be used and how the adjustments are to
-t literal and straightforward procedure is to
- epsilon_0, psi_A, omega_A, xi_A option, and
-_A and depspr to both omega_A and eps_A.
-ation of one aspect of the IAU 2000A nutation
-ted by the IAU General Assembly in 2000,
-ews et al. 2002).
-
-e, T., Fricke, W. & Morando, B., "Expressions
-uantities based upon the IAU (1976) System of
-ts", Astron.Astrophys., 58, 1-16 (1977)
-ng, T.A., Buffet, B.A., "Modeling of nutation
- nutation series for nonrigid Earth and
-rth's interior", J.Geophys.Res., 107, B4,
-ode itself was obtained on 9th September 2002
-.navy.mil/conv2000/chapter5/IAU2000A.
-ware for Implementing the IAU 2000
-S Workshop 5.1 (2002).
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -12936,8 +10176,7 @@ Notes:
      model, formally adopted by the IAU General Assembly in 2000,
      namely MHB2000 (Mathews et al. 2002).
 
-
-References:
+  References:
 
      Lieske, J.H., Lederle, T., Fricke, W. & Morando, B., "Expressions
      for the precession quantities based upon the IAU (1976) System of
@@ -12952,167 +10191,233 @@ References:
      Wallace, P.T., "Software for Implementing the IAU 2000
      Resolutions", in IERS Workshop 5.1 (2002).
 
+
+
 ------
 prec76
 ------
 
-Given:
-le    TDB starting date (Note 1)
-le    TDB ending date (Note 1)
+  IAU 1976 precession model.
 
-le    1st rotation: radians cw around z
-le    3rd rotation: radians cw around z
-le    2nd rotation: radians ccw around y
+  This function forms the three Euler angles which implement general
+  precession between two dates, using the IAU 1976 model (as for the
+  FK5 catalog).
 
-e02 and date11+date12 are Julian Dates,
-onvenient way between the arguments daten1
-mple, JD(TDB)=2450123.7 could be expressed in
-mong others:
-daten2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in cases
-veral decimal digits of resolution is
-00 method is best matched to the way the
-internally and will deliver the optimum
- The MJD method and the date & time methods
-mises between resolution and convenience.
- expressed using different methods, but at
-ome resolution.
-ession angles zeta, z, theta are expressed
-lynomials which are valid only for a limited
-ion, the IAU 1976 precession rate is known to
-bsolute accuracy of the present formulation
-rcsec from 1960AD to 2040AD, better than
- to 2360AD, and remains below 3 arcsec for
-iod 500BC to 3000AD.  The errors exceed
-e range 1200BC to 3900AD, exceed 100 arcsec
-00AD and exceed 1000 arcsec outside 6800BC to
+  Given:
+     date01,date02   double    TDB starting date (Note 1)
+     date11,date12   double    TDB ending date (Note 1)
 
- returned in the conventional order, which
-he order of the corresponding Euler
-ession matrix is
-) x R_3(-zeta).
+  Returned:
+     zeta            double    1st rotation: radians cw around z
+     z               double    3rd rotation: radians cw around z
+     theta           double    2nd rotation: radians ccw around y
 
-Astron.Astrophys. 73, 282, equations
+  Notes:
 
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  1) The dates date01+date02 and date11+date12 are Julian Dates,
+     apportioned in any convenient way between the arguments daten1
+     and daten2.  For example, JD(TDB)=2450123.7 could be expressed in
+     any of these ways, among others:
+
+           daten1        daten2
+
+         2450123.7           0.0       (JD method)
+         2451545.0       -1421.3       (J2000 method)
+         2400000.5       50123.2       (MJD method)
+         2450123.5           0.2       (date & time method)
+
+     The JD method is the most natural and convenient to use in cases
+     where the loss of several decimal digits of resolution is
+     acceptable.  The J2000 method is best matched to the way the
+     argument is handled internally and will deliver the optimum
+     optimum resolution.  The MJD method and the date & time methods
+     are both good compromises between resolution and convenience.
+     The two dates may be expressed using different methods, but at
+     the risk of losing some resolution.
+
+  2) The accumulated precession angles zeta, z, theta are expressed
+     through canonical polynomials which are valid only for a limited
+     time span.  In addition, the IAU 1976 precession rate is known to
+     be imperfect.  The absolute accuracy of the present formulation
+     is better than 0.1 arcsec from 1960AD to 2040AD, better than
+     1 arcsec from 1640AD to 2360AD, and remains below 3 arcsec for
+     the whole of the period 500BC to 3000AD.  The errors exceed
+     10 arcsec outside the range 1200BC to 3900AD, exceed 100 arcsec
+     outside 4200BC to 5600AD and exceed 1000 arcsec outside 6800BC to
+     8200AD.
+
+  3) The three angles are returned in the conventional order, which
+     is not the same as the order of the corresponding Euler
+     rotations.  The precession matrix is
+     R_3(-z) x R_2(+theta) x R_3(-zeta).
+
+  Reference:
+
+     Lieske, J.H., 1979, Astron.Astrophys. 73, 282, equations
+     (6) & (7), p283.
+
+
 
 ------
 pv2p
 ------
 
-Given:
-     pv-vector
+  Discard velocity component of a pv-vector.
 
-     p-vector
+  Given:
+     pv      double[2][3]     pv-vector
 
-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     p       double[3]        p-vector
+
+  Called:
+     eraCp        copy p-vector
+
+
 
 ------
 pv2s
 ------
 
-Given:
-]  pv-vector
+  Convert position/velocity from Cartesian to spherical coordinates.
 
-   longitude angle (radians)
-   latitude angle (radians)
-   radial distance
-   rate of change of theta
-   rate of change of phi
-   rate of change of r
+  Given:
+     pv       double[2][3]  pv-vector
 
- of pv is null, theta, phi, td and pd
-This is handled by extrapolating the
-t time by using the velocity part of
-origin without changing the direction
-onent.  If the position and velocity
- both null, zeroes are returned for all
+  Returned:
+     theta    double        longitude angle (radians)
+     phi      double        latitude angle (radians)
+     r        double        radial distance
+     td       double        rate of change of theta
+     pd       double        rate of change of phi
+     rd       double        rate of change of r
 
- pole, theta, td and pd are indeterminate.
- are returned for all three.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Notes:
+
+  1) If the position part of pv is null, theta, phi, td and pd
+     are indeterminate.  This is handled by extrapolating the
+     position through unit time by using the velocity part of
+     pv.  This moves the origin without changing the direction
+     of the velocity component.  If the position and velocity
+     components of pv are both null, zeroes are returned for all
+     six results.
+
+  2) If the position is a pole, theta, td and pd are indeterminate.
+     In such cases zeroes are returned for all three.
+
+
 
 ------
 pvdpv
 ------
 
-Given:
-]      first pv-vector
-]      second pv-vector
+  Inner (=scalar=dot) product of two pv-vectors.
 
-       a . b (see note)
+  Given:
+     a        double[2][3]      first pv-vector
+     b        double[2][3]      second pv-vector
 
-velocity components of the two pv-vectors are
- bv ), the result, a . b, is the pair of
-ap . bv + av . bp ).  The two numbers are the
-wo p-vectors and its derivative.
+  Returned:
+     adb      double[2]         a . b (see note)
 
-product of two p-vectors
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+
+     If the position and velocity components of the two pv-vectors are
+     ( ap, av ) and ( bp, bv ), the result, a . b, is the pair of
+     numbers ( ap . bp , ap . bv + av . bp ).  The two numbers are the
+     dot-product of the two p-vectors and its derivative.
+
+  Called:
+     eraPdp       scalar product of two p-vectors
+
+
 
 ------
 pvm
 ------
 
-Given:
-  pv-vector
+  Modulus of pv-vector.
 
-  modulus of position component
-  modulus of velocity component
+  Given:
+     pv     double[2][3]   pv-vector
 
- of p-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     r      double         modulus of position component
+     s      double         modulus of velocity component
+
+  Called:
+     eraPm        modulus of p-vector
+
+
 
 ------
 pvmpv
 ------
 
-Given:
-      first pv-vector
-      second pv-vector
+  Subtract one pv-vector from another.
 
-      a - b
+  Given:
+     a       double[2][3]      first pv-vector
+     b       double[2][3]      second pv-vector
 
- re-use the same array for any of the
+  Returned:
+     amb     double[2][3]      a - b
+
+  Note:
+     It is permissible to re-use the same array for any of the
+     arguments.
+
+  Called:
+     eraPmp       p-vector minus p-vector
 
 
-r minus p-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 pvppv
 ------
 
-Given:
-]      first pv-vector
-]      second pv-vector
+  Add one pv-vector to another.
 
-]      a + b
+  Given:
+     a        double[2][3]      first pv-vector
+     b        double[2][3]      second pv-vector
 
- re-use the same array for any of the
+  Returned:
+     apb      double[2][3]      a + b
+
+  Note:
+     It is permissible to re-use the same array for any of the
+     arguments.
+
+  Called:
+     eraPpp       p-vector plus p-vector
 
 
-r plus p-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 pvstar
 ------
 
+  Convert star position+velocity vector to catalog coordinates.
 
-Notes:
+  Given (Note 1):
+     pv     double[2][3]   pv-vector (AU, AU/day)
+
+  Returned (Note 2):
+     ra     double         right ascension (radians)
+     dec    double         declination (radians)
+     pmr    double         RA proper motion (radians/year)
+     pmd    double         Dec proper motion (radians/year)
+     px     double         parallax (arcsec)
+     rv     double         radial velocity (km/s, positive = receding)
+
+  Returned (function value):
+            int            status:
+                              0 = OK
+                             -1 = superluminal speed (Note 5)
+                             -2 = null position vector
+
+  Notes:
 
   1) The specified pv-vector is the coordinate direction (and its rate
      of change) for the date at which the light leaving the star
@@ -13165,53 +10470,40 @@ Notes:
 
   6) The inverse transformation is performed by the function eraStarpv.
 
+  Called:
+     eraPn        decompose p-vector into modulus and direction
+     eraPdp       scalar product of two p-vectors
+     eraSxp       multiply p-vector by scalar
+     eraPmp       p-vector minus p-vector
+     eraPm        modulus of p-vector
+     eraPpp       p-vector plus p-vector
+     eraPv2s      pv-vector to spherical
+     eraAnp       normalize angle into range 0 to 2pi
+
+  Reference:
+
+     Stumpff, P., 1985, Astron.Astrophys. 144, 232-240.
+
+
 
 ------
 pvtob
 ------
 
-Given:
- longitude (radians, east +ve, Note 1)
- latitude (geodetic, radians, Note 1)
- height above ref. ellipsoid (geodetic, m)
- coordinates of the pole (radians, Note 2)
- the TIO locator s' (radians, Note 2)
- Earth rotation angle (radians, Note 3)
+  Position and velocity of a terrestrial observing station.
 
- position/velocity vector (m, m/s, CIRS)
+  Given:
+     elong   double       longitude (radians, east +ve, Note 1)
+     phi     double       latitude (geodetic, radians, Note 1)
+     hm      double       height above ref. ellipsoid (geodetic, m)
+     xp,yp   double       coordinates of the pole (radians, Note 2)
+     sp      double       the TIO locator s' (radians, Note 2)
+     theta   double       Earth rotation angle (radians, Note 3)
 
-dinates are with respect to the ERFA_WGS84
+  Returned:
+     pv      double[2][3] position/velocity vector (m, m/s, CIRS)
 
-ordinates (in radians) of the Celestial
-th respect to the International Terrestrial
-e IERS Conventions), measured along the
-eg west respectively.  sp is the TIO locator
-h positions the Terrestrial Intermediate
-r.  For many applications, xp, yp and
-be set to zero.
-h apparent sidereal time instead of Earth
-result is with respect to the true equator
- i.e. with the x-axis at the equinox rather
-ntermediate origin.
-re meters per UT1 second, not per SI second.
-have any practical consequences in the modern
-
-formed on the arguments.  Error cases that
-etic exceptions are trapped by the eraGd2gc
-sult set to zeros.
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-nn, P. K. (eds), Explanatory Supplement to
-anac, 3rd ed., University Science Books
-3.3.
-
-c to geocentric transformation
-otion matrix
- of transpose of r-matrix and p-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The terrestrial coordinates are with respect to the ERFA_WGS84
      reference ellipsoid.
@@ -13246,41 +10538,27 @@ Notes:
      the Astronomical Almanac, 3rd ed., University Science Books
      (2013), Section 7.4.3.3.
 
-
-References:
-
-     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
-     IERS Technical Note No. 32, BKG (2004)
-
-     Urban, S. & Seidelmann, P. K. (eds), Explanatory Supplement to
-     the Astronomical Almanac, 3rd ed., University Science Books
-     (2013), Section 7.4.3.3.
-
   Called:
      eraGd2gc     geodetic to geocentric transformation
      eraPom00     polar motion matrix
      eraTrxp      product of transpose of r-matrix and p-vector
 
+
+
 ------
 pvu
 ------
 
-Given:
-      time interval
-]     pv-vector
+  Update a pv-vector.
 
-]     p updated, v unchanged
+  Given:
+     dt       double           time interval
+     pv       double[2][3]     pv-vector
 
-r the position component of the vector
-e units from the existing date".
- must match those of the velocity.
-r pv and upv to be the same array.
+  Returned:
+     upv      double[2][3]     p updated, v unchanged
 
-r plus scaled p-vector
-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) "Update" means "refer the position component of the vector
      to a new date dt time units from the existing date".
@@ -13289,46 +10567,48 @@ Notes:
 
   3) It is permissible for pv and upv to be the same array.
 
+  Called:
+     eraPpsp      p-vector plus scaled p-vector
+     eraCp        copy p-vector
+
+
 
 ------
 pvup
 ------
 
-Given:
-       time interval
-]      pv-vector
+  Update a pv-vector, discarding the velocity component.
 
-       p-vector
+  Given:
+     dt       double            time interval
+     pv       double[2][3]      pv-vector
 
-r the position component of the vector to a
-ts from the existing date".
- must match those of the velocity.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     p        double[3]         p-vector
+
+  Notes:
+
+  1) "Update" means "refer the position component of the vector to a
+     new date dt time units from the existing date".
+
+  2) The time units of dt must match those of the velocity.
+
+
 
 ------
 pvxpv
 ------
 
-Given:
-]      first pv-vector
-]      second pv-vector
+  Outer (=vector=cross) product of two pv-vectors.
 
-]      a x b
+  Given:
+     a        double[2][3]      first pv-vector
+     b        double[2][3]      second pv-vector
 
-velocity components of the two pv-vectors are
- bv ), the result, a x b, is the pair of
-p x bv + av x bp ).  The two vectors are the
- two p-vectors and its derivative.
- re-use the same array for any of the
+  Returned:
+     axb      double[2][3]      a x b
 
-
--vector
-product of two p-vectors
-r plus p-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) If the position and velocity components of the two pv-vectors are
      ( ap, av ) and ( bp, bv ), the result, a x b, is the pair of
@@ -13338,128 +10618,54 @@ Notes:
   2) It is permissible to re-use the same array for any of the
      arguments.
 
+  Called:
+     eraCpv       copy pv-vector
+     eraPxp       vector product of two p-vectors
+     eraPpp       p-vector plus p-vector
+
+
 
 ------
 pxp
 ------
 
-Given:
-    first p-vector
-    second p-vector
+  p-vector outer (=vector=cross) product.
 
-    a x b
+  Given:
+     a        double[3]      first p-vector
+     b        double[3]      second p-vector
 
- re-use the same array for any of the
+  Returned:
+     axb      double[3]      a x b
 
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible to re-use the same array for any of the
+     arguments.
+
+
 
 ------
 refco
 ------
 
-Given:
-sure at the observer (hPa = millibar)
-ent temperature at the observer (deg C)
-tive humidity at the observer (range 0-1)
-length (micrometers)
+  Determine the constants A and B in the atmospheric refraction model
+  dZ = A tan Z + B tan^3 Z.
 
-Z coefficient (radians)
-3 Z coefficient (radians)
+  Z is the "observed" zenith distance (i.e. affected by refraction)
+  and dZ is what to add to Z to give the "topocentric" (i.e. in vacuo)
+  zenith distance.
 
-peed and accuracy to give good results in
-erformance at low altitudes is not paramount.
-ained across a range of conditions, and
-cal/IR and radio.
-effects of (i) height above sea level (apart
-ssure itself), (ii) latitude (i.e. the
-rth), (iii) variations in tropospheric lapse
-sive effects in the radio.
- using the following range of conditions:
-, 0.0065, 0.0075 deg/meter
-0, 75 degrees
-000 meters ASL
- height -10% to +5% in steps of 5%
-eg to +20 deg with respect to 280 deg at SL
-0, 0.5, 1
-.6, ... 2 micron, + radio
-5, 45, 75 degrees
-spect to raytracing through a model
-llows:
-   worst         RMS
-   62 mas       8 mas
-  319 mas      49 mas
-set of conditions:
-K/meter
-s
+  Given:
+    phpa   double    pressure at the observer (hPa = millibar)
+    tc     double    ambient temperature at the observer (deg C)
+    rh     double    relative humidity at the observer (range 0-1)
+    wl     double    wavelength (micrometers)
 
+  Returned:
+    refa   double*   tan Z coefficient (radians)
+    refb   double*   tan^3 Z coefficient (radians)
 
- K
-
-gstroms
-follows:
-    eraRefco   Saastamoinen
-      10.27        10.27
-      21.20        21.19
-      33.61        33.60
-      48.83        48.81
-      58.18        58.16
-      69.30        69.27
-      82.99        82.95
-     100.54       100.50
-     124.26       124.20
-     158.68       158.61
-     177.37       177.31
-     200.38       200.32
-     229.43       229.42
-     267.29       267.41
-     318.55       319.10
-     arcsec       arcsec
-amoinen's formula (which includes terms
-en from Hohenkerk and Sinclair (1985).
-nge 0-100 selects the optical/IR case and is
-eters.  Any value outside this range selects
-
-ameters are silently limited to
-values.  Zero pressure is permissible, and
-returned.
-on several sources, as follows:
-he saturation vapour pressure of water as
-perature and temperature is taken from
-4.7) of Gill (1982).
-he water vapour pressure, given the
-re and the relative humidity, is from
-ation (2.5.5).
-of air is a function of temperature,
-ater-vapour pressure and, in the case
-velength.  The formulae for the two cases are
-henkerk & Sinclair (1985) and Rueger (2002).
-eta, the ratio of the scale height of the
- geocentric distance of the observer, is
-uation (9) from Stone (1996).  The
-ved at empirically, consist of (i) a small
- coefficient and (ii) a humidity term for the
-
-the refraction constants as a function of
-from Green (1987), Equation (4.31).
-
-M.L. (ed), "Refraction Effects in the Neutral
- of Experimental Physics: Astrophysics 12B,
-.
-mosphere-Ocean Dynamics", Academic Press,
-
-cal Astronomy", Cambridge University Press,
-
-inclair, A.T., NAO Technical Note No. 63,
-
-ctive Index Formulae for Electronic Distance
-io and Millimetre Waves", in Unisurv Report
-eying and Spatial Information Systems,
-uth Wales, Sydney, Australia, 2002.
-A.S.P. 108, 1051-1058, 1996.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The model balances speed and accuracy to give good results in
      applications where performance at low altitudes is not paramount.
@@ -13558,8 +10764,7 @@ Notes:
      e) The formulae for the refraction constants as a function of
         n-1 and beta are from Green (1987), Equation (4.31).
 
-
-References:
+  References:
 
      Crane, R.K., Meeks, M.L. (ed), "Refraction Effects in the Neutral
      Atmosphere", Methods of Experimental Physics: Astrophysics 12B,
@@ -13581,217 +10786,227 @@ References:
 
      Stone, Ronald C., P.A.S.P. 108, 1051-1058, 1996.
 
+
+
 ------
 rm2v
 ------
 
-Given:
-]    rotation matrix
+  Express an r-matrix as an r-vector.
 
-     rotation vector (Note 1)
+  Given:
+     r        double[3][3]    rotation matrix
 
-scribes a rotation through some angle about
-called the Euler axis.  The "rotation vector"
-ction has the same direction as the Euler axis,
- the angle in radians.  (The magnitude and
-arated by means of the function eraPn.)
-the result.  If r is not a rotation matrix
-ned;  r must be proper (i.e. have a positive
-l orthogonal (inverse = transpose).
-rotates clockwise as seen looking along
-from the origin.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     w        double[3]       rotation vector (Note 1)
+
+  Notes:
+
+  1) A rotation matrix describes a rotation through some angle about
+     some arbitrary axis called the Euler axis.  The "rotation vector"
+     returned by this function has the same direction as the Euler axis,
+     and its magnitude is the angle in radians.  (The magnitude and
+     direction can be separated by means of the function eraPn.)
+
+  2) If r is null, so is the result.  If r is not a rotation matrix
+     the result is undefined;  r must be proper (i.e. have a positive
+     determinant) and real orthogonal (inverse = transpose).
+
+  3) The reference frame rotates clockwise as seen looking along
+     the rotation vector from the origin.
+
+
 
 ------
 rv2m
 ------
 
-Given:
-    rotation vector (Note 1)
+  Form the r-matrix corresponding to a given r-vector.
 
-]    rotation matrix
+  Given:
+     w        double[3]      rotation vector (Note 1)
 
-scribes a rotation through some angle about
-called the Euler axis.  The "rotation vector"
-ction has the same direction as the Euler
-ude is the angle in radians.
-it matrix is returned.
-rotates clockwise as seen looking along the
- the origin.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     r        double[3][3]    rotation matrix
+
+  Notes:
+
+  1) A rotation matrix describes a rotation through some angle about
+     some arbitrary axis called the Euler axis.  The "rotation vector"
+     supplied to This function has the same direction as the Euler
+     axis, and its magnitude is the angle in radians.
+
+  2) If w is null, the unit matrix is returned.
+
+  3) The reference frame rotates clockwise as seen looking along the
+     rotation vector from the origin.
+
+
 
 ------
 rx
 ------
 
-Given:
-   angle (radians)
+  Rotate an r-matrix about the x-axis.
 
-   r-matrix, rotated
+  Given:
+     phi    double          angle (radians)
 
-n with positive phi incorporates in the
-an additional rotation, about the x-axis,
-n looking towards the origin from positive x.
-ion can be represented by this matrix:
-         0      )
-                )
-)   + sin(phi)  )
-                )
-)   + cos(phi)  )
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Given and returned:
+     r      double[3][3]    r-matrix, rotated
+
+  Notes:
+
+  1) Calling this function with positive phi incorporates in the
+     supplied r-matrix r an additional rotation, about the x-axis,
+     anticlockwise as seen looking towards the origin from positive x.
+
+  2) The additional rotation can be represented by this matrix:
+
+         (  1        0            0      )
+         (                               )
+         (  0   + cos(phi)   + sin(phi)  )
+         (                               )
+         (  0   - sin(phi)   + cos(phi)  )
+
+
 
 ------
 rxp
 ------
 
-Given:
-]    r-matrix
-     p-vector
+  Multiply a p-vector by an r-matrix.
 
-     r * p
+  Given:
+     r        double[3][3]    r-matrix
+     p        double[3]       p-vector
 
-r p and rp to be the same array.
+  Returned:
+     rp       double[3]       r * p
 
-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible for p and rp to be the same array.
+
+  Called:
+     eraCp        copy p-vector
+
+
 
 ------
 rxpv
 ------
 
-Given:
-]    r-matrix
-]    pv-vector
+  Multiply a pv-vector by an r-matrix.
 
-]    r * pv
+  Given:
+     r        double[3][3]    r-matrix
+     pv       double[2][3]    pv-vector
 
-r pv and rpv to be the same array.
+  Returned:
+     rpv      double[2][3]    r * pv
 
- of r-matrix and p-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible for pv and rpv to be the same array.
+
+  Called:
+     eraRxp       product of r-matrix and p-vector
+
+
 
 ------
 rxr
 ------
 
-Given:
-]    first r-matrix
-]    second r-matrix
+  Multiply two r-matrices.
 
-]    a * b
+  Given:
+     a        double[3][3]    first r-matrix
+     b        double[3][3]    second r-matrix
 
- re-use the same array for any of the
+  Returned:
+     atb      double[3][3]    a * b
+
+  Note:
+     It is permissible to re-use the same array for any of the
+     arguments.
+
+  Called:
+     eraCr        copy r-matrix
 
 
-matrix
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
 
 ------
 ry
 ------
 
-Given:
-   angle (radians)
+  Rotate an r-matrix about the y-axis.
 
-   r-matrix, rotated
+  Given:
+     theta  double          angle (radians)
 
-n with positive theta incorporates in the
-an additional rotation, about the y-axis,
-n looking towards the origin from positive y.
-ion can be represented by this matrix:
-    0      - sin(theta)  )
-                         )
-    1           0        )
-                         )
-    0      + cos(theta)  )
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Given and returned:
+     r      double[3][3]    r-matrix, rotated
+
+  Notes:
+
+  1) Calling this function with positive theta incorporates in the
+     supplied r-matrix r an additional rotation, about the y-axis,
+     anticlockwise as seen looking towards the origin from positive y.
+
+  2) The additional rotation can be represented by this matrix:
+
+         (  + cos(theta)     0      - sin(theta)  )
+         (                                        )
+         (       0           1           0        )
+         (                                        )
+         (  + sin(theta)     0      + cos(theta)  )
+
+
 
 ------
 rz
 ------
 
-Given:
-   angle (radians)
+  Rotate an r-matrix about the z-axis.
 
-   r-matrix, rotated
+  Given:
+     psi    double          angle (radians)
 
-n with positive psi incorporates in the
-an additional rotation, about the z-axis,
-n looking towards the origin from positive z.
-ion can be represented by this matrix:
-+ sin(psi)     0  )
-                  )
-+ cos(psi)     0  )
-                  )
-     0         1  )
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Given and returned:
+     r      double[3][3]    r-matrix, rotated
+
+  Notes:
+
+  1) Calling this function with positive psi incorporates in the
+     supplied r-matrix r an additional rotation, about the z-axis,
+     anticlockwise as seen looking towards the origin from positive z.
+
+  2) The additional rotation can be represented by this matrix:
+
+         (  + cos(psi)   + sin(psi)     0  )
+         (                                 )
+         (  - sin(psi)   + cos(psi)     0  )
+         (                                 )
+         (       0            0         1  )
+
+
 
 ------
 s00
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
-    CIP coordinates (Note 3)
-e):
-    the CIO locator s in radians (Note 2)
+  The CIO locator s, positioning the Celestial Intermediate Origin on
+  the equator of the Celestial Intermediate Pole, given the CIP's X,Y
+  coordinates.  Compatible with IAU 2000A precession-nutation.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2   double    TT as a 2-part Julian Date (Note 1)
+     x,y           double    CIP coordinates (Note 3)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- the difference between the right ascensions
- two systems:  the two systems are the GCRS
- the point is the ascending node of the
-antity s remains below 0.1 arcsecond
-.
-ompute s is in fact for s+XY/2, where X and Y
-onents of the CIP unit vector;  this series
- a direct series for s would be.  This
-Y to be supplied by the caller, who is
-iding values that are consistent with the
+  Returned (function value):
+                   double    the CIO locator s in radians (Note 2)
 
-ent with the IAU 2000A precession-nutation.
-
-omaly of the Moon
-omaly of the Sun
-gument of the latitude of the Moon
-ongation of the Moon from the Sun
-ngitude of the Moon's ascending node
-ngitude of Venus
-ngitude of Earth
- accumulated precession in longitude
-
-ont, J., Lambert, S. and Wallace, P.,
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154 (2003)
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -13827,8 +11042,17 @@ Notes:
 
   4) The model is consistent with the IAU 2000A precession-nutation.
 
+  Called:
+     eraFal03     mean anomaly of the Moon
+     eraFalp03    mean anomaly of the Sun
+     eraFaf03     mean argument of the latitude of the Moon
+     eraFad03     mean elongation of the Moon from the Sun
+     eraFaom03    mean longitude of the Moon's ascending node
+     eraFave03    mean longitude of Venus
+     eraFae03     mean longitude of Earth
+     eraFapa03    general accumulated precession in longitude
 
-References:
+  References:
 
      Capitaine, N., Chapront, J., Lambert, S. and Wallace, P.,
      "Expressions for the Celestial Intermediate Pole and Celestial
@@ -13841,58 +11065,23 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 s00a
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
-e):
-   the CIO locator s in radians (Note 2)
+  The CIO locator s, positioning the Celestial Intermediate Origin on
+  the equator of the Celestial Intermediate Pole, using the IAU 2000A
+  precession-nutation model.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double    TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- the difference between the right ascensions
- two systems.  The two systems are the GCRS
- the point is the ascending node of the
-O locator s remains a small fraction of
-ut 1900-2100.
-ompute s is in fact for s+XY/2, where X and Y
-onents of the CIP unit vector;  this series
- a direct series for s would be.  The present
-ll IAU 2000A nutation model when predicting
-aster results, with no significant loss of
-ained via the function eraS00b, which uses
-B truncated model.
+  Returned (function value):
+                  double    the CIO locator s in radians (Note 2)
 
-al NPB matrix, IAU 2000A
- CIP X,Y from the BPN matrix
- locator s, given X,Y, IAU 2000A
-
-ont, J., Lambert, S. and Wallace, P.,
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154 (2003)
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -13927,8 +11116,12 @@ Notes:
      accuracy, can be obtained via the function eraS00b, which uses
      instead the IAU 2000B truncated model.
 
+  Called:
+     eraPnm00a    classical NPB matrix, IAU 2000A
+     eraBnp2xy    extract CIP X,Y from the BPN matrix
+     eraS00       the CIO locator s, given X,Y, IAU 2000A
 
-References:
+  References:
 
      Capitaine, N., Chapront, J., Lambert, S. and Wallace, P.,
      "Expressions for the Celestial Intermediate Pole and Celestial
@@ -13941,58 +11134,23 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 s00b
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
-e):
-   the CIO locator s in radians (Note 2)
+  The CIO locator s, positioning the Celestial Intermediate Origin on
+  the equator of the Celestial Intermediate Pole, using the IAU 2000B
+  precession-nutation model.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double    TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- the difference between the right ascensions
- two systems.  The two systems are the GCRS
- the point is the ascending node of the
-O locator s remains a small fraction of
-ut 1900-2100.
-ompute s is in fact for s+XY/2, where X and Y
-onents of the CIP unit vector;  this series
- a direct series for s would be.  The present
-U 2000B truncated nutation model when
-osition.  The function eraS00a uses instead
-odel, but with no significant increase in
- cost in speed.
+  Returned (function value):
+                  double    the CIO locator s in radians (Note 2)
 
-al NPB matrix, IAU 2000B
- CIP X,Y from the BPN matrix
- locator s, given X,Y, IAU 2000A
-
-ont, J., Lambert, S. and Wallace, P.,
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154 (2003)
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -14027,8 +11185,12 @@ Notes:
      the full IAU 2000A model, but with no significant increase in
      accuracy and at some cost in speed.
 
+  Called:
+     eraPnm00b    classical NPB matrix, IAU 2000B
+     eraBnp2xy    extract CIP X,Y from the BPN matrix
+     eraS00       the CIO locator s, given X,Y, IAU 2000A
 
-References:
+  References:
 
      Capitaine, N., Chapront, J., Lambert, S. and Wallace, P.,
      "Expressions for the Celestial Intermediate Pole and Celestial
@@ -14041,62 +11203,24 @@ References:
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
+
+
 ------
 s06
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
-    CIP coordinates (Note 3)
-e):
-    the CIO locator s in radians (Note 2)
+  The CIO locator s, positioning the Celestial Intermediate Origin on
+  the equator of the Celestial Intermediate Pole, given the CIP's X,Y
+  coordinates.  Compatible with IAU 2006/2000A precession-nutation.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2   double    TT as a 2-part Julian Date (Note 1)
+     x,y           double    CIP coordinates (Note 3)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- the difference between the right ascensions
- two systems:  the two systems are the GCRS
- the point is the ascending node of the
-antity s remains below 0.1 arcsecond
-.
-ompute s is in fact for s+XY/2, where X and Y
-onents of the CIP unit vector;  this series
- a direct series for s would be.  This
-Y to be supplied by the caller, who is
-iding values that are consistent with the
+  Returned (function value):
+                   double    the CIO locator s in radians (Note 2)
 
-ent with the "P03" precession (Capitaine et
-y IAU 2006 Resolution 1, 2006, and the
-with P03 adjustments).
-
-omaly of the Moon
-omaly of the Sun
-gument of the latitude of the Moon
-ongation of the Moon from the Sun
-ngitude of the Moon's ascending node
-ngitude of Venus
-ngitude of Earth
- accumulated precession in longitude
-
-ce, P.T. & Chapront, J., 2003, Astron.
-
-t, G. (eds.) 2004, IERS Conventions (2003),
-No. 32, BKG
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -14134,8 +11258,17 @@ Notes:
      al. 2003), adopted by IAU 2006 Resolution 1, 2006, and the
      IAU 2000A nutation (with P03 adjustments).
 
+  Called:
+     eraFal03     mean anomaly of the Moon
+     eraFalp03    mean anomaly of the Sun
+     eraFaf03     mean argument of the latitude of the Moon
+     eraFad03     mean elongation of the Moon from the Sun
+     eraFaom03    mean longitude of the Moon's ascending node
+     eraFave03    mean longitude of Venus
+     eraFae03     mean longitude of Earth
+     eraFapa03    general accumulated precession in longitude
 
-References:
+  References:
 
      Capitaine, N., Wallace, P.T. & Chapront, J., 2003, Astron.
      Astrophys. 432, 355
@@ -14143,58 +11276,23 @@ References:
      McCarthy, D.D., Petit, G. (eds.) 2004, IERS Conventions (2003),
      IERS Technical Note No. 32, BKG
 
+
+
 ------
 s06a
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
-e):
-   the CIO locator s in radians (Note 2)
+  The CIO locator s, positioning the Celestial Intermediate Origin on
+  the equator of the Celestial Intermediate Pole, using the IAU 2006
+  precession and IAU 2000A nutation models.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double    TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
- the difference between the right ascensions
- two systems.  The two systems are the GCRS
- the point is the ascending node of the
-O locator s remains a small fraction of
-ut 1900-2100.
-ompute s is in fact for s+XY/2, where X and Y
-onents of the CIP unit vector;  this series is
-direct series for s would be.  The present
-ll IAU 2000A nutation model when predicting
+  Returned (function value):
+                  double    the CIO locator s in radians (Note 2)
 
-
-al NPB matrix, IAU 2006/2000A
- CIP X,Y coordinates from NPB matrix
- locator s, given X,Y, IAU 2006
-
-ont, J., Lambert, S. and Wallace, P.,
- Celestial Intermediate Pole and Celestial
-sistent with the IAU 2000A precession-
-ron.Astrophys. 400, 1145-1154 (2003)
-phemeris origin (CEO) was renamed "celestial
-igin" (CIO) by IAU 2006 Resolution 2.
-ace, P.T., 2006, Astron.Astrophys. 450, 855
-it, G. (eds.), 2004, IERS Conventions (2003),
-No. 32, BKG
-taine, N., 2006, Astron.Astrophys. 459, 981
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -14227,8 +11325,12 @@ Notes:
      function uses the full IAU 2000A nutation model when predicting
      the CIP position.
 
+  Called:
+     eraPnm06a    classical NPB matrix, IAU 2006/2000A
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+     eraS06       the CIO locator s, given X,Y, IAU 2006
 
-References:
+  References:
 
      Capitaine, N., Chapront, J., Lambert, S. and Wallace, P.,
      "Expressions for the Celestial Intermediate Pole and Celestial
@@ -14245,90 +11347,98 @@ References:
 
      Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 
+
+
 ------
 s2c
 ------
 
-Given:
-  longitude angle (radians)
-  latitude angle (radians)
+  Convert spherical coordinates to Cartesian.
 
-  direction cosines
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Given:
+     theta    double       longitude angle (radians)
+     phi      double       latitude angle (radians)
+
+  Returned:
+     c        double[3]    direction cosines
+
+
 
 ------
 s2p
 ------
 
-Given:
- longitude angle (radians)
- latitude angle (radians)
- radial distance
+  Convert spherical polar coordinates to p-vector.
 
- Cartesian coordinates
+  Given:
+     theta   double       longitude angle (radians)
+     phi     double       latitude angle (radians)
+     r       double       radial distance
 
-al coordinates to unit vector
-y p-vector by scalar
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     p       double[3]    Cartesian coordinates
+
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraSxp       multiply p-vector by scalar
+
+
 
 ------
 s2pv
 ------
 
-Given:
-     longitude angle (radians)
-     latitude angle (radians)
-     radial distance
-     rate of change of theta
-     rate of change of phi
-     rate of change of r
+  Convert position/velocity from spherical to Cartesian coordinates.
 
-]    pv-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Given:
+     theta    double          longitude angle (radians)
+     phi      double          latitude angle (radians)
+     r        double          radial distance
+     td       double          rate of change of theta
+     pd       double          rate of change of phi
+     rd       double          rate of change of r
+
+  Returned:
+     pv       double[2][3]    pv-vector
+
+
 
 ------
 s2xpv
 ------
 
-Given:
-  scalar to multiply position component by
-  scalar to multiply velocity component by
-  pv-vector
+  Multiply a pv-vector by two scalars.
 
-  pv-vector: p scaled by s1, v scaled by s2
+  Given:
+     s1     double         scalar to multiply position component by
+     s2     double         scalar to multiply velocity component by
+     pv     double[2][3]   pv-vector
 
-r pv and spv to be the same array.
+  Returned:
+     spv    double[2][3]   pv-vector: p scaled by s1, v scaled by s2
 
-y p-vector by scalar
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible for pv and spv to be the same array.
+
+  Called:
+     eraSxp       multiply p-vector by scalar
+
+
 
 ------
 sepp
 ------
 
-Given:
-first p-vector (not necessarily unit length)
-second p-vector (not necessarily unit length)
-e):
-angular separation (radians, always positive)
+  Angular separation between two p-vectors.
 
-null, a zero result is returned.
-on is most simply formulated in terms of
-ever, this gives poor accuracy for angles
-he present algorithm uses both cross product
-deliver full accuracy whatever the size of
+  Given:
+     a      double[3]    first p-vector (not necessarily unit length)
+     b      double[3]    second p-vector (not necessarily unit length)
 
+  Returned (function value):
+            double       angular separation (radians, always positive)
 
-product of two p-vectors
- of p-vector
-product of two p-vectors
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) If either vector is null, a zero result is returned.
 
@@ -14338,142 +11448,117 @@ Notes:
      and dot product, to deliver full accuracy whatever the size of
      the angle.
 
+  Called:
+     eraPxp       vector product of two p-vectors
+     eraPm        modulus of p-vector
+     eraPdp       scalar product of two p-vectors
+
+
 
 ------
 seps
 ------
 
-Given:
-first longitude (radians)
-first latitude (radians)
-second longitude (radians)
-second latitude (radians)
-e):
-angular separation (radians)
+  Angular separation between two sets of spherical coordinates.
 
-al coordinates to unit vector
- separation between two p-vectors
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Given:
+     al     double       first longitude (radians)
+     ap     double       first latitude (radians)
+     bl     double       second longitude (radians)
+     bp     double       second latitude (radians)
+
+  Returned (function value):
+            double       angular separation (radians)
+
+  Called:
+     eraS2c       spherical coordinates to unit vector
+     eraSepp      angular separation between two p-vectors
+
+
 
 ------
 sp00
 ------
 
-Given:
-   TT as a 2-part Julian Date (Note 1)
-e):
-   the TIO locator s' in radians (Note 2)
+  The TIO locator s', positioning the Terrestrial Intermediate Origin
+  on the equator of the Celestial Intermediate Pole.
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Given:
+     date1,date2  double    TT as a 2-part Julian Date (Note 1)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-s obtained from polar motion observations by
-n, and so is in essence unpredictable.
-ated by a secular drift of about
-er century, which is the approximation
-sent function.
+  Returned (function value):
+                  double    the TIO locator s' in radians (Note 2)
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Notes:
+
+  1) The TT date date1+date2 is a Julian Date, apportioned in any
+     convenient way between the two arguments.  For example,
+     JD(TT)=2450123.7 could be expressed in any of these ways,
+     among others:
+
+            date1          date2
+
+         2450123.7           0.0       (JD method)
+         2451545.0       -1421.3       (J2000 method)
+         2400000.5       50123.2       (MJD method)
+         2450123.5           0.2       (date & time method)
+
+     The JD method is the most natural and convenient to use in
+     cases where the loss of several decimal digits of resolution
+     is acceptable.  The J2000 method is best matched to the way
+     the argument is handled internally and will deliver the
+     optimum resolution.  The MJD method and the date & time methods
+     are both good compromises between resolution and convenience.
+
+  2) The TIO locator s' is obtained from polar motion observations by
+     numerical integration, and so is in essence unpredictable.
+     However, it is dominated by a secular drift of about
+     47 microarcseconds per century, which is the approximation
+     evaluated by the present function.
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 starpm
 ------
 
-Given:
-ght ascension (radians), before
-clination (radians), before
- proper motion (radians/year), before
-c proper motion (radians/year), before
-rallax (arcseconds), before
-dial velocity (km/s, +ve = receding), before
-efore" epoch, part A (Note 1)
-efore" epoch, part B (Note 1)
-fter" epoch, part A (Note 1)
-fter" epoch, part B (Note 1)
+  Star proper motion:  update star catalog data for space motion.
 
-ght ascension (radians), after
-clination (radians), after
- proper motion (radians/year), after
-c proper motion (radians/year), after
-rallax (arcseconds), after
-dial velocity (km/s, +ve = receding), after
-e):
-atus:
- -1 = system error (should not occur)
-  0 = no warnings or errors
-  1 = distance overridden (Note 6)
-  2 = excessive velocity (Note 7)
-  4 = solution didn't converge (Note 8)
-lse = binary logical OR of the above warnings
+  Given:
+     ra1    double     right ascension (radians), before
+     dec1   double     declination (radians), before
+     pmr1   double     RA proper motion (radians/year), before
+     pmd1   double     Dec proper motion (radians/year), before
+     px1    double     parallax (arcseconds), before
+     rv1    double     radial velocity (km/s, +ve = receding), before
+     ep1a   double     "before" epoch, part A (Note 1)
+     ep1b   double     "before" epoch, part B (Note 1)
+     ep2a   double     "after" epoch, part A (Note 1)
+     ep2b   double     "after" epoch, part B (Note 1)
 
-ing TDB dates ep1a+ep1b and ep2a+ep2b are
-ioned in any convenient way between the two
-r example, JD(TDB)=2450123.7 could be
-these ways, among others:
-  epnb
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-ormal star-catalog conventions, the object's
-declination are freed from the effects of
- The frame, which is aligned to the catalog
- is Lorentzian and centered on the SSB.
-re the rate of change of the right ascension
-he catalog epoch and are in radians per TDB
+  Returned:
+     ra2    double     right ascension (radians), after
+     dec2   double     declination (radians), after
+     pmr2   double     RA proper motion (radians/year), after
+     pmd2   double     Dec proper motion (radians/year), after
+     px2    double     parallax (arcseconds), after
+     rv2    double     radial velocity (km/s, +ve = receding), after
 
-ial velocity are in the same frame.
-units.  The star coordinates are in radians
-ns in radians per Julian year, but the
-conds.
- is in terms of coordinate angle, not true
-og uses arcseconds for both RA and Dec proper
-er motion will need to be divided by cos(Dec)
+  Returned (function value):
+            int        status:
+                          -1 = system error (should not occur)
+                           0 = no warnings or errors
+                           1 = distance overridden (Note 6)
+                           2 = excessive velocity (Note 7)
+                           4 = solution didn't converge (Note 8)
+                        else = binary logical OR of the above warnings
 
- at constant speed, in the inertial frame,
-
-or zero or negative) parallax is interpreted
-ect is on the "celestial sphere", the radius
-rary (large) value (see the eraStarpv
-ue used).  When the distance is overridden in
-, initially zero, has 1 added to it.
-y is a significant fraction of c (see the
- function eraStarpv), it is arbitrarily set
-action occurs, 2 is added to the status.
-ustment carried out in the eraStarpv function
-e calculation.  If the process fails to
-t number of iterations, 4 is added to the
-
-
-talog data to space motion pv-vector
-a pv-vector
-product of two p-vectors
-otion pv-vector to star catalog data
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The starting and ending TDB dates ep1a+ep1b and ep2a+ep2b are
      Julian Dates, apportioned in any convenient way between the two
@@ -14532,13 +11617,40 @@ Notes:
      converge within a set number of iterations, 4 is added to the
      status.
 
+  Called:
+     eraStarpv    star catalog data to space motion pv-vector
+     eraPvu       update a pv-vector
+     eraPdp       scalar product of two p-vectors
+     eraPvstar    space motion pv-vector to star catalog data
+
+
 
 ------
 starpv
 ------
 
+  Convert star catalog coordinates to position+velocity vector.
 
-Notes:
+  Given (Note 1):
+     ra     double        right ascension (radians)
+     dec    double        declination (radians)
+     pmr    double        RA proper motion (radians/year)
+     pmd    double        Dec proper motion (radians/year)
+     px     double        parallax (arcseconds)
+     rv     double        radial velocity (km/s, positive = receding)
+
+  Returned (Note 2):
+     pv     double[2][3]  pv-vector (AU, AU/day)
+
+  Returned (function value):
+            int           status:
+                              0 = no warnings
+                              1 = distance overridden (Note 6)
+                              2 = excessive speed (Note 7)
+                              4 = solution didn't converge (Note 8)
+                           else = binary logical OR of the above
+
+  Notes:
 
   1) The star data accepted by this function are "observables" for an
      imaginary observer at the solar-system barycenter.  Proper motion
@@ -14608,61 +11720,85 @@ Notes:
   9) The inverse transformation is performed by the function
      eraPvstar.
 
+  Called:
+     eraS2pv      spherical coordinates to pv-vector
+     eraPm        modulus of p-vector
+     eraZp        zero p-vector
+     eraPn        decompose p-vector into modulus and direction
+     eraPdp       scalar product of two p-vectors
+     eraSxp       multiply p-vector by scalar
+     eraPmp       p-vector minus p-vector
+     eraPpp       p-vector plus p-vector
+
+  Reference:
+
+     Stumpff, P., 1985, Astron.Astrophys. 144, 232-240.
+
+
 
 ------
 sxp
 ------
 
-Given:
- scalar
- p-vector
+  Multiply a p-vector by a scalar.
 
- s * p
+  Given:
+     s      double        scalar
+     p      double[3]     p-vector
 
-r p and sp to be the same array.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     sp     double[3]     s * p
+
+  Note:
+     It is permissible for p and sp to be the same array.
+
+
 
 ------
 sxpv
 ------
 
-Given:
-    scalar
-    pv-vector
+  Multiply a pv-vector by a scalar.
 
-    s * pv
+  Given:
+     s       double          scalar
+     pv      double[2][3]    pv-vector
 
-r pv and spv to be the same array
+  Returned:
+     spv     double[2][3]    s * pv
 
-y pv-vector by two scalars
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible for pv and spv to be the same array
+
+  Called:
+     eraS2xpv     multiply pv-vector by two scalars
+
+
 
 ------
 taitt
 ------
 
-Given:
- TAI as a 2-part Julian Date
+  Time scale transformation:  International Atomic Time, TAI, to
+  Terrestrial Time, TT.
 
- TT as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     tai1,tai2  double    TAI as a 2-part Julian Date
 
-Date, apportioned in any convenient way
-ments, for example where tai1 is the Julian
-is the fraction of a day.  The returned
+  Returned:
+     tt1,tt2    double    TT as a 2-part Julian Date
 
+  Returned (function value):
+                int       status:  0 = OK
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
 
-References:
+     tai1+tai2 is Julian Date, apportioned in any convenient way
+     between the two arguments, for example where tai1 is the Julian
+     Day Number and tai2 is the fraction of a day.  The returned
+     tt1,tt2 follow suit.
+
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -14670,72 +11806,61 @@ References:
      Explanatory Supplement to the Astronomical Almanac,
      P. Kenneth Seidelmann (ed), University Science Books (1992)
 
+
+
 ------
 taiut1
 ------
 
-Given:
- TAI as a 2-part Julian Date
- UT1-TAI in seconds
+  Time scale transformation:  International Atomic Time, TAI, to
+  Universal Time, UT1.
 
- UT1 as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     tai1,tai2  double    TAI as a 2-part Julian Date
+     dta        double    UT1-TAI in seconds
 
-Date, apportioned in any convenient way
-ments, for example where tai1 is the Julian
-is the fraction of a day.  The returned
-t.
-e. UT1-TAI, is an observed quantity, and is
-tabulations.
+  Returned:
+     ut11,ut12  double    UT1 as a 2-part Julian Date
 
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned (function value):
+                int       status:  0 = OK
+
+  Notes:
+
+  1) tai1+tai2 is Julian Date, apportioned in any convenient way
+     between the two arguments, for example where tai1 is the Julian
+     Day Number and tai2 is the fraction of a day.  The returned
+     UT11,UT12 follow suit.
+
+  2) The argument dta, i.e. UT1-TAI, is an observed quantity, and is
+     available from IERS tabulations.
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992)
+
+
 
 ------
 taiutc
 ------
 
-Given:
-TAI as a 2-part Julian Date (Note 1)
+  Time scale transformation:  International Atomic Time, TAI, to
+  Coordinated Universal Time, UTC.
 
-UTC as a 2-part quasi Julian Date (Notes 1-3)
-e):
-status: +1 = dubious year (Note 4)
-         0 = OK
-        -1 = unacceptable date
+  Given:
+     tai1,tai2  double   TAI as a 2-part Julian Date (Note 1)
 
-Date, apportioned in any convenient way
-ments, for example where tai1 is the Julian
-is the fraction of a day.  The returned utc1
-logous pair, except that a special convention
-h the problem of leap seconds - see the next
+  Returned:
+     utc1,utc2  double   UTC as a 2-part quasi Julian Date (Notes 1-3)
 
-sly represent UTC during a leap second unless
- taken.  The convention in the present
- JD day represents UTC days whether the
-00 or 86401 SI seconds.  In the 1960-1972 era
-umps (in either direction) each time the
-ession was changed, and these "mini-leaps"
- the ERFA convention.
-f can be used to transform the UTC quasi-JD
-nd clock time, including UTC leap second
+  Returned (function value):
+                int      status: +1 = dubious year (Note 4)
+                                  0 = OK
+                                 -1 = unacceptable date
 
-dubious year" flags UTCs that predate the
-time scale or that are too far in the future
-eraDat for further details.
-
-TAI
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) tai1+tai2 is Julian Date, apportioned in any convenient way
      between the two arguments, for example where tai1 is the Julian
@@ -14760,8 +11885,10 @@ Notes:
      introduction of the time scale or that are too far in the future
      to be trusted.  See eraDat for further details.
 
+  Called:
+     eraUtctai    UTC to TAI
 
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -14769,139 +11896,152 @@ References:
      Explanatory Supplement to the Astronomical Almanac,
      P. Kenneth Seidelmann (ed), University Science Books (1992)
 
+
+
 ------
 tcbtdb
 ------
 
-Given:
- TCB as a 2-part Julian Date
+  Time scale transformation:  Barycentric Coordinate Time, TCB, to
+  Barycentric Dynamical Time, TDB.
 
- TDB as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     tcb1,tcb2  double    TCB as a 2-part Julian Date
 
-Date, apportioned in any convenient way
-ments, for example where tcb1 is the Julian
-is the fraction of a day.  The returned
-t.
- Assembly introduced a conventional linear
-en TDB and TCB.  This transformation
-drift between TCB and terrestrial time TT,
-imately centered on TT.  Because the
- TT and TCB depends on the adopted solar
-e degree of alignment between TDB and TT over
-vary according to which ephemeris is used.
-f TDB attempted to avoid this problem by
- and TT should differ only by periodic
-good description of the nature of the
-ded precise mathematical formulation.  The
-relationship adopted in 2006 sidestepped
-hilst delivering a TDB that in practice was
-es before that date.
-he same as Teph, the time argument for the
-emerides.
+  Returned:
+     tdb1,tdb2  double    TDB as a 2-part Julian Date
 
-B3
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned (function value):
+                int       status:  0 = OK
+
+  Notes:
+
+  1) tcb1+tcb2 is Julian Date, apportioned in any convenient way
+     between the two arguments, for example where tcb1 is the Julian
+     Day Number and tcb2 is the fraction of a day.  The returned
+     tdb1,tdb2 follow suit.
+
+  2) The 2006 IAU General Assembly introduced a conventional linear
+     transformation between TDB and TCB.  This transformation
+     compensates for the drift between TCB and terrestrial time TT,
+     and keeps TDB approximately centered on TT.  Because the
+     relationship between TT and TCB depends on the adopted solar
+     system ephemeris, the degree of alignment between TDB and TT over
+     long intervals will vary according to which ephemeris is used.
+     Former definitions of TDB attempted to avoid this problem by
+     stipulating that TDB and TT should differ only by periodic
+     effects.  This is a good description of the nature of the
+     relationship but eluded precise mathematical formulation.  The
+     conventional linear relationship adopted in 2006 sidestepped
+     these difficulties whilst delivering a TDB that in practice was
+     consistent with values before that date.
+
+  3) TDB is essentially the same as Teph, the time argument for the
+     JPL solar system ephemerides.
+
+  Reference:
+
+     IAU 2006 Resolution B3
+
+
 
 ------
 tcgtt
 ------
 
-Given:
- TCG as a 2-part Julian Date
+  Time scale transformation:  Geocentric Coordinate Time, TCG, to
+  Terrestrial Time, TT.
 
- TT as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     tcg1,tcg2  double    TCG as a 2-part Julian Date
 
-Date, apportioned in any convenient way
-ments, for example where tcg1 is the Julian
- is the fraction of a day.  The returned
+  Returned:
+     tt1,tt2    double    TT as a 2-part Julian Date
 
+  Returned (function value):
+                int       status:  0 = OK
 
-it, G. (eds.), IERS Conventions (2003),.
-No. 32, BKG (2004)
-B1.9
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
 
-References:
+     tcg1+tcg2 is Julian Date, apportioned in any convenient way
+     between the two arguments, for example where tcg1 is the Julian
+     Day Number and tcg22 is the fraction of a day.  The returned
+     tt1,tt2 follow suit.
+
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),.
      IERS Technical Note No. 32, BKG (2004)
 
      IAU 2000 Resolution B1.9
 
+
+
 ------
 tdbtcb
 ------
 
-Given:
- TDB as a 2-part Julian Date
+  Time scale transformation:  Barycentric Dynamical Time, TDB, to
+  Barycentric Coordinate Time, TCB.
 
- TCB as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     tdb1,tdb2  double    TDB as a 2-part Julian Date
 
-Date, apportioned in any convenient way
-ments, for example where tdb1 is the Julian
-is the fraction of a day.  The returned
-t.
- Assembly introduced a conventional linear
-en TDB and TCB.  This transformation
-drift between TCB and terrestrial time TT,
-imately centered on TT.  Because the
- TT and TCB depends on the adopted solar
-e degree of alignment between TDB and TT over
-vary according to which ephemeris is used.
-f TDB attempted to avoid this problem by
- and TT should differ only by periodic
-good description of the nature of the
-ded precise mathematical formulation.  The
-relationship adopted in 2006 sidestepped
-hilst delivering a TDB that in practice was
-es before that date.
-he same as Teph, the time argument for the
-emerides.
+  Returned:
+     tcb1,tcb2  double    TCB as a 2-part Julian Date
 
-B3
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned (function value):
+                int       status:  0 = OK
+
+  Notes:
+
+  1) tdb1+tdb2 is Julian Date, apportioned in any convenient way
+     between the two arguments, for example where tdb1 is the Julian
+     Day Number and tdb2 is the fraction of a day.  The returned
+     tcb1,tcb2 follow suit.
+
+  2) The 2006 IAU General Assembly introduced a conventional linear
+     transformation between TDB and TCB.  This transformation
+     compensates for the drift between TCB and terrestrial time TT,
+     and keeps TDB approximately centered on TT.  Because the
+     relationship between TT and TCB depends on the adopted solar
+     system ephemeris, the degree of alignment between TDB and TT over
+     long intervals will vary according to which ephemeris is used.
+     Former definitions of TDB attempted to avoid this problem by
+     stipulating that TDB and TT should differ only by periodic
+     effects.  This is a good description of the nature of the
+     relationship but eluded precise mathematical formulation.  The
+     conventional linear relationship adopted in 2006 sidestepped
+     these difficulties whilst delivering a TDB that in practice was
+     consistent with values before that date.
+
+  3) TDB is essentially the same as Teph, the time argument for the
+     JPL solar system ephemerides.
+
+  Reference:
+
+     IAU 2006 Resolution B3
+
+
 
 ------
 tdbtt
 ------
 
-Given:
- TDB as a 2-part Julian Date
- TDB-TT in seconds
+  Time scale transformation:  Barycentric Dynamical Time, TDB, to
+  Terrestrial Time, TT.
 
- TT as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     tdb1,tdb2  double    TDB as a 2-part Julian Date
+     dtr        double    TDB-TT in seconds
 
-Date, apportioned in any convenient way
-ments, for example where tdb1 is the Julian
-is the fraction of a day.  The returned
+  Returned:
+     tt1,tt2    double    TT as a 2-part Julian Date
 
-resents the quasi-periodic component of the
-tween TT and TCB.  It is dependent upon the
- ephemeris, and can be obtained by numerical
-rrogating a precomputed time ephemeris or by
-uch as that implemented in the ERFA function
-ity is dominated by an annual term of 1.7 ms
+  Returned (function value):
+                int       status:  0 = OK
 
-he same as Teph, the time argument for the
-emerides.
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-3
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) tdb1+tdb2 is Julian Date, apportioned in any convenient way
      between the two arguments, for example where tdb1 is the Julian
@@ -14919,17 +12059,12 @@ Notes:
   3) TDB is essentially the same as Teph, the time argument for the
      JPL solar system ephemerides.
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
      IAU 2006 Resolution 3
-
-------
-test_erfa
-------
 
 
 
@@ -14937,125 +12072,156 @@ test_erfa
 tf2a
 ------
 
-Given:
-gn:  '-' = negative, otherwise positive
-urs
-nutes
-conds
+  Convert hours, minutes, seconds to radians.
 
-gle in radians
-e):
-atus:  0 = OK
-       1 = ihour outside range 0-23
-       2 = imin outside range 0-59
-       3 = sec outside range 0-59.999...
+  Given:
+     s         char    sign:  '-' = negative, otherwise positive
+     ihour     int     hours
+     imin      int     minutes
+     sec       double  seconds
 
-ted even if any of the range checks fail.
-n and/or sec produce a warning status, but
-is used in the conversion.
-le errors, the status value reflects only the
- taking precedence.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     rad       double  angle in radians
+
+  Returned (function value):
+               int     status:  0 = OK
+                                1 = ihour outside range 0-23
+                                2 = imin outside range 0-59
+                                3 = sec outside range 0-59.999...
+
+  Notes:
+
+  1)  The result is computed even if any of the range checks fail.
+
+  2)  Negative ihour, imin and/or sec produce a warning status, but
+      the absolute value is used in the conversion.
+
+  3)  If there are multiple errors, the status value reflects only the
+      first, the smallest taking precedence.
+
+
 
 ------
 tf2d
 ------
 
-Given:
-gn:  '-' = negative, otherwise positive
-urs
-nutes
-conds
+  Convert hours, minutes, seconds to days.
 
-terval in days
-e):
-atus:  0 = OK
-       1 = ihour outside range 0-23
-       2 = imin outside range 0-59
-       3 = sec outside range 0-59.999...
+  Given:
+     s         char    sign:  '-' = negative, otherwise positive
+     ihour     int     hours
+     imin      int     minutes
+     sec       double  seconds
 
-ted even if any of the range checks fail.
-n and/or sec produce a warning status, but
-is used in the conversion.
-le errors, the status value reflects only the
- taking precedence.
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned:
+     days      double  interval in days
+
+  Returned (function value):
+               int     status:  0 = OK
+                                1 = ihour outside range 0-23
+                                2 = imin outside range 0-59
+                                3 = sec outside range 0-59.999...
+
+  Notes:
+
+  1)  The result is computed even if any of the range checks fail.
+
+  2)  Negative ihour, imin and/or sec produce a warning status, but
+      the absolute value is used in the conversion.
+
+  3)  If there are multiple errors, the status value reflects only the
+      first, the smallest taking precedence.
+
+
 
 ------
 tr
 ------
 
-Given:
-]    r-matrix
+  Transpose an r-matrix.
 
-]    transpose
+  Given:
+     r        double[3][3]    r-matrix
 
-r r and rt to be the same array.
+  Returned:
+     rt       double[3][3]    transpose
 
-matrix
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible for r and rt to be the same array.
+
+  Called:
+     eraCr        copy r-matrix
+
+
 
 ------
 trxp
 ------
 
-Given:
-]   r-matrix
-    p-vector
+  Multiply a p-vector by the transpose of an r-matrix.
 
-    r * p
+  Given:
+     r        double[3][3]   r-matrix
+     p        double[3]      p-vector
 
-r p and trp to be the same array.
+  Returned:
+     trp      double[3]      r * p
 
-se r-matrix
- of r-matrix and p-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible for p and trp to be the same array.
+
+  Called:
+     eraTr        transpose r-matrix
+     eraRxp       product of r-matrix and p-vector
+
+
 
 ------
 trxpv
 ------
 
-Given:
-]    r-matrix
-]    pv-vector
+  Multiply a pv-vector by the transpose of an r-matrix.
 
-]    r * pv
+  Given:
+     r        double[3][3]    r-matrix
+     pv       double[2][3]    pv-vector
 
-r pv and trpv to be the same array.
+  Returned:
+     trpv     double[2][3]    r * pv
 
-se r-matrix
- of r-matrix and pv-vector
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
+     It is permissible for pv and trpv to be the same array.
+
+  Called:
+     eraTr        transpose r-matrix
+     eraRxpv      product of r-matrix and pv-vector
+
+
 
 ------
 tttai
 ------
 
-Given:
- TT as a 2-part Julian Date
+  Time scale transformation:  Terrestrial Time, TT, to International
+  Atomic Time, TAI.
 
- TAI as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     tt1,tt2    double    TT as a 2-part Julian Date
 
-te, apportioned in any convenient way between
-or example where tt1 is the Julian Day Number
-ion of a day.  The returned tai1,tai2 follow
+  Returned:
+     tai1,tai2  double    TAI as a 2-part Julian Date
 
+  Returned (function value):
+                int       status:  0 = OK
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
 
-References:
+     tt1+tt2 is Julian Date, apportioned in any convenient way between
+     the two arguments, for example where tt1 is the Julian Day Number
+     and tt2 is the fraction of a day.  The returned tai1,tai2 follow
+     suit.
+
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -15063,67 +12229,58 @@ References:
      Explanatory Supplement to the Astronomical Almanac,
      P. Kenneth Seidelmann (ed), University Science Books (1992)
 
+
+
 ------
 tttcg
 ------
 
-Given:
- TT as a 2-part Julian Date
+  Time scale transformation:  Terrestrial Time, TT, to Geocentric
+  Coordinate Time, TCG.
 
- TCG as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     tt1,tt2    double    TT as a 2-part Julian Date
 
-te, apportioned in any convenient way between
-or example where tt1 is the Julian Day Number
-ion of a day.  The returned tcg1,tcg2 follow
+  Returned:
+     tcg1,tcg2  double    TCG as a 2-part Julian Date
 
+  Returned (function value):
+                int       status:  0 = OK
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-B1.9
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Note:
 
-References:
+     tt1+tt2 is Julian Date, apportioned in any convenient way between
+     the two arguments, for example where tt1 is the Julian Day Number
+     and tt2 is the fraction of a day.  The returned tcg1,tcg2 follow
+     suit.
+
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
      IAU 2000 Resolution B1.9
 
+
+
 ------
 tttdb
 ------
 
-Given:
- TT as a 2-part Julian Date
- TDB-TT in seconds
+  Time scale transformation:  Terrestrial Time, TT, to Barycentric
+  Dynamical Time, TDB.
 
- TDB as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     tt1,tt2    double    TT as a 2-part Julian Date
+     dtr        double    TDB-TT in seconds
 
-te, apportioned in any convenient way between
-or example where tt1 is the Julian Day Number
-ion of a day.  The returned tdb1,tdb2 follow
+  Returned:
+     tdb1,tdb2  double    TDB as a 2-part Julian Date
 
-resents the quasi-periodic component of the
-tween TT and TCB.  It is dependent upon the
- ephemeris, and can be obtained by numerical
-rrogating a precomputed time ephemeris or by
-uch as that implemented in the ERFA function
-ity is dominated by an annual term of 1.7 ms
+  Returned (function value):
+                int       status:  0 = OK
 
-he same as Teph, the time argument for the JPL
-ides.
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-3
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) tt1+tt2 is Julian Date, apportioned in any convenient way between
      the two arguments, for example where tt1 is the Julian Day Number
@@ -15141,130 +12298,135 @@ Notes:
   3) TDB is essentially the same as Teph, the time argument for the JPL
      solar system ephemerides.
 
-
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
 
      IAU 2006 Resolution 3
 
+
+
 ------
 ttut1
 ------
 
-Given:
- TT as a 2-part Julian Date
- TT-UT1 in seconds
+  Time scale transformation:  Terrestrial Time, TT, to Universal Time,
+  UT1.
 
- UT1 as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     tt1,tt2    double    TT as a 2-part Julian Date
+     dt         double    TT-UT1 in seconds
 
-te, apportioned in any convenient way between
-or example where tt1 is the Julian Day Number
-ion of a day.  The returned ut11,ut12 follow
+  Returned:
+     ut11,ut12  double    UT1 as a 2-part Julian Date
 
-lassical Delta T.
+  Returned (function value):
+                int       status:  0 = OK
 
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Notes:
+
+  1) tt1+tt2 is Julian Date, apportioned in any convenient way between
+     the two arguments, for example where tt1 is the Julian Day Number
+     and tt2 is the fraction of a day.  The returned ut11,ut12 follow
+     suit.
+
+  2) The argument dt is classical Delta T.
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992)
+
+
 
 ------
 ut1tai
 ------
 
-Given:
- UT1 as a 2-part Julian Date
- UT1-TAI in seconds
+  Time scale transformation:  Universal Time, UT1, to International
+  Atomic Time, TAI.
 
- TAI as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     ut11,ut12  double    UT1 as a 2-part Julian Date
+     dta        double    UT1-TAI in seconds
 
-Date, apportioned in any convenient way
-ments, for example where ut11 is the Julian
-is the fraction of a day.  The returned
-t.
-e. UT1-TAI, is an observed quantity, and is
-tabulations.
+  Returned:
+     tai1,tai2  double    TAI as a 2-part Julian Date
 
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Returned (function value):
+                int       status:  0 = OK
+
+  Notes:
+
+  1) ut11+ut12 is Julian Date, apportioned in any convenient way
+     between the two arguments, for example where ut11 is the Julian
+     Day Number and ut12 is the fraction of a day.  The returned
+     tai1,tai2 follow suit.
+
+  2) The argument dta, i.e. UT1-TAI, is an observed quantity, and is
+     available from IERS tabulations.
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992)
+
+
 
 ------
 ut1tt
 ------
 
-Given:
- UT1 as a 2-part Julian Date
- TT-UT1 in seconds
+  Time scale transformation:  Universal Time, UT1, to Terrestrial
+  Time, TT.
 
- TT as a 2-part Julian Date
-e):
- status:  0 = OK
+  Given:
+     ut11,ut12  double    UT1 as a 2-part Julian Date
+     dt         double    TT-UT1 in seconds
 
-Date, apportioned in any convenient way
-ments, for example where ut11 is the Julian
-is the fraction of a day.  The returned
+  Returned:
+     tt1,tt2    double    TT as a 2-part Julian Date
 
-lassical Delta T.
+  Returned (function value):
+                int       status:  0 = OK
 
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
+  Notes:
+
+  1) ut11+ut12 is Julian Date, apportioned in any convenient way
+     between the two arguments, for example where ut11 is the Julian
+     Day Number and ut12 is the fraction of a day.  The returned
+     tt1,tt2 follow suit.
+
+  2) The argument dt is classical Delta T.
+
+  Reference:
+
+     Explanatory Supplement to the Astronomical Almanac,
+     P. Kenneth Seidelmann (ed), University Science Books (1992)
+
+
 
 ------
 ut1utc
 ------
 
-Given:
-UT1 as a 2-part Julian Date (Note 1)
-Delta UT1: UT1-UTC in seconds (Note 2)
+  Time scale transformation:  Universal Time, UT1, to Coordinated
+  Universal Time, UTC.
 
-UTC as a 2-part quasi Julian Date (Notes 3,4)
-e):
-status: +1 = dubious year (Note 5)
-         0 = OK
-        -1 = unacceptable date
+  Given:
+     ut11,ut12  double   UT1 as a 2-part Julian Date (Note 1)
+     dut1       double   Delta UT1: UT1-UTC in seconds (Note 2)
 
-Date, apportioned in any convenient way
-ments, for example where ut11 is the Julian
-is the fraction of a day.  The returned utc1
-logous pair, except that a special convention
-h the problem of leap seconds - see Note 3.
-ained from tabulations provided by the
-Rotation and Reference Systems Service.  The
-ly by 1s at a leap second;  however, close to
-gorithm used here is tolerant of the "wrong"
-g made.
-sly represent UTC during a leap second unless
- taken.  The convention in the present
- returned quasi JD day UTC1+UTC2 represents
- length is 86399, 86400 or 86401 SI seconds.
-f can be used to transform the UTC quasi-JD
-nd clock time, including UTC leap second
+  Returned:
+     utc1,utc2  double   UTC as a 2-part quasi Julian Date (Notes 3,4)
 
-dubious year" flags UTCs that predate the
-time scale or that are too far in the future
-eraDat for further details.
+  Returned (function value):
+                int      status: +1 = dubious year (Note 5)
+                                  0 = OK
+                                 -1 = unacceptable date
 
-regorian calendar
-T) = TAI-UTC
-an calendar to JD
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) ut11+ut12 is Julian Date, apportioned in any convenient way
      between the two arguments, for example where ut11 is the Julian
@@ -15291,8 +12453,12 @@ Notes:
      introduction of the time scale or that are too far in the future
      to be trusted.  See eraDat for further details.
 
+  Called:
+     eraJd2cal    JD to Gregorian calendar
+     eraDat       delta(AT) = TAI-UTC
+     eraCal2jd    Gregorian calendar to JD
 
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -15300,49 +12466,27 @@ References:
      Explanatory Supplement to the Astronomical Almanac,
      P. Kenneth Seidelmann (ed), University Science Books (1992)
 
+
+
 ------
 utctai
 ------
 
-Given:
-UTC as a 2-part quasi Julian Date (Notes 1-4)
+  Time scale transformation:  Coordinated Universal Time, UTC, to
+  International Atomic Time, TAI.
 
-TAI as a 2-part Julian Date (Note 5)
-e):
-status: +1 = dubious year (Note 3)
-         0 = OK
-        -1 = unacceptable date
+  Given:
+     utc1,utc2  double   UTC as a 2-part quasi Julian Date (Notes 1-4)
 
-ulian Date (see Note 2), apportioned in any
-en the two arguments, for example where utc1
-mber and utc2 is the fraction of a day.
-sly represent UTC during a leap second unless
- taken.  The convention in the present
- JD day represents UTC days whether the
-00 or 86401 SI seconds.  In the 1960-1972 era
-umps (in either direction) each time the
-ession was changed, and these "mini-leaps"
- the ERFA convention.
-dubious year" flags UTCs that predate the
-time scale or that are too far in the future
-eraDat for further details.
-d converts from calendar date and time of day
-ate, and in the case of UTC implements the
-y convention described above.
-I2 are such that their sum is the TAI Julian
+  Returned:
+     tai1,tai2  double   TAI as a 2-part Julian Date (Note 5)
 
+  Returned (function value):
+                int      status: +1 = dubious year (Note 3)
+                                  0 = OK
+                                 -1 = unacceptable date
 
-regorian calendar
-T) = TAI-UTC
-an calendar to JD
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) utc1+utc2 is quasi Julian Date (see Note 2), apportioned in any
      convenient way between the two arguments, for example where utc1
@@ -15367,8 +12511,12 @@ Notes:
   5) The returned TAI1,TAI2 are such that their sum is the TAI Julian
      Date.
 
+  Called:
+     eraJd2cal    JD to Gregorian calendar
+     eraDat       delta(AT) = TAI-UTC
+     eraCal2jd    Gregorian calendar to JD
 
-References:
+  References:
 
      McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
      IERS Technical Note No. 32, BKG (2004)
@@ -15376,52 +12524,28 @@ References:
      Explanatory Supplement to the Astronomical Almanac,
      P. Kenneth Seidelmann (ed), University Science Books (1992)
 
+
+
 ------
 utcut1
 ------
 
-Given:
-UTC as a 2-part quasi Julian Date (Notes 1-4)
-Delta UT1 = UT1-UTC in seconds (Note 5)
+  Time scale transformation:  Coordinated Universal Time, UTC, to
+  Universal Time, UT1.
 
-UT1 as a 2-part Julian Date (Note 6)
-e):
-status: +1 = dubious year (Note 3)
-         0 = OK
-        -1 = unacceptable date
+  Given:
+     utc1,utc2  double   UTC as a 2-part quasi Julian Date (Notes 1-4)
+     dut1       double   Delta UT1 = UT1-UTC in seconds (Note 5)
 
-ulian Date (see Note 2), apportioned in any
-en the two arguments, for example where utc1
-mber and utc2 is the fraction of a day.
-sly represent UTC during a leap second unless
- taken.  The convention in the present
- JD day represents UTC days whether the
-00 or 86401 SI seconds.
-dubious year" flags UTCs that predate the
-time scale or that are too far in the future
-eraDat for further details.
-d converts from calendar date and time of
-an Date, and in the case of UTC implements
-guity convention described above.
-ained from tabulations provided by the
-Rotation and Reference Systems Service.
-esponsibility to supply a dut1 argument
-TC value that matches the given UTC.
-12 are such that their sum is the UT1 Julian
+  Returned:
+     ut11,ut12  double   UT1 as a 2-part Julian Date (Note 6)
 
+  Returned (function value):
+                int      status: +1 = dubious year (Note 3)
+                                  0 = OK
+                                 -1 = unacceptable date
 
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-nt to the Astronomical Almanac,
-n (ed), University Science Books (1992)
-
-regorian calendar
-T) = TAI-UTC
-TAI
-UT1
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) utc1+utc2 is quasi Julian Date (see Note 2), apportioned in any
      convenient way between the two arguments, for example where utc1
@@ -15456,86 +12580,28 @@ Notes:
      Explanatory Supplement to the Astronomical Almanac,
      P. Kenneth Seidelmann (ed), University Science Books (1992)
 
-
-References:
-
-     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
-     IERS Technical Note No. 32, BKG (2004)
-
-     Explanatory Supplement to the Astronomical Almanac,
-     P. Kenneth Seidelmann (ed), University Science Books (1992)
-
   Called:
      eraJd2cal    JD to Gregorian calendar
      eraDat       delta(AT) = TAI-UTC
      eraUtctai    UTC to TAI
      eraTaiut1    TAI to UT1
 
+
+
 ------
 xy06
 ------
 
-Given:
-    TT as a 2-part Julian Date (Note 1)
+  X,Y coordinates of celestial intermediate pole from series based
+  on IAU 2006 precession and IAU 2000A nutation.
 
-    CIP X,Y coordinates (Note 2)
+  Given:
+     date1,date2  double     TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     x,y          double     CIP X,Y coordinates (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-are those of the unit vector towards the
-te pole.  They represent the combined effects
-ssion and nutation.
-ments used are as adopted in IERS Conventions
-Simon et al. (1994) and Souchay et al.
-
-ve to the angles-based method, via the ERFA
-d as used in eraXys06a for example.  The two
- 1 microarcsecond level (at present), a
-mpared with the intrinsic accuracy of the
- would be unwise to mix the two methods
-ries-based) in a single application.
-
-omaly of the Moon
-omaly of the Sun
-gument of the latitude of the Moon
-ongation of the Moon from the Sun
-ngitude of the Moon's ascending node
-ngitude of Mercury
-ngitude of Venus
-ngitude of Earth
-ngitude of Mars
-ngitude of Jupiter
-ngitude of Saturn
-ngitude of Uranus
-ngitude of Neptune
- accumulated precession in longitude
-
-ce, P.T. & Chapront, J., 2003,
-12, 567
-ace, P.T., 2006, Astron.Astrophys. 450, 855
-it, G. (eds.), 2004, IERS Conventions (2003),
-No. 32, BKG
-on, P., Chapront, J., Chapront-Touze, M.,
-, J., Astron.Astrophys., 1994, 282, 663
- B., Kinoshita, H., Folgueira, M., 1999,
-p.Ser. 135, 111
-taine, N., 2006, Astron.Astrophys. 459, 981
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -15571,8 +12637,23 @@ Notes:
      models.  However, it would be unwise to mix the two methods
      (angles-based and series-based) in a single application.
 
+  Called:
+     eraFal03     mean anomaly of the Moon
+     eraFalp03    mean anomaly of the Sun
+     eraFaf03     mean argument of the latitude of the Moon
+     eraFad03     mean elongation of the Moon from the Sun
+     eraFaom03    mean longitude of the Moon's ascending node
+     eraFame03    mean longitude of Mercury
+     eraFave03    mean longitude of Venus
+     eraFae03     mean longitude of Earth
+     eraFama03    mean longitude of Mars
+     eraFaju03    mean longitude of Jupiter
+     eraFasa03    mean longitude of Saturn
+     eraFaur03    mean longitude of Uranus
+     eraFane03    mean longitude of Neptune
+     eraFapa03    general accumulated precession in longitude
 
-References:
+  References:
 
      Capitaine, N., Wallace, P.T. & Chapront, J., 2003,
      Astron.Astrophys., 412, 567
@@ -15590,48 +12671,24 @@ References:
 
      Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 
+
+
 ------
 xys00a
 ------
 
-Given:
-  TT as a 2-part Julian Date (Note 1)
+  For a given TT date, compute the X,Y coordinates of the Celestial
+  Intermediate Pole and the CIO locator s, using the IAU 2000A
+  precession-nutation model.
 
-  Celestial Intermediate Pole (Note 2)
-  the CIO locator s (Note 2)
+  Given:
+     date1,date2  double   TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     x,y          double   Celestial Intermediate Pole (Note 2)
+     s            double   the CIO locator s (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-ediate Pole coordinates are the x,y
-it vector in the Geocentric Celestial
-
-n radians) positions the Celestial
-on the equator of the CIP.
-ly less accurate result (about 1 mas for
-d by using instead the eraXys00b function.
-
-al NPB matrix, IAU 2000A
- CIP X,Y coordinates from NPB matrix
- locator s, given X,Y, IAU 2000A
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -15662,49 +12719,34 @@ Notes:
   4) A faster, but slightly less accurate result (about 1 mas for
      X,Y), can be obtained by using instead the eraXys00b function.
 
+  Called:
+     eraPnm00a    classical NPB matrix, IAU 2000A
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+     eraS00       the CIO locator s, given X,Y, IAU 2000A
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 xys00b
 ------
 
-Given:
-  TT as a 2-part Julian Date (Note 1)
+  For a given TT date, compute the X,Y coordinates of the Celestial
+  Intermediate Pole and the CIO locator s, using the IAU 2000B
+  precession-nutation model.
 
-  Celestial Intermediate Pole (Note 2)
-  the CIO locator s (Note 2)
+  Given:
+     date1,date2  double   TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     x,y          double   Celestial Intermediate Pole (Note 2)
+     s            double   the CIO locator s (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-ediate Pole coordinates are the x,y
-it vector in the Geocentric Celestial
-
-n radians) positions the Celestial
-on the equator of the CIP.
- is faster, but slightly less accurate (about
-the eraXys00a function.
-
-al NPB matrix, IAU 2000B
- CIP X,Y coordinates from NPB matrix
- locator s, given X,Y, IAU 2000A
-
-it, G. (eds.), IERS Conventions (2003),
-No. 32, BKG (2004)
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -15735,48 +12777,34 @@ Notes:
   4) The present function is faster, but slightly less accurate (about
      1 mas in X,Y), than the eraXys00a function.
 
+  Called:
+     eraPnm00b    classical NPB matrix, IAU 2000B
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+     eraS00       the CIO locator s, given X,Y, IAU 2000A
+
+  Reference:
+
+     McCarthy, D. D., Petit, G. (eds.), IERS Conventions (2003),
+     IERS Technical Note No. 32, BKG (2004)
+
+
 
 ------
 xys06a
 ------
 
-Given:
- TT as a 2-part Julian Date (Note 1)
+  For a given TT date, compute the X,Y coordinates of the Celestial
+  Intermediate Pole and the CIO locator s, using the IAU 2006
+  precession and IAU 2000A nutation models.
 
- Celestial Intermediate Pole (Note 2)
- the CIO locator s (Note 2)
+  Given:
+     date1,date2  double  TT as a 2-part Julian Date (Note 1)
 
-te2 is a Julian Date, apportioned in any
-en the two arguments.  For example,
-ld be expressed in any of these ways,
+  Returned:
+     x,y          double  Celestial Intermediate Pole (Note 2)
+     s            double  the CIO locator s (Note 2)
 
-  date2
-    0.0       (JD method)
--1421.3       (J2000 method)
-50123.2       (MJD method)
-    0.2       (date & time method)
- most natural and convenient to use in
- of several decimal digits of resolution
-J2000 method is best matched to the way
-led internally and will deliver the
- The MJD method and the date & time methods
-mises between resolution and convenience.
-ediate Pole coordinates are the x,y components
-n the Geocentric Celestial Reference System.
-n radians) positions the Celestial
-on the equator of the CIP.
-ns for generating X and Y are also available:
-ace (2006) and eraXy06.
-
-al NPB matrix, IAU 2006/2000A
- CIP X,Y coordinates from NPB matrix
- locator s, given X,Y, IAU 2006
-
-ace, P.T., 2006, Astron.Astrophys. 450, 855
-taine, N., 2006, Astron.Astrophys. 459, 981
-, NumFOCUS Foundation.
-n, from the SOFA library.  See notes at end of file.
-Notes:
+  Notes:
 
   1) The TT date date1+date2 is a Julian Date, apportioned in any
      convenient way between the two arguments.  For example,
@@ -15806,16 +12834,27 @@ Notes:
   4) Series-based solutions for generating X and Y are also available:
      see Capitaine & Wallace (2006) and eraXy06.
 
+  Called:
+     eraPnm06a    classical NPB matrix, IAU 2006/2000A
+     eraBpn2xy    extract CIP X,Y coordinates from NPB matrix
+     eraS06       the CIO locator s, given X,Y, IAU 2006
 
-References:
+  References:
 
      Capitaine, N. & Wallace, P.T., 2006, Astron.Astrophys. 450, 855
 
      Wallace, P.T. & Capitaine, N., 2006, Astron.Astrophys. 459, 981
 
+
+
 ------
 zp
 ------
+
+  Zero a p-vector.
+
+  Returned:
+     p        double[3]      p-vector
 
 
 
@@ -15823,11 +12862,24 @@ zp
 zpv
 ------
 
+  Zero a pv-vector.
+
+  Returned:
+     pv       double[2][3]      pv-vector
+
+  Called:
+     eraZp        zero p-vector
+
 
 
 ------
 zr
 ------
+
+  Initialize an r-matrix to the null matrix.
+
+  Returned:
+     r        double[3][3]    r-matrix
 
 
 
