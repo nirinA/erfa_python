@@ -1092,6 +1092,10 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(d, 32.0, 9)
         d = erfa.dat(2008, 1, 17, 0.0)
         self.assertAlmostEqual(d, 33.0, 9)
+        d = erfa.dat(2015, 9, 1, 0.0)
+        self.assertAlmostEqual(d, 36.0, 9)
+        d = erfa.dat(2017, 9, 1, 0.0)
+        self.assertAlmostEqual(d, 37.0, 9)
         
     def test_dtdb(self):
         d = erfa.dtdb(2448939.5, 0.123, 0.76543, 5.0123, 5525.242, 3190.0)
@@ -1128,13 +1132,13 @@ class Validate(unittest.TestCase):
         self.assertRaises(erfa.error, erfa.eform, 0)
         a, f = erfa.eform(1)
         self.assertAlmostEqual(a, 6378137.0, 10)
-        self.assertAlmostEqual(f, 0.0033528106647474807, 18)
+        self.assertAlmostEqual(f,  0.3352810664747480720e-2, 18)
         a, f = erfa.eform(2)
         self.assertAlmostEqual(a, 6378137.0, 10)
-        self.assertAlmostEqual(f, 0.0033528106811823189, 18)
+        self.assertAlmostEqual(f, 0.3352810681182318935e-2, 18)
         a, f = erfa.eform(3)
         self.assertAlmostEqual(a, 6378135.0, 10)
-        self.assertAlmostEqual(f, 0.0033527794541675049, 18)
+        self.assertAlmostEqual(f, 0.3352779454167504862e-2, 18)
         #a, f = erfa.eform(4)
         self.assertRaises(erfa.error, erfa.eform, 4)
 
@@ -1338,8 +1342,8 @@ class Validate(unittest.TestCase):
         f = 0.0033528
         xyz = (2e6, 3e6, 5.244e6)
         e, p, h = erfa.gc2gde(a, f, xyz)
-        self.assertAlmostEqual(e, 0.98279372324732907, places=14)
-        self.assertAlmostEqual(p, 0.97160183775704115, places=14)
+        self.assertAlmostEqual(e, 0.9827937232473290680, places=14)
+        self.assertAlmostEqual(p, 0.9716018377570411532, places=14)
         self.assertAlmostEqual(h, 332.36862495764397, places=8)
 
     def test_gd2gc(self):
