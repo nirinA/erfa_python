@@ -2028,7 +2028,7 @@ class Validate(unittest.TestCase):
         self.assertAlmostEqual(pmr2, -0.1783662682155932702e-4, places=17)
         self.assertAlmostEqual(pmd2, 0.2338092915987603664e-5, places=17)
         self.assertAlmostEqual(px2, 0.7473533835323493644, places=13)
-        self.assertAlmostEqual(rv2, -21.59905170476860786, places=1)
+        self.assertAlmostEqual(rv2, -21.59905170476860786, places=10)
 
     def test_starpv(self):
         ra =   0.01686756

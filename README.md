@@ -33,7 +33,7 @@ obtaining
 download tarball
 ***********
 
-latest version is available from Pypi:
+latest version is available from pypi:
 
     https://pypi.python.org/pypi/erfa_python
 
@@ -42,7 +42,7 @@ or from github:
     https://github.com/nirinA/erfa_python/releases
 
 **********
-clone from github:
+clone from github
 **********
 
 you can clone the project repository at:
