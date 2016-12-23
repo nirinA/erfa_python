@@ -16,24 +16,37 @@ requirements
 
 to use this wrapper, you need:
 
-* Python 2.7 - 3.5
+* Python 2.7 - 3.6
 
 * C compiler to build the module.
 
   . newer version of gcc (4.7+) is prefered.
 
-for windows, only Python 2.7 is supported.
+## for windows, only Python 2.7 is supported.
+## update: no longer support for windows
 
---------
-download
---------
+----------
+obtaining
+----------
 
-erfa_python is available from Pypi:
+***********
+download tarball
+***********
+
+latest version is available from Pypi:
 
     https://pypi.python.org/pypi/erfa_python
 
-or clone from github:
+or from github:
 
+    https://github.com/nirinA/erfa_python/releases
+
+**********
+clone from github:
+**********
+
+you can clone the project repository at:
+    
     https://github.com/nirinA/erfa_python/
 
 
@@ -158,6 +171,13 @@ can be found in ``examples/`` directory.
 ----------
 what's new
 ----------
+
+***********
+. 2016123
+***********
+
+- update from SOFA release 12, revised on 2016-12-23.
+- tests for fk52h and starpm are relaxed, as they failed with Python3.6 built with all optimization enabled.
 
 ***********
 . 20160503
