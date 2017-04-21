@@ -22,9 +22,6 @@ to use this wrapper, you need:
 
   . newer version of gcc (4.7+) is prefered.
 
-## for windows, only Python 2.7 is supported.
-## update: no longer support for windows
-
 ----------
 obtaining
 ----------
@@ -171,6 +168,16 @@ can be found in ``examples/`` directory.
 ----------
 what's new
 ----------
+
+***********
+. 20170421
+***********
+
+- update from SOFA release 13.
+- this release replaces the IAU 1976 value of astronomical unit with the IAU 2012 value.
+- codes are all backward compatible but results are not, especially those using ```erfa.ASTROM```
+- ```erfa_test.py``` has been updated accordingly
+
 
 ***********
 . 2016123

@@ -1373,7 +1373,7 @@ void eraApcs(double date1, double date2, double pv[2][3],
 /* au/d to m/s */
    const double AUDMS = ERFA_DAU/ERFA_DAYSEC;
 
-/* Light time for 1 AU (day) */
+/* Light time for 1 au (day) */
    const double CR = ERFA_AULT/ERFA_DAYSEC;
 
    int i;
@@ -2140,12 +2140,12 @@ void eraAtci13(double rc, double dc,
 **
 **  3) The TDB date date1+date2 is a Julian Date, apportioned in any
 **     convenient way between the two arguments.  For example,
-**     JD(TDB)=2450123.8g could be expressed in any of these ways, among
+**     JD(TDB)=2450123.7 could be expressed in any of these ways, among
 **     others:
 **
 **            date1          date2
 **
-**         2450123.8g           0.0       (JD method)
+**         2450123.7           0.0       (JD method)
 **         2451545.0       -1421.3       (J2000 method)
 **         2400000.5       50123.2       (MJD method)
 **         2450123.5           0.2       (date & time method)
@@ -5983,9 +5983,9 @@ int eraDat(int iy, int im, int id, double fd, double *deltat )
 **     so early that JD could not be computed.
 **
 **  2) If the specified date is for a day which ends with a leap second,
-**     the UTC-TAI value returned is for the period leading up to the
+**     the TAI-UTC value returned is for the period leading up to the
 **     leap second.  If the date is for a day which begins as a leap
-**     second ends, the UTC-TAI returned is for the period following the
+**     second ends, the TAI-UTC returned is for the period following the
 **     leap second.
 **
 **  3) The day number must be in the normal calendar range, for example
@@ -8576,19 +8576,19 @@ int eraEpv00(double date1, double date2,
 **  2) On return, the arrays pvh and pvb contain the following:
 **
 **        pvh[0][0]  x       }
-**        pvh[0][1]  y       } heliocentric position, AU
+**        pvh[0][1]  y       } heliocentric position, au
 **        pvh[0][2]  z       }
 **
 **        pvh[1][0]  xdot    }
-**        pvh[1][1]  ydot    } heliocentric velocity, AU/d
+**        pvh[1][1]  ydot    } heliocentric velocity, au/d
 **        pvh[1][2]  zdot    }
 **
 **        pvb[0][0]  x       }
-**        pvb[0][1]  y       } barycentric position, AU
+**        pvb[0][1]  y       } barycentric position, au
 **        pvb[0][2]  z       }
 **
 **        pvb[1][0]  xdot    }
-**        pvb[1][1]  ydot    } barycentric velocity, AU/d
+**        pvb[1][1]  ydot    } barycentric velocity, au/d
 **        pvb[1][2]  zdot    }
 **
 **     The vectors are with respect to the Barycentric Celestial
@@ -13942,7 +13942,7 @@ int eraJd2cal(double dj1, double dj2,
 **  Returned (function value):
 **               int      status:
 **                           0 = OK
-**                          -1 = unacceptable date (Note 3)
+**                          -1 = unacceptable date (Note 1)
 **
 **  Notes:
 **
@@ -14309,7 +14309,7 @@ void eraLdn(int n, eraLDBODY b[], double ob[3], double sc[3],
 **  Derived, with permission, from the SOFA library.  See notes at end of file.
 */
 {
-/* Light time for 1 AU (days) */
+/* Light time for 1 au (days) */
    const double CR = ERFA_AULT/ERFA_DAYSEC;
 
    int i;
@@ -18859,7 +18859,7 @@ int eraPlan94(double date1, double date2, int np, double pv[2][3])
 **                             5=Jupiter, 6=Saturn, 7=Uranus, 8=Neptune)
 **
 **  Returned (argument):
-**     pv     double[2][3] planet p,v (heliocentric, J2000.0, AU,AU/d)
+**     pv     double[2][3] planet p,v (heliocentric, J2000.0, au,au/d)
 **
 **  Returned (function value):
 **            int          status: -1 = illegal NP (outside 1-8)
@@ -18900,11 +18900,11 @@ int eraPlan94(double date1, double date2, int np, double pv[2][3])
 **  4) On successful return, the array pv contains the following:
 **
 **        pv[0][0]   x      }
-**        pv[0][1]   y      } heliocentric position, AU
+**        pv[0][1]   y      } heliocentric position, au
 **        pv[0][2]   z      }
 **
 **        pv[1][0]   xdot   }
-**        pv[1][1]   ydot   } heliocentric velocity, AU/d
+**        pv[1][1]   ydot   } heliocentric velocity, au/d
 **        pv[1][2]   zdot   }
 **
 **     The reference frame is equatorial and is with respect to the
@@ -19031,7 +19031,7 @@ int eraPlan94(double date1, double date2, int np, double pv[2][3])
 /*
 ** Tables giving the mean Keplerian elements, limited to t^2 terms:
 **
-**   a       semi-major axis (AU)
+**   a       semi-major axis (au)
 **   dlm     mean longitude (degree and arcsecond)
 **   e       eccentricity
 **   pi      longitude of the perihelion (degree and arcsecond)
@@ -19258,7 +19258,7 @@ int eraPlan94(double date1, double date2, int np, double pv[2][3])
       at = 2.0 * atan2(sqrt((1.0 + de) / (1.0 - de)) * sin(ae2),
                                                        cos(ae2));
 
-   /* Distance (AU) and speed (radians per day). */
+   /* Distance (au) and speed (radians per day). */
       r = da * (1.0 - de * cos(ae));
       v = GK * sqrt((1.0 + 1.0 / amas[np]) / (da * da * da));
 
@@ -19275,7 +19275,7 @@ int eraPlan94(double date1, double date2, int np, double pv[2][3])
       xmc = (de * cos(dp) + xcw) * xf;
       xpxq2 = 2 * xp * xq;
 
-   /* Position (J2000.0 ecliptic x,y,z in AU). */
+   /* Position (J2000.0 ecliptic x,y,z in au). */
       x = r * (xcw - xm2 * xp);
       y = r * (xsw + xm2 * xq);
       z = r * (-xm2 * ci2);
@@ -19285,7 +19285,7 @@ int eraPlan94(double date1, double date2, int np, double pv[2][3])
       pv[0][1] = y * COSEPS - z * SINEPS;
       pv[0][2] = y * SINEPS + z * COSEPS;
 
-   /* Velocity (J2000.0 ecliptic xdot,ydot,zdot in AU/d). */
+   /* Velocity (J2000.0 ecliptic xdot,ydot,zdot in au/d). */
       x = v * (( -1.0 + 2.0 * xp * xp) * xms + xpxq2 * xmc);
       y = v * ((  1.0 - 2.0 * xq * xq) * xmc - xpxq2 * xms);
       z = v * (2.0 * ci2 * (xp * xms + xq * xmc));
@@ -21298,7 +21298,7 @@ int eraPvstar(double pv[2][3], double *ra, double *dec,
 **  Convert star position+velocity vector to catalog coordinates.
 **
 **  Given (Note 1):
-**     pv     double[2][3]   pv-vector (AU, AU/day)
+**     pv     double[2][3]   pv-vector (au, au/day)
 **
 **  Returned (Note 2):
 **     ra     double         right ascension (radians)
@@ -21353,7 +21353,7 @@ int eraPvstar(double pv[2][3], double *ra, double *dec,
 **  3) Care is needed with units.  The star coordinates are in radians
 **     and the proper motions in radians per Julian year, but the
 **     parallax is in arcseconds; the radial velocity is in km/s, but
-**     the pv-vector result is in AU and AU/day.
+**     the pv-vector result is in au and au/day.
 **
 **  4) The proper motions are the rate of change of the right ascension
 **     and declination at the catalog epoch and are in radians per Julian
@@ -21389,12 +21389,12 @@ int eraPvstar(double pv[2][3], double *ra, double *dec,
           usr[3], ust[3], a, rad, decd, rd;
 
 
-/* Isolate the radial component of the velocity (AU/day, inertial). */
+/* Isolate the radial component of the velocity (au/day, inertial). */
    eraPn(pv[0], &r, x);
    vr = eraPdp(x, pv[1]);
    eraSxp(vr, x, ur);
 
-/* Isolate the transverse component of the velocity (AU/day, inertial). */
+/* Isolate the transverse component of the velocity (au/day, inertial). */
    eraPmp(pv[1], ur, ut);
    vt = eraPm(ut);
 
@@ -21404,9 +21404,9 @@ int eraPvstar(double pv[2][3], double *ra, double *dec,
 
 /* The inertial-to-observed correction terms. */
    d = 1.0 + betr;
-   w = 1.0 - betr*betr - bett*bett;
-   if (d == 0.0 || w < 0) return -1;
-   del = sqrt(w) - 1.0;
+   w = betr*betr + bett*bett;
+   if (d == 0.0 || w > 1.0) return -1;
+   del = - w / (sqrt(1.0-w) + 1.0);
 
 /* Apply relativistic correction factor to radial velocity component. */
    w = (betr != 0) ? (betr - del) / (betr * d) : 1.0;
@@ -21416,7 +21416,7 @@ int eraPvstar(double pv[2][3], double *ra, double *dec,
 /* component.                                                  */
    eraSxp(1.0/d, ut, ust);
 
-/* Combine the two to obtain the observed velocity vector (AU/day). */
+/* Combine the two to obtain the observed velocity vector (au/day). */
    eraPpp(usr, ust, pv[1]);
 
 /* Cartesian to spherical. */
@@ -23687,7 +23687,7 @@ int eraStarpv(double ra, double dec,
 **     rv     double        radial velocity (km/s, positive = receding)
 **
 **  Returned (Note 2):
-**     pv     double[2][3]  pv-vector (AU, AU/day)
+**     pv     double[2][3]  pv-vector (au, au/day)
 **
 **  Returned (function value):
 **            int           status:
@@ -23721,7 +23721,7 @@ int eraStarpv(double ra, double dec,
 **     direction", where the object was located at the catalog epoch, be
 **     required, it may be obtained by calculating the magnitude of the
 **     position vector pv[0][0-2] dividing by the speed of light in
-**     AU/day to give the light-time, and then multiplying the space
+**     au/day to give the light-time, and then multiplying the space
 **     velocity pv[1][0-2] by this light-time and adding the result to
 **     pv[0][0-2].
 **
@@ -23740,7 +23740,7 @@ int eraStarpv(double ra, double dec,
 **  3) Care is needed with units.  The star coordinates are in radians
 **     and the proper motions in radians per Julian year, but the
 **     parallax is in arcseconds; the radial velocity is in km/s, but
-**     the pv-vector result is in AU and AU/day.
+**     the pv-vector result is in au and au/day.
 **
 **  4) The RA proper motion is in terms of coordinate angle, not true
 **     angle.  If the catalog uses arcseconds for both RA and Dec proper
@@ -23803,7 +23803,7 @@ int eraStarpv(double ra, double dec,
           od = 0.0, odel = 0.0;     /* warnings   */
 
 
-/* Distance (AU). */
+/* Distance (au). */
    if (px >= PXMIN) {
       w = px;
       iwarn = 0;
@@ -23813,14 +23813,14 @@ int eraStarpv(double ra, double dec,
    }
    r = ERFA_DR2AS / w;
 
-/* Radial velocity (AU/day). */
+/* Radial velocity (au/day). */
    rd = ERFA_DAYSEC * rv * 1e3 / ERFA_DAU;
 
 /* Proper motion (radian/day). */
    rad = pmr / ERFA_DJY;
    decd = pmd / ERFA_DJY;
 
-/* To pv-vector (AU,AU/day). */
+/* To pv-vector (au,au/day). */
    eraS2pv(ra, dec, r, rad, decd, rd, pv);
 
 /* If excessive velocity, arbitrarily set it to zero. */
@@ -23830,12 +23830,12 @@ int eraStarpv(double ra, double dec,
       iwarn += 2;
    }
 
-/* Isolate the radial component of the velocity (AU/day). */
+/* Isolate the radial component of the velocity (au/day). */
    eraPn(pv[0], &w, x);
    vsr = eraPdp(x, pv[1]);
    eraSxp(vsr, x, usr);
 
-/* Isolate the transverse component of the velocity (AU/day). */
+/* Isolate the transverse component of the velocity (au/day). */
    eraPmp(pv[1], usr, ust);
    vst = eraPm(ust);
 

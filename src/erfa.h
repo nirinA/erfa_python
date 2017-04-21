@@ -98,17 +98,17 @@ typedef struct {
 /* TT minus TAI (s) */
 #define ERFA_TTMTAI (32.184)
 
-/* Astronomical unit (m) */
-#define ERFA_DAU (149597870e3)
+/* Astronomical unit (m, IAU 2012) */
+#define ERFA_DAU (149597870.7e3)
 
 /* Speed of light (m/s) */
 #define ERFA_CMPS 299792458.0
 
 /* Light time for 1 au (s) */
-#define ERFA_AULT 499.004782
+#define ERFA_AULT (ERFA_DAU/ERFA_CMPS)
 
-/* Speed of light (AU per day) */
-#define ERFA_DC (ERFA_DAYSEC / ERFA_AULT)
+/* Speed of light (au per day) */
+#define ERFA_DC (ERFA_DAYSEC/ERFA_AULT)
 
 /* L_G = 1 - d(TT)/d(TCG) */
 #define ERFA_ELG (6.969290134e-10)
