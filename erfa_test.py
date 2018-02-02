@@ -2706,7 +2706,100 @@ class Validate(unittest.TestCase):
         dl, db = erfa.lteqec(epj, dr, dd)
         self.assertAlmostEqual(dl, 0.5039483649047114859, places=14)
         self.assertAlmostEqual(db, 0.5848534459726224882, places=14)
-        
+
+## 20180130
+## Astronomy/HorizonEquatorial
+    def test_ae2hd(self):
+        a = 5.5
+        e = 1.1
+        p = 0.7
+        h, d = erfa.ae2hd(a, e, p)
+        self.assertAlmostEqual(h, 0.5933291115507309663, places=14)
+        self.assertAlmostEqual(d, 0.9613934761647817620, places=14)
+
+    def test_hd2ae(self):
+        h = 1.1
+        d = 1.2
+        p = 0.3
+        a, e = erfa.hd2ae(h, d, p)
+        self.assertAlmostEqual(a, 5.916889243730066194, places=13)
+        self.assertAlmostEqual(e, 0.4472186304990486228, places=14)
+
+    def test_hd2pa(self):
+        h = 1.1
+        d = 1.2
+        p = 0.3
+        q = erfa.hd2pa(h, d, p)
+        self.assertAlmostEqual(q, 1.906227428001995580, places=13)
+
+## Astronomy/Gnomonic
+    def test_tpors(self):
+        xi = -0.03
+        eta = 0.07
+        ra = 1.3
+        dec = 1.5
+        az1, bz1, az2, bz2 = erfa.tpors(xi, eta, ra, dec)
+        self.assertAlmostEqual(az1, 1.736621577783208748, places=13)
+        self.assertAlmostEqual(bz1, 1.436736561844090323, places=13)
+        self.assertAlmostEqual(az2, 4.004971075806584490, places=13)
+        self.assertAlmostEqual(bz2, 1.565084088476417917, places=13)
+
+    def test_tporv(self):
+        xi = -0.03
+        eta = 0.07
+        ra = 1.3
+        dec = 1.5
+        v = erfa.s2c(ra, dec)
+        vz1, vz2 = erfa.tporv(xi, eta, v)
+## this doesn't return solution
+##        vz1, vz2 = erfa.tporv(ra, dec, v)
+        self.assertAlmostEqual(vz1[0], -0.02206252822366888610, places=15)
+        self.assertAlmostEqual(vz1[1], 0.1318251060359645016, places=14)
+        self.assertAlmostEqual(vz1[2], 0.9910274397144543895, places=14)
+        self.assertAlmostEqual(vz2[0], -0.003712211763801968173, places=16)
+        self.assertAlmostEqual(vz2[1], -0.004341519956299836813, places=16)
+        self.assertAlmostEqual(vz2[2], 0.9999836852110587012, places=14)
+
+    def test_tpsts(self):
+        xi = -0.03
+        eta = 0.07
+        raz = 2.3
+        decz = 1.5
+        ra, dec = erfa.tpsts(xi, eta, raz, decz)
+        self.assertAlmostEqual(ra, 0.7596127167359629775, places=14)
+        self.assertAlmostEqual(dec, 1.540864645109263028, places=13)
+
+    def test_tpstv(self):
+        xi = -0.03
+        eta = 0.07
+        raz = 2.3
+        decz = 1.5
+        vz = erfa.s2c(raz, decz)
+        v = erfa.tpstv(xi, eta, vz)
+        self.assertAlmostEqual(v[0], 0.02170030454907376677, places=15)
+        self.assertAlmostEqual(v[1], 0.02060909590535367447, places=15)
+        self.assertAlmostEqual(v[2], 0.9995520806583523804, places=14)
+
+    def test_tpxes(self):
+        ra = 1.3
+        dec = 1.55
+        raz = 2.3
+        decz = 1.5
+        xi, eta = erfa.tpxes(ra, dec, raz, decz)
+        self.assertAlmostEqual(xi, -0.01753200983236980595, places=15)
+        self.assertAlmostEqual(eta, 0.05962940005778712891, places=15)
+
+    def test_tpxev(self):
+        ra = 1.3
+        dec = 1.55
+        raz = 2.3
+        decz = 1.5
+        v = erfa.s2c(ra, dec)
+        vz = erfa.s2c(raz, decz)
+        xi, eta = erfa.tpxev(v, vz)
+        self.assertAlmostEqual(xi, -0.01753200983236980595, places=15)
+        self.assertAlmostEqual(eta, 0.05962940005778712891, places=15)
+
 ## some older version of Python 2.7
 ## failed to use 'support'
 if __name__ == '__main__':

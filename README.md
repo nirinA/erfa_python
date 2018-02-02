@@ -123,7 +123,9 @@ and, from the interpreter:
    >>> help(erfa.<function>)
 ```
 
-C-api reference of liberfa is available in ``doc/api.rst``.
+*to be updated*
+
+more detailed C-api reference of liberfa is available in ``doc/api.rst``.
 a html version can be built:
 
 ```
@@ -168,6 +170,14 @@ can be found in ``examples/`` directory.
 ----------
 what's new
 ----------
+
+
+***********
+. 2010201
+***********
+
+- update from SOFA release 14.
+
 
 ***********
 . 20170421

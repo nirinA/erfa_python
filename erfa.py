@@ -77,4 +77,7 @@ __all__ = ['ASTROM', 'AULT', 'CMPS', 'D2PI', 'DAS2R', 'DAU', 'DAYSEC',
            'icrs2g', 'g2icrs',
            'ltp', 'ltpb', 'ltpecl', 'ltpequ',
            'eceq06', 'ecm06', 'eqec06',
-           'lteceq', 'ltecm', 'lteqec']
+           'lteceq', 'ltecm', 'lteqec',
+           'ae2hd', 'hd2ae', 'hd2pa',
+           'tpors', 'tporv', 'tpsts', 'tpstv', 'tpxes', 'tpxev',
+           ]

@@ -6351,6 +6351,256 @@ PyDoc_STRVAR(_erfa_lteqec_doc,
 "   dl          ecliptic longitude (radians)\n"
 "   db          ecliptic latitude (radians)");
 
+static PyObject *
+_erfa_ae2hd(PyObject *self, PyObject *args)
+{
+    double az, el, phi, ha, dec;
+    if (!PyArg_ParseTuple(args, "ddd", &az, &el, &phi)) {
+        return NULL;
+    }
+    eraAe2hd(az, el, phi, &ha, &dec);
+    return Py_BuildValue("dd", ha, dec);
+}
+
+PyDoc_STRVAR(_erfa_ae2hd_doc,
+"ae2hd(az, el, phi) -> (ha, dec)\n\n"
+"Horizon to equatorial coordinates:  transform azimuth and altitude\n"
+"to hour angle and declination.\n"
+"Given:\n"
+"   az          azimuth\n"
+"   el          altitude (informally, elevation)\n"
+"   phi         site altitude\n"
+"Returned:\n"
+"   ha          hour angle (local)\n"
+"   dec         declination\n");
+
+static PyObject *
+_erfa_hd2ae(PyObject *self, PyObject *args)
+{
+    double az, el, phi, ha, dec;
+    if (!PyArg_ParseTuple(args, "ddd", &ha, &dec, &phi)) {
+        return NULL;
+    }
+    eraHd2ae(ha, dec, phi, &az, &el);
+    return Py_BuildValue("dd", az, el);
+}
+
+PyDoc_STRVAR(_erfa_hd2ae_doc,
+"hd2ae(ha, dec, phi) -> (az, el)\n\n"
+"Equatorial to horizon coordinates:  transform hour angle and\n"
+"declination to azimuth and altitude.\n"
+"Given:\n"
+"   ha          hour angle (local)\n"
+"   dec         declination\n"
+"   phi         site altitude\n"
+"Returned:\n"
+"   az          azimuth\n"
+"   el          altitude (informally, elevation)\n");
+
+static PyObject *
+_erfa_hd2pa(PyObject *self, PyObject *args)
+{
+    double ha, dec, phi, pa;
+    if (!PyArg_ParseTuple(args, "ddd", &ha, &dec, &phi)) {
+        return NULL;
+    }
+    pa = eraHd2pa(ha, dec, phi);
+    return Py_BuildValue("d", pa);
+}
+
+PyDoc_STRVAR(_erfa_hd2pa_doc,
+"hd2pa(ha, dec, phi) -> pa\n\n"
+"Parallactic angle for a given hour angle and declination.\n"
+"Given:\n"
+"   ha          hour angle (local)\n"
+"   dec         declination\n"
+"   phi         site altitude\n"
+"Returned:\n"
+"   pa          parallactic angle\n");
+
+static PyObject *
+_erfa_tpors(PyObject *self, PyObject *args)
+{
+    double xi, eta, a, b, a01, b01, a02, b02;
+    int status;
+    if (!PyArg_ParseTuple(args, "dddd", &xi, &eta, &a, &b)) {
+        return NULL;
+    }
+    status = eraTpors(xi, eta, a, b, &a01, &b01, &a02, &b02);
+    if (status == 0){
+        PyErr_SetString(_erfaError, "no solution returned");
+        return NULL;
+    }
+    else if (status == 1) {
+        PyErr_WarnEx(PyExc_Warning, "only the first solution is useful", 1);
+    }
+    else if (status == 2) {
+        PyErr_WarnEx(PyExc_Warning, "both solutions are useful", 1);
+    }
+    return Py_BuildValue("dddd", a01, b01, a02, b02);
+}
+
+PyDoc_STRVAR(_erfa_tpors_doc,
+"tpors(xi, eta, a, b) -> (a01, b01, a02, b02)\n"
+"In the tangent plane projection, given the rectangular coordinates\n"
+"of a star and its spherical coordinates, determine the spherical\n"
+"coordinates of the tangent point\n"
+"Given:\n"
+"   xi,eta      rectangular coordinates of star image\n"
+"   a,b         star's spherical coordinates\n"
+"Returned:\n"
+"   a01,b01     tangent point's spherical coordinates, Solution 1\n"
+"   a02,b02     tangent point's spherical coordinates, Solution 2\n");
+
+static PyObject *
+_erfa_tporv(PyObject *self, PyObject *args)
+{
+    double xi, eta, v[3], v01[3], v02[3];
+    int status;
+    if (!PyArg_ParseTuple(args, "dd(ddd)", &xi, &eta, &v[0], &v[1], &v[2])) {
+        return NULL;
+    }
+    status = eraTporv(xi, eta, v, v01, v02);
+    if (status == 0){
+        PyErr_SetString(_erfaError, "no solution returned");
+        return NULL;
+    }
+    else if (status == 1) {
+        PyErr_WarnEx(PyExc_Warning, "only the first solution is useful", 1);
+    }
+    else if (status == 2) {
+        PyErr_WarnEx(PyExc_Warning, "both solutions are useful", 1);
+    }
+    return Py_BuildValue("(ddd)(ddd)", v01[0], v01[1], v01[2], v02[0], v02[1], v02[2]);
+}
+
+PyDoc_STRVAR(_erfa_tporv_doc,
+"tprov(xi, eta, v[3]) -> (v01[3], v02[3])\n"
+"In the tangent plane projection, given the rectangular coordinates\n"
+"of a star and its direction cosines, determine the direction\n"
+"cosines of the tangent point.\n"
+"Given:\n"
+"   xi,eta      rectangular coordinates of star image\n"
+"   v           star's direction cosines\n"
+"Returned:\n"
+"   v01         tangent point's direction cosines, Solution 1\n"
+"   v02         tangent point's direction cosines, Solution 2\n");
+
+static PyObject *
+_erfa_tpsts(PyObject *self, PyObject *args)
+{
+    double xi, eta, a, b, a0, b0;
+    if (!PyArg_ParseTuple(args, "dddd", &xi, &eta, &a0, &b0)) {
+        return NULL;
+    }
+    eraTpsts(xi, eta, a0, b0, &a, &b);
+    return Py_BuildValue("dd", a, b);
+}
+
+PyDoc_STRVAR(_erfa_tpsts_doc,
+"tpsts(xi, eta, a0, b0) -> (a, b)\n"
+"In the tangent plane projection, given the star's rectangular\n"
+"coordinates and the spherical coordinates of the tangent point,\n"
+"solve for the spherical coordinates of the star.\n"
+"Given:\n"
+"   xi,eta      rectangular coordinates of star image\n"
+"   a0,b0       tangent point's spherical coordinates\n"
+"Returned:\n"
+"   a,b         star's spherical coordinates\n");
+
+static PyObject *
+_erfa_tpstv(PyObject *self, PyObject *args)
+{
+    double xi, eta, v[3], v0[3];
+    if (!PyArg_ParseTuple(args, "dd(ddd)", &xi, &eta, &v0[0], &v0[1], &v0[2])) {
+        return NULL;
+    }
+    eraTpstv(xi, eta, v0, v);
+    return Py_BuildValue("(ddd)", v[0], v[1], v[2]);
+}
+
+PyDoc_STRVAR(_erfa_tpstv_doc,
+"tpstv(xi, eta, v0[3]) -> (v[3])\n"
+"In the tangent plane projection, given the star's rectangular\n"
+"coordinates and the direction cosines of the tangent point, solve\n"
+"for the direction cosines of the star.\n"
+"Given:\n"
+"   xi,eta      rectangular coordinates of star image\n"
+"   v0          tangent point's direction cosines\n"
+"Returned:\n"
+"   v           star's direction cosines\n");
+
+static PyObject *
+_erfa_tpxes(PyObject *self, PyObject *args)
+{
+    double xi, eta, a, b, a0, b0;
+    int status;
+    if (!PyArg_ParseTuple(args, "dddd", &a, &b, &a0, &b0)) {
+        return NULL;
+    }
+    status = eraTpxes( a, b, a0, b0, &xi, &eta);
+    if (status == 1) {
+        PyErr_SetString(_erfaError, "star too far from axis");
+        return NULL;
+    }
+    else if (status == 2) {
+        PyErr_SetString(_erfaError, "antistar on tangent plane");
+        return NULL;
+    }
+    else if (status == 3) {
+        PyErr_SetString(_erfaError, "antistar too far from axis");
+        return NULL;
+    }
+    return Py_BuildValue("dd", xi, eta);
+}
+
+PyDoc_STRVAR(_erfa_tpxes_doc,
+"tpxes(a, b, a0, b0) -> (xi, eta)\n"
+"In the tangent plane projection, given celestial spherical\n"
+"coordinates for a star and the tangent point, solve for the star's\n"
+"rectangular coordinates in the tangent plane.\n"
+"Given:\n"
+"   a,b         star's spherical coordinates\n"
+"   a0,b0       tangent point's spherical coordinates\n"
+"Returned:\n"
+"   xi,eta      rectangular coordinates of star image\n");
+
+static PyObject *
+_erfa_tpxev(PyObject *self, PyObject *args)
+{
+    double xi, eta, v[3], v0[3];
+    int status;
+    if (!PyArg_ParseTuple(args, "(ddd)(ddd)", &v[0], &v[1], &v[2],
+                                              &v0[0], &v0[1], &v0[2])) {
+        return NULL;
+    }
+    status = eraTpxev(v, v0, &xi, &eta);
+    if (status == 1) {
+        PyErr_SetString(_erfaError, "star too far from axis");
+        return NULL;
+    }
+    else if (status == 2) {
+        PyErr_SetString(_erfaError, "antistar on tangent plane");
+        return NULL;
+    }
+    else if (status == 3) {
+        PyErr_SetString(_erfaError, "antistar too far from axis");
+        return NULL;
+    }
+    return Py_BuildValue("dd", xi, eta);
+}
+
+PyDoc_STRVAR(_erfa_tpxev_doc,
+"tpxev(v[3], v0[3]) -> (xi, eta)\n"
+"In the tangent plane projection, given celestial direction cosines\n"
+"for a star and the tangent point, solve for the star's rectangular\n"
+"coordinates in the tangent plane.\n"
+"Given:\n"
+"   v           direction cosines of star\n"
+"   v0          direction cosines of tangent point\n"
+"Returned:\n"
+"   xi,eta      tangent plane coordinates of star\n");
+
 
 static PyMethodDef _erfa_methods[] = {
     {"ab", _erfa_ab, METH_VARARGS, _erfa_ab_doc},
@@ -6578,6 +6828,15 @@ static PyMethodDef _erfa_methods[] = {
     {"lteceq", _erfa_lteceq, METH_VARARGS, _erfa_lteceq_doc},
     {"ltecm", _erfa_ltecm, METH_VARARGS, _erfa_ltecm_doc},
     {"lteqec", _erfa_lteqec, METH_VARARGS, _erfa_lteqec_doc},
+    {"ae2hd", _erfa_ae2hd, METH_VARARGS, _erfa_ae2hd_doc},
+    {"hd2ae", _erfa_hd2ae, METH_VARARGS, _erfa_hd2ae_doc},
+    {"hd2pa", _erfa_hd2pa, METH_VARARGS, _erfa_hd2pa_doc},
+    {"tpors", _erfa_tpors, METH_VARARGS, _erfa_tpors_doc},
+    {"tporv", _erfa_tporv, METH_VARARGS, _erfa_tporv_doc},
+    {"tpsts", _erfa_tpsts, METH_VARARGS, _erfa_tpsts_doc},
+    {"tpstv", _erfa_tpstv, METH_VARARGS, _erfa_tpstv_doc},
+    {"tpxes", _erfa_tpxes, METH_VARARGS, _erfa_tpxes_doc},
+    {"tpxev", _erfa_tpxev, METH_VARARGS, _erfa_tpxev_doc},
     {NULL,		NULL}		/* sentinel */
 };
 
